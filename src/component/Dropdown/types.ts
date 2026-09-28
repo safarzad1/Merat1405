@@ -23,4 +23,6 @@ export type CommonDropdownProps<T extends DropdownValue> = {
   leadingIcon?: ReactNode;
   dropdownZIndex?: number;
   error?: boolean;
+  searchable?: boolean;
+  searchPlaceholder?: string;
 };

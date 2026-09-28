@@ -49,6 +49,8 @@ export default function Dropdown<T extends DropdownValue = string>({
   dropdownZIndex = 2147483000,
   menuWidth,
   error = false,
+  searchable = false,
+  searchPlaceholder = "جستجو...",
 }: DropdownProps<T>) {
   const generatedId = useId().replace(/:/g, "");
   const listId = `dropdown-list-${generatedId}`;
@@ -56,6 +58,8 @@ export default function Dropdown<T extends DropdownValue = string>({
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
   const [position, setPosition] = useState<DropdownPosition>({
     top: 0,
     left: 0,
@@ -68,6 +72,15 @@ export default function Dropdown<T extends DropdownValue = string>({
     for (const option of options) unique.set(option.value, option);
     return Array.from(unique.values());
   }, [options]);
+
+  const filteredOptions = useMemo(() => {
+    const query = searchText.trim().toLocaleLowerCase();
+    if (!searchable || !query) return normalizedOptions;
+    return normalizedOptions.filter((option) =>
+      String(option.label || "").toLocaleLowerCase().includes(query) ||
+      String(option.description || "").toLocaleLowerCase().includes(query),
+    );
+  }, [normalizedOptions, searchable, searchText]);
 
   const selectedOption = useMemo(
     () => normalizedOptions.find((option) => option.value === value),
@@ -113,6 +126,16 @@ export default function Dropdown<T extends DropdownValue = string>({
     if (disabled || loading) setOpen(false);
   }, [disabled, loading]);
 
+  useEffect(() => {
+    if (!open) {
+      setSearchText("");
+      return;
+    }
+    if (searchable) {
+      window.setTimeout(() => searchInputRef.current?.focus(), 0);
+    }
+  }, [open, searchable]);
+
   const menu = open && mounted && !disabled && !loading
     ? createPortal(
         <div
@@ -124,10 +147,29 @@ export default function Dropdown<T extends DropdownValue = string>({
           style={createDropdownMenuStyle(position, dropdownZIndex)}
           dir="rtl"
         >
-          {normalizedOptions.length === 0 ? (
-            <div className={styles.empty}>{emptyText}</div>
+          {searchable ? (
+            <div className={styles.searchWrap}>
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchText}
+                onChange={(event) => setSearchText(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    event.stopPropagation();
+                    setOpen(false);
+                  }
+                }}
+                placeholder={searchPlaceholder}
+                className={styles.searchInput}
+                aria-label={searchPlaceholder}
+              />
+            </div>
+          ) : null}
+          {filteredOptions.length === 0 ? (
+            <div className={styles.empty}>{searchText ? "نتیجه‌ای یافت نشد." : emptyText}</div>
           ) : (
-            normalizedOptions.map((option) => {
+            filteredOptions.map((option) => {
               const selected = option.value === value;
               return (
                 <button

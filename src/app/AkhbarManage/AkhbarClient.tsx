@@ -244,6 +244,7 @@ export default function AkhbarClient() {
   const [activeAttachment, setActiveAttachment] = useState<number | null>(null);
   const [attachmentLoading, setAttachmentLoading] = useState(false);
   const [attachmentAction, setAttachmentAction] = useState<number | null>(null);
+  const [attachmentPreviewOpen, setAttachmentPreviewOpen] = useState(false);
 
   const [localDraft, setLocalDraft] = useState<{ form: FormState; step: WizardStep; savedAt: string } | null>(null);
   const [hotspotModal, setHotspotModal] = useState(false);
@@ -426,11 +427,11 @@ export default function AkhbarClient() {
 
   function resetWizard() {
     setWizardOpen(false); setWizardMode("edit"); setStep(1); setForm(emptyForm); setDetail(null); setErrors({});
-    setPersonSearch(""); setPersonRows([]); setLinkedPersons([]); setAttachments([]); setActiveAttachment(null);
+    setPersonSearch(""); setPersonRows([]); setLinkedPersons([]); setAttachments([]); setActiveAttachment(null); setAttachmentPreviewOpen(false);
   }
 
   function openCreate() {
-    setWizardMode("edit"); setErrors({}); setDetail(null); setPersonSearch(""); setPersonRows([]); setLinkedPersons([]); setAttachments([]); setActiveAttachment(null);
+    setWizardMode("edit"); setErrors({}); setDetail(null); setPersonSearch(""); setPersonRows([]); setLinkedPersons([]); setAttachments([]); setActiveAttachment(null); setAttachmentPreviewOpen(false);
     if (localDraft?.form) { setForm({ ...emptyForm, ...localDraft.form }); setStep(localDraft.step || 1); }
     else { setForm(emptyForm); setStep(1); }
     setWizardOpen(true);
@@ -443,7 +444,7 @@ export default function AkhbarClient() {
       const r = await GetKhabar(row.ShomareKhabar, userId);
       if (!r.data) throw new Error("اطلاعات خبر یافت نشد.");
       setDetail(r.data); setForm(hydrateForm(r.data)); setWizardMode(mode); setStep(mode === "view" ? 4 : 1);
-      setErrors({}); setPersonSearch(""); setPersonRows([]); setLinkedPersons([]); setAttachments([]); setActiveAttachment(null); setWizardOpen(true);
+      setErrors({}); setPersonSearch(""); setPersonRows([]); setLinkedPersons([]); setAttachments([]); setActiveAttachment(null); setAttachmentPreviewOpen(false); setWizardOpen(true);
     } catch (e) { showToast.error(e instanceof Error ? e.message : "خطا در دریافت خبر"); }
     finally { setLoading(false); }
   }
@@ -589,6 +590,7 @@ export default function AkhbarClient() {
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const selectedAttachment = attachments.find((x) => num(x.KhabarPeyvastId) === activeAttachment) || null;
   const selectedAttachmentUrl = selectedAttachment && userId ? GetKhabarPeyvastUrl(form.shomareKhabar, userId, selectedAttachment.FileName) : "";
+  const imageAttachments = attachments.filter((item) => extKind(item.FileName) === "image");
   const canEditCurrent = wizardMode === "edit";
   const detailIsInbox = bool(detail?.IsInbox);
   const detailCanReturn = bool(detail?.CanReturn);
@@ -671,10 +673,9 @@ export default function AkhbarClient() {
 
           <div className={styles.modalBody}>
             {step===1 ? <div className={styles.stepContent}>
-              <div className={styles.sectionTitle}><FileText size={18}/><div><h3>مشخصات خبر</h3><p>اطلاعات اصلی و محتوای خبر را ثبت کنید.</p></div></div>
               <div className={styles.formGrid3}>
                 <Field label="طبقه‌بندی خبر" required error={errors.tabaqehBandi}><Dropdown value={form.tabaqehBandi} options={classificationOptions} onChange={(v)=>setField("tabaqehBandi",num(v))} disabled={!canEditCurrent} error={errors.tabaqehBandi}/></Field>
-                <Field label="منبع خبر" required error={errors.manbaKhabarId}><Dropdown value={form.manbaKhabarId} options={sourceOptions} onChange={(v)=>setField("manbaKhabarId",num(v))} disabled={!canEditCurrent} error={errors.manbaKhabarId}/></Field>
+                <Field label="منبع خبر" required error={errors.manbaKhabarId}><Dropdown value={form.manbaKhabarId} options={sourceOptions} onChange={(v)=>setField("manbaKhabarId",num(v))} disabled={!canEditCurrent} error={errors.manbaKhabarId} searchable searchPlaceholder="جستجو در منابع خبر..."/></Field>
                 <Field label="نوع خبر" required error={errors.noeKhabar}><Dropdown value={form.noeKhabar} options={typeOptions} onChange={(v)=>setField("noeKhabar",num(v))} disabled={!canEditCurrent} error={errors.noeKhabar}/></Field>
               </div>
               <div className={styles.formGrid3}>
@@ -694,25 +695,27 @@ export default function AkhbarClient() {
             </div> : null}
 
             {step===2 ? <div className={styles.stepContent}>
-              <div className={styles.sectionTitle}><UsersRound size={18}/><div><h3>افراد وابسته به خبر</h3><p>اشخاص مرتبط را جستجو و به خبر اضافه کنید.</p></div></div>
-              {wizardMode==="edit" ? <div className={styles.personSearchBox}><div className={styles.searchBox}><Search size={17}/><input value={personSearch} onChange={(e)=>setPersonSearch(e.target.value)} placeholder="نام، نام خانوادگی یا نام پدر..."/></div>{personSearchDebounced.length<2?<span className={styles.hint}>برای جستجو حداقل ۲ حرف وارد کنید.</span>:null}</div> : null}
-              {wizardMode==="edit" && personSearchDebounced.length>=2 ? <div className={styles.searchResults}>{personLoading?<div className={styles.miniLoading}><Loader2 className={styles.spin} size={18}/> در حال جستجو...</div>:personRows.length?personRows.map((person)=><div className={styles.personResult} key={person.ShomarehParvandeh}><div><strong>{fullName(person)}</strong><span>نام پدر: {person.NamePedar || "—"} · شماره پرونده: {person.ShomarehParvandeh}</span></div><button type="button" onClick={()=>void addPerson(person)} disabled={personAction===person.ShomarehParvandeh}>{personAction===person.ShomarehParvandeh?<Loader2 className={styles.spin} size={15}/>:<UserPlus size={15}/>} افزودن</button></div>):<div className={styles.miniEmpty}>شخصی یافت نشد.</div>}</div>:null}
-              <div className={styles.linkedPanel}><div className={styles.panelMiniHeader}><strong>افراد وابسته ثبت‌شده</strong><span>{linkedPersons.length} نفر</span></div>{linkedPersons.length?<div className={styles.linkedList}>{linkedPersons.map((person)=><div className={styles.linkedPerson} key={person.KhabarShakhsId}><div className={styles.personAvatar}>{(person.FirstName||"؟").slice(0,1)}</div><div><strong>{fullName(person)}</strong><span>نام پدر: {person.NamePedar || "—"} · پرونده {person.ShomarehParvandeh}</span></div>{wizardMode==="edit"?<button type="button" onClick={()=>void removePerson(person)} disabled={personAction===person.KhabarShakhsId}><Trash2 size={15}/></button>:null}</div>)}</div>:<div className={styles.miniEmpty}>هنوز شخصی به خبر اضافه نشده است.</div>}</div>
+              <div className={`${styles.personColumns} ${wizardMode!=="edit"?styles.personColumnsSingle:""}`}>
+                {wizardMode==="edit" ? <div className={styles.personPanel}>
+                  <div className={styles.panelMiniHeader}><strong>جستجوی افراد</strong><span>افزودن</span></div>
+                  <div className={styles.personSearchBox}><div className={styles.searchBox}><Search size={17}/><input value={personSearch} onChange={(e)=>setPersonSearch(e.target.value)} placeholder="نام، نام خانوادگی یا نام پدر..."/></div>{personSearchDebounced.length<2?<span className={styles.hint}>حداقل ۲ حرف وارد کنید.</span>:null}</div>
+                  {personSearchDebounced.length>=2 ? <div className={styles.searchResults}>{personLoading?<div className={styles.miniLoading}><Loader2 className={styles.spin} size={18}/> در حال جستجو...</div>:personRows.length?personRows.map((person)=><div className={styles.personResult} key={person.ShomarehParvandeh}><div><strong>{fullName(person)}</strong><span>نام پدر: {person.NamePedar || "—"} · شماره پرونده: {person.ShomarehParvandeh}</span></div><button type="button" onClick={()=>void addPerson(person)} disabled={personAction===person.ShomarehParvandeh}>{personAction===person.ShomarehParvandeh?<Loader2 className={styles.spin} size={15}/>:<UserPlus size={15}/>} افزودن</button></div>):<div className={styles.miniEmpty}>شخصی یافت نشد.</div>}</div>:<div className={styles.miniEmpty}>برای جستجو حداقل ۲ حرف وارد کنید.</div>}
+                </div> : null}
+                <div className={styles.linkedPanel}><div className={styles.panelMiniHeader}><strong>افراد وابسته ثبت‌شده</strong><span>{linkedPersons.length} نفر</span></div>{linkedPersons.length?<div className={styles.linkedList}>{linkedPersons.map((person)=><div className={styles.linkedPerson} key={person.KhabarShakhsId}><div className={styles.personAvatar}>{(person.FirstName||"؟").slice(0,1)}</div><div><strong>{fullName(person)}</strong><span>نام پدر: {person.NamePedar || "—"} · پرونده {person.ShomarehParvandeh}</span></div>{wizardMode==="edit"?<button type="button" onClick={()=>void removePerson(person)} disabled={personAction===person.KhabarShakhsId}><Trash2 size={15}/></button>:null}</div>)}</div>:<div className={styles.miniEmpty}>هنوز شخصی به خبر اضافه نشده است.</div>}</div>
+              </div>
             </div>:null}
 
             {step===3 ? <div className={styles.stepContent}>
-              <div className={styles.sectionTitle}><FileImage size={18}/><div><h3>اسناد وابسته به خبر</h3><p>تصویر و صوت تا ۵ مگابایت و ویدئو تا ۱۰ مگابایت.</p></div></div>
               <div className={styles.attachmentGrid}>
                 <div className={styles.attachmentManager}>
                   {wizardMode==="edit"?<><input ref={fileInputRef} type="file" multiple hidden accept="image/png,image/jpeg,audio/mpeg,video/mp4,video/webm,video/quicktime" onChange={(e)=>void uploadFiles(e.target.files)}/><button type="button" className={styles.uploadBox} onClick={()=>fileInputRef.current?.click()} disabled={attachmentAction===-1}>{attachmentAction===-1?<Loader2 className={styles.spin} size={30}/>:<Upload size={30}/>}<strong>{attachmentAction===-1?"در حال بارگذاری...":"انتخاب فایل"}</strong><span>PNG, JPG, JPEG, MP3, MP4, WEBM, MOV</span></button></>:null}
-                  <div className={styles.attachmentList}>{attachmentLoading?<div className={styles.miniLoading}><Loader2 className={styles.spin} size={18}/> دریافت پیوست‌ها...</div>:attachments.length?attachments.map((item)=>{const kind=extKind(item.FileName);const Icon=kind==="image"?FileImage:kind==="video"?FileVideo:kind==="audio"?FileAudio:FileText;return <button type="button" key={item.KhabarPeyvastId} className={`${styles.attachmentRow} ${activeAttachment===item.KhabarPeyvastId?styles.attachmentActive:""}`} onClick={()=>setActiveAttachment(item.KhabarPeyvastId)}><span className={styles.fileIcon}><Icon size={18}/></span><span className={styles.fileInfo}><strong>{item.OriginalFileName || item.FileName}</strong><small>{formatSize(item.FileSize)}</small></span>{wizardMode==="edit"?<span role="button" tabIndex={0} className={styles.fileDelete} onClick={(e)=>{e.stopPropagation();void removeAttachment(item)}}><Trash2 size={14}/></span>:null}</button>}):<div className={styles.miniEmpty}>پیوستی ثبت نشده است.</div>}</div>
+                  <div className={styles.attachmentList}>{attachmentLoading?<div className={styles.miniLoading}><Loader2 className={styles.spin} size={18}/> دریافت پیوست‌ها...</div>:attachments.length?attachments.map((item)=>{const kind=extKind(item.FileName);const Icon=kind==="image"?FileImage:kind==="video"?FileVideo:kind==="audio"?FileAudio:FileText;return <button type="button" key={item.KhabarPeyvastId} className={`${styles.attachmentRow} ${activeAttachment===item.KhabarPeyvastId?styles.attachmentActive:""}`} onClick={()=>{setActiveAttachment(item.KhabarPeyvastId);setAttachmentPreviewOpen(true)}} title="مشاهده پیش‌نمایش"><span className={styles.fileIcon}><Icon size={18}/></span><span className={styles.fileInfo}><strong>{item.OriginalFileName || item.FileName}</strong><small>{formatSize(item.FileSize)} · برای پیش‌نمایش کلیک کنید</small></span>{wizardMode==="edit"?<span role="button" tabIndex={0} className={styles.fileDelete} onClick={(e)=>{e.stopPropagation();void removeAttachment(item)}}><Trash2 size={14}/></span>:null}</button>}):<div className={styles.miniEmpty}>پیوستی ثبت نشده است.</div>}</div>
                 </div>
                 <div className={styles.previewBox}>{selectedAttachment&&selectedAttachmentUrl?extKind(selectedAttachment.FileName)==="image"?<img src={selectedAttachmentUrl} alt="پیوست خبر"/>:extKind(selectedAttachment.FileName)==="video"?<video src={selectedAttachmentUrl} controls/>:extKind(selectedAttachment.FileName)==="audio"?<div className={styles.audioPreview}><FileAudio size={54}/><audio src={selectedAttachmentUrl} controls/></div>:<FileText size={64}/>:<div className={styles.previewEmpty}><FileImage size={46}/><span>برای پیش‌نمایش یک پیوست را انتخاب کنید.</span></div>}</div>
               </div>
             </div>:null}
 
             {step===4 ? <div className={styles.stepContent}>
-              <div className={styles.sectionTitle}><CheckCircle2 size={18}/><div><h3>مرور نهایی خبر</h3><p>اطلاعات، اشخاص و اسناد را پیش از اقدام نهایی کنترل کنید.</p></div></div>
               {detail?.LastReturnReason ? <div className={styles.returnNotice}><RotateCcw size={17}/><div><strong>آخرین علت برگشت</strong><p>{detail.LastReturnReason}</p></div></div>:null}
               <div className={styles.reviewGrid}>
                 <ReviewItem label="شماره خبر" value={form.shomareKhabar || "—"}/><ReviewItem label="وضعیت" value={statusLabel(detail?.CurrentStatusCode, detail?.CurrentStatusName) || "پیش‌نویس"}/><ReviewItem label="عنوان خبر" value={form.onvanKhabar || "—"}/><ReviewItem label="منبع خبر" value={detail?.ManbaKhabarName || sourceOptions.find(x=>x.value===form.manbaKhabarId)?.label || "—"}/><ReviewItem label="نوع خبر" value={detail?.NoeKhabarName || typeOptions.find(x=>x.value===form.noeKhabar)?.label || "—"}/><ReviewItem label="تاریخ انتشار" value={form.tarikhEnteshar || "—"}/>
@@ -736,6 +739,33 @@ export default function AkhbarClient() {
           </footer>
         </section>
       </div>:null}
+
+      {attachmentPreviewOpen && selectedAttachment && selectedAttachmentUrl ? <div className={styles.attachmentPreviewLayer}>
+        <button type="button" className={styles.attachmentPreviewBackdrop} aria-label="بستن پیش‌نمایش" onClick={()=>setAttachmentPreviewOpen(false)}/>
+        <section className={styles.attachmentPreviewCard} role="dialog" aria-modal="true" aria-label="پیش‌نمایش سند">
+          <header className={styles.attachmentPreviewHeader}>
+            <div><strong>پیش‌نمایش سند</strong><span>{selectedAttachment.OriginalFileName || selectedAttachment.FileName}</span></div>
+            <button type="button" onClick={()=>setAttachmentPreviewOpen(false)} aria-label="بستن"><X size={18}/></button>
+          </header>
+          <div className={styles.attachmentPreviewBody}>
+            {imageAttachments.length ? <aside className={styles.attachmentPreviewThumbs} aria-label="تصاویر پیوست">
+              <div className={styles.attachmentPreviewThumbTitle}>تصاویر <span>{imageAttachments.length}</span></div>
+              <div className={styles.attachmentPreviewThumbList}>
+                {imageAttachments.map((item) => {
+                  const imageUrl = userId ? GetKhabarPeyvastUrl(form.shomareKhabar, userId, item.FileName) : "";
+                  const active = num(item.KhabarPeyvastId) === activeAttachment;
+                  return <button type="button" key={item.KhabarPeyvastId} className={`${styles.attachmentPreviewThumb} ${active ? styles.attachmentPreviewThumbActive : ""}`} onClick={() => setActiveAttachment(num(item.KhabarPeyvastId))} title={item.OriginalFileName || item.FileName}>
+                    {imageUrl ? <img src={imageUrl} alt={item.OriginalFileName || item.FileName}/> : <FileImage size={20}/>}
+                  </button>;
+                })}
+              </div>
+            </aside> : null}
+            <div className={styles.attachmentPreviewMain}>
+              {extKind(selectedAttachment.FileName)==="image" ? <img className={styles.attachmentPreviewMedia} src={selectedAttachmentUrl} alt={selectedAttachment.OriginalFileName || selectedAttachment.FileName}/> : extKind(selectedAttachment.FileName)==="video" ? <video className={styles.attachmentPreviewMedia} src={selectedAttachmentUrl} controls autoPlay/> : extKind(selectedAttachment.FileName)==="audio" ? <div className={styles.attachmentPreviewAudio}><FileAudio size={60}/><strong>{selectedAttachment.OriginalFileName || selectedAttachment.FileName}</strong><audio src={selectedAttachmentUrl} controls autoPlay/></div> : <div className={styles.attachmentPreviewUnsupported}><FileText size={58}/><span>پیش‌نمایش این نوع سند در برنامه پشتیبانی نمی‌شود.</span></div>}
+            </div>
+          </div>
+        </section>
+      </div> : null}
 
       {hotspotModal?<SimpleModal title="افزودن نقطه خبرخیز" onClose={()=>setHotspotModal(false)}><Field label="عنوان نقطه خبرخیز" required><input autoFocus className={styles.input} value={hotspotTitle} onChange={(e)=>setHotspotTitle(e.target.value)} maxLength={300}/></Field><div className={styles.simpleActions}><button type="button" className={styles.secondaryButton} onClick={()=>setHotspotModal(false)}>انصراف</button><button type="button" className={styles.primaryButton} onClick={()=>void addHotspot()} disabled={hotspotSaving}>{hotspotSaving?<Loader2 className={styles.spin} size={15}/>:null} ثبت</button></div></SimpleModal>:null}
 
