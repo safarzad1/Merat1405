@@ -1,0 +1,1129 @@
+.header {
+  position: sticky;
+  z-index: 80;
+  top: 0;
+  width: 100%;
+  color: #1a2230;
+  background: transparent;
+  border-bottom: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.header {
+  --drawer-panel: #1F6F78;
+  --drawer-panel-solid: #1F6F78;
+  --drawer-panel-dark: #1A5E66;
+  --drawer-accent: #E4F2F4;
+  --drawer-accent-soft: #EDF7F8;
+  --drawer-item-hover: rgba(255,255,255,.09);
+  --drawer-item-active-text: #1F6F78;
+  --drawer-item-active-bg: #ffffff;
+  --drawer-submenu-border: rgba(255,255,255,.22);
+  --drawer-footer-bg: rgba(255,255,255,.10);
+  --drawer-logout-bg: rgba(16, 75, 82, .22);
+  --drawer-logout-hover: rgba(16, 75, 82, .32);
+  --banner-background: var(--banner-background);
+  --banner-shadow: 0 10px 24px rgba(31, 111, 120, .16);
+}
+
+
+
+.headerShifted .legacyBanner {
+  width: calc(100% - 282px);
+  margin-right: 282px;
+  transition: width 220ms ease, margin-right 220ms ease;
+}
+
+.legacyBanner {
+  position: relative;
+  width: 100%;
+  height: 82px;
+  display: grid;
+  grid-template-columns: minmax(250px, 1fr) auto minmax(250px, 1fr);
+  align-items: center;
+  margin: 0 8px 0;
+  padding: 0 22px;
+  overflow: hidden;
+  color: #fff;
+  /* طیف آبی نفتی ملایم مرآت */
+  background: var(--banner-background);
+  border-bottom: 1px solid rgba(255,255,255,.16);
+  border-radius: 18px;
+  box-shadow: var(--banner-shadow);
+}
+
+.legacyBanner::before,
+.legacyBanner::after {
+  content: "";
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba(255, 255, 255, .035);
+  transform: rotate(18deg);
+  pointer-events: none;
+}
+
+.legacyBanner::before {
+  top: -17px;
+  right: 22%;
+}
+
+.legacyBanner::after {
+  bottom: -20px;
+  left: 39%;
+}
+
+.legacyCouncil {
+  position: relative;
+  z-index: 1;
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  text-decoration: none;
+}
+
+.legacyCouncilImage {
+  display: block;
+  width: min(470px, 36vw);
+  height: 70px;
+  object-fit: contain;
+  object-position: right center;
+  opacity: 1;
+  visibility: visible;
+}
+
+
+.legacyMark {
+  position: relative;
+  z-index: 1;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.legacyMarkImage {
+  width: 114px;
+  height: 72px;
+  object-fit: contain;
+}
+
+.legacyUser {
+  position: relative;
+  z-index: 1;
+  justify-self: end;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  direction: rtl;
+}
+
+.legacyUserAvatar {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  flex: 0 0 44px;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, .96);
+  border-radius: 50%;
+  color: #1F6F78;
+  background: #fff;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, .16);
+}
+
+.legacyUserAvatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.legacyUserAvatar svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.legacyUserText {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.legacyUserText strong {
+  max-width: 145px;
+  overflow: hidden;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+}
+
+.legacyUserText small {
+  color: rgba(255, 255, 255, .9);
+  font-size: 13px;
+}
+
+.legacyUserChevron {
+  color: rgba(255, 255, 255, .92);
+  font-size: 13px;
+}
+
+.menuBar {
+  height: 44px;
+  background: var(--drawer-panel);
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+  box-shadow: 0 2px 10px rgba(17, 24, 39, 0.08);
+}
+
+.menuShell {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px 0 10px;
+}
+
+.menuStart {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.drawerToggle {
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 11px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 8px;
+  color: #fff;
+  background: rgba(255, 255, 255, .08);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.drawerToggle:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, .34);
+  background: rgba(255, 255, 255, .14);
+}
+
+.drawerToggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.headerActions,
+.userBox,
+.logoutButton,
+.dateBox {
+  display: flex;
+  align-items: center;
+}
+
+.headerActions {
+  flex: 0 0 auto;
+  gap: 6px;
+  height: 100%;
+  direction: rtl;
+}
+
+.dateBox {
+  min-height: 31px;
+  gap: 5px;
+  padding: 0 9px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, .9);
+  background: rgba(255, 255, 255, .08);
+  font-size: 13px;
+}
+
+.dateBox b {
+  color: #fff;
+  font-weight: 400;
+}
+
+.iconButton {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  flex: 0 0 32px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 8px;
+  color: #fff;
+  background: rgba(255, 255, 255, .08);
+  text-decoration: none;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.iconButton:hover {
+  border-color: rgba(255, 255, 255, .34);
+  background: rgba(255, 255, 255, .14);
+}
+
+.iconButton svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.userBox {
+  max-width: 220px;
+  gap: 7px;
+  padding: 0 5px;
+}
+
+.userAvatar {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  flex: 0 0 31px;
+  place-items: center;
+  border: 1px solid #dce3ee;
+  border-radius: 8px;
+  color: #3f4dd7;
+  background: #fff;
+}
+
+.userAvatar svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.userInfo {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.userInfo small {
+  color: #818b9b;
+  font-size: 13px;
+}
+
+.userInfo strong {
+  max-width: 160px;
+  overflow: hidden;
+  color: #202939;
+  font-size: 13px;
+  font-weight: 400;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.logoutButton {
+  height: 32px;
+  gap: 5px;
+  padding: 0 9px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 8px;
+  color: #fff;
+  background: rgba(255, 255, 255, .08);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.logoutButton:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, .34);
+  background: rgba(255, 255, 255, .14);
+}
+
+.logoutButton:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.logoutIcon {
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+}
+
+.logoutIcon svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.drawerBackdrop {
+  position: fixed;
+  z-index: 130;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: rgba(15, 23, 42, 0.22);
+  opacity: 0;
+  visibility: hidden;
+  cursor: default;
+  transition: opacity 180ms ease, visibility 180ms ease;
+}
+
+.drawerBackdropOpen {
+  opacity: 1;
+  visibility: visible;
+}
+
+.drawer {
+  position: fixed;
+  z-index: 140;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(330px, 88vw);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-left: 1px solid #d7dee8;
+  background: #fbfcfe;
+  box-shadow: -18px 0 42px rgba(26, 39, 60, 0.18);
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateX(100%);
+  transition: transform 200ms ease, visibility 200ms ease;
+}
+
+.drawerOpen {
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.drawerHeader {
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #e3e8ef;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.drawerBrand {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.drawerLogo {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  object-fit: contain;
+}
+
+.drawerBrand > span {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.drawerBrand strong {
+  color: #172033;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.drawerBrand small {
+  color: #748094;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.drawerClose {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  flex: 0 0 34px;
+  place-items: center;
+  border: 1px solid #dbe2eb;
+  border-radius: 9px;
+  color: #344054;
+  background: #fff;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.drawerClose:hover {
+  color: #1F6F78;
+  border-color: #bfd2ba;
+  background: #f7fbf6;
+}
+
+.drawerClose svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.drawerNav {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 9px 16px;
+  scrollbar-width: thin;
+}
+
+.drawerGroup {
+  min-width: 0;
+  display: block;
+  margin: 0;
+}
+
+.drawerItem {
+  position: relative;
+  width: 100%;
+  min-height: 43px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 11px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: #1e293b;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: right;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 140ms ease, background 140ms ease, border-color 140ms ease;
+}
+
+.drawerItem:hover {
+  color: #1F6F78;
+  border-color: #d9e6d5;
+  background: #f5f9f4;
+}
+
+.drawerItemActive {
+  color: #1F6F78;
+  border-color: #d5e4d1;
+  background: #f1f7ef;
+}
+
+.drawerItemActive::before {
+  content: "";
+  position: absolute;
+  top: 9px;
+  right: 0;
+  width: 3px;
+  height: 24px;
+  border-radius: 4px 0 0 4px;
+  background: #1F6F78;
+}
+
+.drawerItemIcon {
+  width: 19px;
+  height: 19px;
+  display: grid;
+  flex: 0 0 19px;
+  place-items: center;
+  color: #475569;
+}
+
+.drawerItemActive .drawerItemIcon,
+.drawerItem:hover .drawerItemIcon {
+  color: currentColor;
+}
+
+.drawerItemIcon svg,
+.drawerChevron svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.drawerChevron {
+  width: 14px;
+  height: 14px;
+  display: grid;
+  margin-right: auto;
+  color: #7b8798;
+  transition: transform 150ms ease;
+}
+
+.drawerChevronOpen {
+  transform: rotate(180deg);
+}
+
+.drawerSubmenu {
+  margin: 3px 18px 5px 0;
+  padding: 3px 10px 3px 0;
+  border-right: 1px solid #d9e1eb;
+}
+
+.drawerSubitem {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 9px;
+  border-radius: 7px;
+  color: #334155;
+  font-size: 13.5px;
+  font-weight: 400;
+  text-decoration: none;
+  transition: color 140ms ease, background 140ms ease;
+}
+
+.drawerSubitem:hover {
+  color: #1F6F78;
+  background: #f5f9f4;
+}
+
+.drawerSubitemActive {
+  color: #1F6F78;
+  background: #eef6ec;
+}
+
+.drawerDot {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
+  border-radius: 50%;
+  background: #94a3b8;
+}
+
+.drawerSubitemActive .drawerDot {
+  background: #1F6F78;
+}
+
+@media (max-width: 900px) {
+  .drawer { width: min(320px, 90vw); }
+
+  .legacyBanner {
+    height: 66px;
+    grid-template-columns: 1fr auto 1fr;
+    margin: 0 6px 0;
+    padding: 0 12px;
+    border-radius: 16px;
+  }
+
+  .legacyCouncilImage {
+    width: min(290px, 33vw);
+    height: 49px;
+  }
+
+  .legacyMarkImage {
+    width: 70px;
+    height: 47px;
+  }
+
+  .legacyUserText small {
+    display: none;
+  }
+
+  .menuBar {
+    height: 42px;
+  }
+
+  .menuShell {
+    padding: 0 8px;
+  }
+
+  .drawerToggle {
+    height: 32px;
+    padding-inline: 9px;
+  }
+
+  .dateBox {
+    display: none;
+  }
+
+  .userInfo {
+    display: none;
+  }
+
+  .userBox {
+    padding: 0;
+  }
+
+  .logoutButton {
+    width: 32px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .logoutButton > span:last-child {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .drawer { width: min(300px, 92vw); }
+
+  .drawerHeader { min-height: 58px; padding: 7px 10px; }
+
+  .drawerNav { padding: 8px 8px 12px; }
+
+  .legacyBanner {
+    height: 58px;
+    margin: 0 4px 0;
+    padding: 0 8px;
+    border-radius: 14px;
+  }
+
+  .legacyCouncilImage {
+    width: 190px;
+    height: 42px;
+  }
+
+  .legacyMarkImage {
+    width: 58px;
+    height: 41px;
+  }
+
+  .legacyUserText {
+    display: none;
+  }
+
+  .legacyUserAvatar {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+  }
+
+  .drawerToggle span {
+    display: none;
+  }
+
+  .drawerToggle {
+    width: 32px;
+    padding: 0;
+  }
+
+  .headerActions {
+    gap: 4px;
+  }
+
+  .iconButton,
+  .userAvatar,
+  .logoutButton {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+}
+
+/* Drawer visual refresh - compact teal panel inspired by the requested sample */
+.drawerBackdrop {
+  background: rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(1.5px);
+}
+
+.drawer {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 274px;
+  border: 1px solid rgba(255, 255, 255, .24);
+  border-radius: 20px 0 0 20px;
+  color: #fff;
+  background: var(--drawer-panel);
+  box-shadow: -14px 12px 34px rgba(15, 45, 52, .22);
+}
+
+.drawerHeader {
+  min-height: 78px;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, .18);
+  background: transparent;
+}
+
+.drawerBrand {
+  gap: 10px;
+}
+
+.drawerLogo {
+  width: 46px;
+  height: 46px;
+  padding: 4px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.drawerBrand strong {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.drawerBrand small {
+  color: rgba(255, 255, 255, .76);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.drawerClose {
+  width: 31px;
+  height: 31px;
+  flex-basis: 31px;
+  border-color: rgba(255, 255, 255, .20);
+  color: #fff;
+  background: rgba(255, 255, 255, .08);
+}
+
+.drawerClose:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, .36);
+  background: rgba(255, 255, 255, .14);
+}
+
+.drawerNav {
+  gap: 3px;
+  padding: 10px 12px 8px;
+  scrollbar-color: rgba(255,255,255,.28) transparent;
+}
+
+.drawerItem {
+  min-height: 40px;
+  gap: 9px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, .94);
+  background: transparent;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.drawerItem:hover {
+  color: #fff;
+  border-color: transparent;
+  background: var(--drawer-item-hover);
+}
+
+.drawerItemActive {
+  color: var(--drawer-item-active-text);
+  border-color: transparent;
+  background: var(--drawer-item-active-bg);
+  box-shadow: 0 4px 10px rgba(35, 47, 71, .08);
+}
+
+.drawerItemActive::before {
+  display: none;
+}
+
+.drawerItemIcon {
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  padding: 4px;
+  border-radius: 8px;
+  color: #fff;
+  background: rgba(255, 255, 255, .10);
+}
+
+.drawerItem:hover .drawerItemIcon {
+  color: #fff;
+  background: rgba(255, 255, 255, .16);
+}
+
+.drawerItemActive .drawerItemIcon {
+  color: var(--drawer-item-active-text);
+  background: var(--drawer-accent-soft);
+}
+
+.drawerChevron {
+  width: 14px;
+  height: 14px;
+  color: rgba(255, 255, 255, .85);
+}
+
+.drawerItemActive .drawerChevron {
+  color: var(--drawer-item-active-text);
+}
+
+.drawerSubmenu {
+  margin: 3px 17px 5px 0;
+  padding: 3px 9px 3px 0;
+  border-right: 1px solid var(--drawer-submenu-border);
+}
+
+.drawerSubitem {
+  min-height: 34px;
+  padding: 0 9px;
+  border-radius: 9px;
+  color: rgba(255, 255, 255, .82);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.drawerSubitem:hover {
+  color: #fff;
+  background: rgba(255,255,255,.09);
+}
+
+.drawerSubitemActive {
+  color: #fff;
+  background: rgba(255,255,255,.14);
+}
+
+.drawerDot,
+.drawerSubitemActive .drawerDot {
+  background: rgba(255,255,255,.75);
+}
+
+.drawerFooter {
+  margin: 0 12px 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, .18);
+}
+
+.drawerUserCard {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 8px;
+  border-radius: 13px;
+  background: var(--drawer-footer-bg);
+}
+
+.drawerUserAvatar {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  flex: 0 0 38px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 10px;
+  color: var(--drawer-panel-solid);
+  background: #fff;
+}
+
+.drawerUserAvatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.drawerUserAvatar svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.drawerUserInfo {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.drawerUserInfo strong {
+  overflow: hidden;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 400;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.drawerUserInfo small {
+  color: rgba(255, 255, 255, .72);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.drawerLogout {
+  width: 100%;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 7px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--drawer-logout-bg);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.drawerLogout:hover:not(:disabled) {
+  background: var(--drawer-logout-hover);
+}
+
+.drawerLogout:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+.drawerLogoutIcon {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+}
+
+.drawerLogoutIcon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (max-width: 520px) {
+  .drawer {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(270px, calc(100vw - 8px));
+    border-radius: 17px 0 0 17px;
+  }
+}
+
+
+/* Fixed right sidebar behavior */
+.drawerBackdrop,
+.drawerBackdropOpen {
+  display: none;
+}
+
+.drawer {
+  position: fixed;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(calc(100% + 22px));
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.drawerOpen {
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.drawerReopen {
+  position: fixed;
+  z-index: 145;
+  top: 84px;
+  right: 0;
+  width: 40px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, .3);
+  border-right: 0;
+  border-radius: 14px 0 0 14px;
+  color: #fff;
+  background: var(--drawer-panel);
+  box-shadow: -6px 6px 18px rgba(15, 45, 52, .18);
+  cursor: pointer;
+}
+
+.drawerReopen:hover {
+  background: var(--drawer-panel-dark);
+}
+
+.drawerReopen svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.drawerClose {
+  width: 33px;
+  height: 33px;
+  flex-basis: 33px;
+}
+
+@media (max-width: 900px) {
+  .drawerReopen {
+    top: 76px;
+  }
+}
+
+@media (max-width: 520px) {
+  .drawerReopen {
+    top: 68px;
+    width: 36px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 900px) {
+  .headerShifted .legacyBanner {
+    width: calc(100% - 274px);
+    margin-right: 274px;
+  }
+}
+
+@media (max-width: 520px) {
+  .headerShifted .legacyBanner {
+    width: calc(100% - 254px);
+    margin-right: 254px;
+  }
+}

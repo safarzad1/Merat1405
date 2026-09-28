@@ -1,0 +1,155 @@
+.field label {
+  display: block;
+  margin: 0 2px 7px;
+  color: #3b4960;
+  font-family: "ShabnamLogin", Tahoma, Arial, sans-serif;
+  font-size: 13.5px;
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+.inputWrap {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  border: 1px solid #dbe3ee;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(27, 45, 80, 0.035);
+  transition: border-color 170ms ease, box-shadow 170ms ease, background 170ms ease;
+}
+
+.inputWrap:hover {
+  border-color: #c8d3e1;
+}
+
+.inputWrap:focus-within {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.09);
+}
+
+.inputWrapError {
+  border-color: #f1a8a8;
+}
+
+.inputWrapError:focus-within {
+  border-color: #dc6b6b;
+  box-shadow: 0 0 0 4px rgba(220, 107, 107, 0.09);
+}
+
+.input {
+  height: 100%;
+  min-width: 0;
+  flex: 1;
+  padding: 0;
+  border: 0;
+  outline: none;
+  color: #172033;
+  background: transparent;
+  font-family: "ShabnamLogin", Tahoma, Arial, sans-serif;
+  font-size: 13.5px;
+  font-weight: 300;
+  text-align: right;
+}
+
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus,
+.input:-webkit-autofill:active {
+  -webkit-text-fill-color: #172033 !important;
+  -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+  box-shadow: 0 0 0 1000px #fff inset !important;
+  transition: background-color 9999s ease-out 0s;
+}
+
+.input::placeholder {
+  color: #a4adbb;
+  font-size: 13.5px;
+  font-weight: 300;
+}
+
+.input:disabled {
+  color: #9aa3b4;
+  cursor: not-allowed;
+}
+
+.inputWrap:has(.input:disabled) {
+  background: #f5f7fb;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  flex: 0 0 32px;
+  place-items: center;
+  border-radius: 10px;
+  color: #64748b;
+  background: #f1f5f9;
+  transition: color 170ms ease, background 170ms ease;
+  pointer-events: none;
+}
+
+.inputWrap:focus-within .icon {
+  color: #4f46e5;
+  background: #eef2ff;
+}
+
+.icon svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.action {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  flex: 0 0 31px;
+  place-items: center;
+  padding: 6px;
+  border: 0;
+  border-radius: 9px;
+  color: #8590a6;
+  background: transparent;
+  cursor: pointer;
+  transition: color 160ms ease, background 160ms ease;
+}
+
+.action:hover,
+.action:focus-visible {
+  color: #4338ca;
+  background: #eef2ff;
+}
+
+.action:focus-visible {
+  outline: 2px solid rgba(99, 102, 241, 0.28);
+  outline-offset: 1px;
+}
+
+.action svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.errorText {
+  display: block;
+  margin: 5px 3px 0;
+  color: #b91c1c;
+  font-family: "ShabnamLogin", Tahoma, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.7;
+}

@@ -1,0 +1,97 @@
+.pageBody {
+  min-height: calc(100vh - 150px);
+  padding: 14px;
+  background:
+    radial-gradient(circle at 92% 4%, color-mix(in srgb, var(--app-primary) 5%, transparent), transparent 28%),
+    #f8fafc;
+}
+
+.newsWorkspace {
+  min-height: calc(100vh - 182px);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--app-primary) 15%, #dfe5ee);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--app-primary) 7%, transparent);
+}
+
+.workspaceHeader {
+  position: relative;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--app-primary) 12%, #e4e9f0);
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    color-mix(in srgb, var(--app-soft) 48%, #ffffff) 100%
+  );
+}
+
+.workspaceHeader::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: var(--app-gradient);
+}
+
+.headerIcon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  flex: 0 0 40px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--app-primary) 14%, transparent);
+  border-radius: 11px;
+  color: var(--app-primary);
+  background: var(--app-soft);
+}
+
+.headerIcon svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.workspaceHeader h1 {
+  margin: 0 0 4px;
+  color: #263449;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.workspaceHeader p {
+  margin: 0;
+  color: #7b8798;
+  font-size: 13px;
+  font-weight: 300;
+}
+
+.contentArea {
+  min-height: calc(100vh - 255px);
+  background: #fff;
+}
+
+@media (max-width: 720px) {
+  .pageBody {
+    padding: 10px;
+  }
+
+  .newsWorkspace {
+    min-height: calc(100vh - 160px);
+    border-radius: 13px;
+  }
+
+  .workspaceHeader {
+    padding: 11px 12px;
+  }
+}

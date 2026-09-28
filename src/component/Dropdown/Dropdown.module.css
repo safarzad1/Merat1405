@@ -1,0 +1,360 @@
+.root,
+.root *,
+.menu,
+.menu *,
+.searchMenu,
+.searchMenu * {
+    box-sizing: border-box;
+    font-family: "Shabnam", Arial, Helvetica, sans-serif !important;
+    font-weight: 400 !important;
+}
+
+.root {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    color: #172033;
+    direction: rtl;
+}
+
+.trigger {
+    width: 100%;
+    height: 42px;
+    padding: 0 10px;
+    border: 1px solid #d2dde2;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #172033;
+    background: #ffffff;
+    cursor: pointer;
+    outline: 0;
+    text-align: right;
+    transition: border-color 160ms ease, box-shadow 160ms ease,
+        background-color 160ms ease;
+}
+
+.trigger:hover:not(:disabled) {
+    border-color: #aebfc6;
+}
+
+.triggerOpen {
+    border-color: #4ba39d;
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.09);
+}
+
+.trigger:disabled {
+    opacity: 0.58;
+    cursor: not-allowed;
+}
+
+.trigger > svg {
+    flex: 0 0 auto;
+    color: #5d6d76;
+}
+
+.triggerText {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    color: #172033;
+    font-size: var(--dropdown-item-font-size, 12px);
+    line-height: 1.8;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.placeholder {
+    color: #8a98a1;
+}
+
+.chevron {
+    transition: transform 160ms ease;
+}
+
+.triggerOpen .chevron {
+    transform: rotate(180deg);
+}
+
+.menu,
+.searchMenu {
+    position: fixed;
+    overflow: hidden;
+    border: 1px solid #d2dde2;
+    border-radius: 11px;
+    color: #172033;
+    background: #ffffff;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.2);
+    direction: rtl;
+}
+
+.menu {
+    padding: 5px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.searchMenu {
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+}
+
+.searchBox {
+    height: 39px;
+    padding: 0 9px;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid #dce5e8;
+    border-radius: 9px;
+    color: #64748b;
+    background: #f7fafb;
+}
+
+.searchBox:focus-within {
+    color: #0f766e;
+    border-color: #61aaa5;
+    box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.07);
+}
+
+.searchBox input {
+    min-width: 0;
+    height: 100%;
+    flex: 1 1 auto;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    color: #172033;
+    background: transparent;
+    font-size: var(--dropdown-item-font-size, 12px);
+    text-align: right;
+}
+
+.searchBox input::placeholder {
+    color: #91a0a8;
+    opacity: 1;
+}
+
+.clearButton {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 7px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    color: #64748b;
+    background: transparent;
+    cursor: pointer;
+}
+
+.clearButton:hover {
+    color: #a33b3b;
+    background: #fff2f2;
+}
+
+.optionList {
+    min-height: 0;
+    margin-top: 5px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.option {
+    width: 100%;
+    min-height: 38px;
+    padding: 7px 9px;
+    border: 0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 9px;
+    color: #172033;
+    background: transparent;
+    cursor: pointer;
+    font-size: var(--dropdown-item-font-size, 12px);
+    line-height: 1.8;
+    text-align: right;
+}
+
+.option:hover:not(:disabled) {
+    color: #0f766e;
+    background: #f1f7f6;
+}
+
+.option:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.optionSelected {
+    color: #0f766e;
+    background: #e8f6f3;
+}
+
+.option > svg {
+    flex: 0 0 auto;
+}
+
+.optionText {
+    min-width: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    overflow: hidden;
+}
+
+.optionText strong {
+    overflow: hidden;
+    color: inherit;
+    font-size: var(--dropdown-item-font-size, 12px);
+    line-height: 1.8;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.optionText small {
+    overflow: hidden;
+    color: #7b8992;
+    font-size: 10.5px;
+    line-height: 1.7;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.empty {
+    padding: 16px 9px;
+    color: #73818a;
+    font-size: 11.5px;
+    line-height: 1.8;
+    text-align: center;
+}
+
+.compact .trigger {
+    height: 36px;
+    padding-inline: 9px;
+    border-radius: 9px;
+    background: #f8fbfb;
+    border-color: #dbe5e8;
+}
+
+.compact .triggerText {
+    font-size: var(--dropdown-item-font-size, 12px);
+}
+
+.spin {
+    animation: spin 0.85s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* ===== Searchable multi-select ===== */
+.multiSearchMenu {
+    min-width: 320px;
+}
+
+.multiTrigger {
+    min-height: 42px;
+    height: auto;
+    padding-block: 5px;
+}
+
+.multiTriggerSelection {
+    min-width: 0;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    overflow: hidden;
+}
+
+.multiTriggerChip {
+    min-width: 0;
+    max-width: 45%;
+    padding: 3px 7px;
+    border: 1px solid #cce7e3;
+    border-radius: 7px;
+    overflow: hidden;
+    color: #0f766e;
+    background: #eefaf8;
+    font-size: 10.5px;
+    line-height: 1.7;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.multiTriggerMore {
+    flex: 0 0 auto;
+    padding: 3px 7px;
+    border-radius: 7px;
+    color: #475569;
+    background: #eef2f6;
+    font-size: 10.5px;
+}
+
+.multiSelectedInfo {
+    min-height: 34px;
+    margin-top: 5px;
+    padding: 5px 7px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    border-bottom: 1px solid #edf2f4;
+    color: #64748b;
+    font-size: 10.5px;
+}
+
+.multiSelectedInfo button {
+    padding: 3px 7px;
+    border: 0;
+    border-radius: 7px;
+    color: #b42318;
+    background: #fff1f1;
+    cursor: pointer;
+    font-family: "Shabnam", Arial, Helvetica, sans-serif !important;
+    font-size: 10px;
+}
+
+.multiSelectedInfo button:hover {
+    background: #ffe4e4;
+}
+
+.multiOptionCheck {
+    width: 21px;
+    height: 21px;
+    flex: 0 0 21px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #c9d6dc;
+    border-radius: 6px;
+    color: #ffffff;
+    background: #ffffff;
+}
+
+.optionSelected .multiOptionCheck {
+    border-color: #2f948b;
+    background: #2f948b;
+}
+
+@media (max-width: 640px) {
+    .multiSearchMenu {
+        min-width: 0;
+    }
+
+    .multiTriggerChip {
+        max-width: 54%;
+    }
+}

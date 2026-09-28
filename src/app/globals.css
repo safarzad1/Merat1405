@@ -1,26 +1,71 @@
-@import "tailwindcss";
+@font-face {
+  font-family: "ShabnamApp";
+  src: url("../Styles/Fonts/Shabnam/Shabnam-Light-FD.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 300 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PeydaApp";
+  src: url("../Styles/Fonts/Peyda/Peyda-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  min-width: 320px;
+  background: #f4f6fa;
+  color: #1f2937;
+  font-family: "ShabnamApp", Tahoma, Arial, sans-serif;
+  font-size: 13.5px;
+  font-weight: 300;
+}
+button, input, select, textarea { font-family: inherit; }
+button { font-weight: 300; }
+a { color: inherit; }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --app-primary: #245f68;
+  --app-primary-dark: #193f48;
+  --app-gradient: linear-gradient(100deg, #245f68 0%, #2e7c83 52%, #214f5a 100%);
+  --app-soft: #edf7f8;
+  --app-accent: #e4f2f4;
+  --app-active-text: #245f68;
+  --app-active-bg: #ffffff;
+  --app-panel: linear-gradient(180deg, #245f68 0%, #2e7c83 58%, #214f5a 100%);
+  --app-shadow: 0 10px 26px rgba(31,111,120,.18);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Tokens for every form/page added to Merat from this point onward. */
+.meratThemeBox {
+  border: 1px solid color-mix(in srgb, var(--app-primary) 16%, #dce3ed);
+  background: #fff;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--app-primary) 7%, transparent);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.meratThemeInput,
+.meratThemeSelect,
+.meratThemeTextarea {
+  border: 1px solid color-mix(in srgb, var(--app-primary) 17%, #d5dde8);
+  color: #273449;
+  background: #fff;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.meratThemeInput:focus,
+.meratThemeSelect:focus,
+.meratThemeTextarea:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--app-primary) 62%, #ffffff);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-primary) 10%, transparent);
+}
+
+.meratThemePrimaryButton {
+  border: 0;
+  color: #fff;
+  background: var(--app-gradient);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--app-primary) 18%, transparent);
 }
