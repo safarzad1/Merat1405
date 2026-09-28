@@ -217,7 +217,7 @@ export default function FehrestParvandhContent({ shomarehParvandeh, noeBayegani,
         countSafehat: "",
     });
 
-    const [davtalabPicUrl, setDavtalabPicUrl] = useState<string>("/images/person.png");
+    const [davtalabPicUrl, setDavtalabPicUrl] = useState<string>("/person.png");
     const [loadingDavtalabPic, setLoadingDavtalabPic] = useState(false);
     const picObjectUrlRef = useRef<string | null>(null);
 
@@ -346,9 +346,9 @@ export default function FehrestParvandhContent({ shomarehParvandeh, noeBayegani,
                     return;
                 }
 
-                setDavtalabPicUrl("/images/person.png");
+                setDavtalabPicUrl("/person.png");
             } catch {
-                if (!cancelled) setDavtalabPicUrl("/images/person.png");
+                if (!cancelled) setDavtalabPicUrl("/person.png");
             } finally {
                 if (!cancelled) setLoadingDavtalabPic(false);
             }
@@ -568,7 +568,7 @@ export default function FehrestParvandhContent({ shomarehParvandeh, noeBayegani,
 
             {/* مودال نمایش خبر */}
             {modalOpenKhabar && selectedRow && (
-                <div className="fixed inset-0 z-50 flex items-start justify-center mt-10">
+                <div className="fixed inset-0 z-[30000] flex items-start justify-center mt-10">
                     <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalOpenKhabar(false)} />
                     <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-[900px] max-w-[95vw] relative">
                         <div className="bg-gray-200 -mx-6 p-3 border-0 border-b-2 border-purple-500 flex items-center justify-between">
@@ -662,8 +662,21 @@ export default function FehrestParvandhContent({ shomarehParvandeh, noeBayegani,
 
                                                         <td className="text-center border px-4 py-1">
                                                             <button
+                                                                type="button"
                                                                 onMouseDown={(e) => e.stopPropagation()}
                                                                 className="w-full text-center cursor-pointer hover:underline"
+                                                                style={{
+                                                                    appearance: "none",
+                                                                    WebkitAppearance: "none",
+                                                                    background: "transparent",
+                                                                    border: "0",
+                                                                    boxShadow: "none",
+                                                                    borderRadius: 0,
+                                                                    padding: 0,
+                                                                    minHeight: "auto",
+                                                                    color: "inherit",
+                                                                    font: "inherit",
+                                                                }}
                                                                 onClick={() => openKhabarModal(r)}
                                                             >
                                                                 {r.onvanMatn}
@@ -698,7 +711,17 @@ export default function FehrestParvandhContent({ shomarehParvandeh, noeBayegani,
 
                     {/* thumbs column */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-2 h-full">
+                        <div
+                            className="bg-white rounded-xl shadow-sm border border-gray-200 p-2"
+                            style={{
+                                height: "min(700px, calc(100vh - 95px))",
+                                maxHeight: "calc(100vh - 95px)",
+                                minHeight: 0,
+                                display: "flex",
+                                flexDirection: "column",
+                                overflow: "hidden",
+                            }}
+                        >
                             <div className="rounded-xl border border-gray-200 bg-gray-50 p-2 m-0 flex items-center justify-center">
                                 {loadingDavtalabPic ? (
                                     <div className="flex items-center gap-2 text-xs text-gray-600">
@@ -710,14 +733,23 @@ export default function FehrestParvandhContent({ shomarehParvandeh, noeBayegani,
                                         src={davtalabPicUrl}
                                         alt="عکس داوطلب"
                                         className="w-full h-[120px] object-contain rounded-lg"
-                                        onError={() => setDavtalabPicUrl("/images/person.png")}
+                                        onError={() => setDavtalabPicUrl("/person.png")}
                                     />
                                 )}
                             </div>
 
                             <hr className="my-2 border-gray-200" />
 
-                            <div data-tour="thumbs" className="flex-1 overflow-y-auto pr-1">
+                            <div
+                                data-tour="thumbs"
+                                className="flex-1 overflow-y-auto pr-1"
+                                style={{
+                                    minHeight: 0,
+                                    overflowY: "auto",
+                                    overflowX: "hidden",
+                                    overscrollBehavior: "contain",
+                                }}
+                            >
                                 {loadingThumbs ? (
                                     <div className="flex items-center justify-center h-full text-xs text-gray-600 gap-2">
                                         <Spinner size={16} />
@@ -847,6 +879,11 @@ export default function FehrestParvandhContent({ shomarehParvandeh, noeBayegani,
                                                 scale > 1 ? "cursor-grab" : "cursor-default",
                                             ].join(" ")}
                                             style={{
+                                                maxWidth: "calc(100% - 24px)",
+                                                maxHeight: "calc(100% - 24px)",
+                                                width: "auto",
+                                                height: "auto",
+                                                objectFit: "contain",
                                                 transform: `translate(-50%, -50%) translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
                                                 transition: dragZoomRef.current.isDown ? "none" : "transform 0.12s ease-out",
                                                 transformOrigin: "center center",

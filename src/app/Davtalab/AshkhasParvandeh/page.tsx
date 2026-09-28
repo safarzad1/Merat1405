@@ -207,7 +207,7 @@ export default function Page() {
     });
 
     // ✅ عکس داوطلب
-    const [davtalabPicUrl, setDavtalabPicUrl] = useState<string>("/images/person.png");
+    const [davtalabPicUrl, setDavtalabPicUrl] = useState<string>("/person.png");
     const [loadingDavtalabPic, setLoadingDavtalabPic] = useState(false);
     const picObjectUrlRef = useRef<string | null>(null);
     useEffect(() => {
@@ -254,9 +254,9 @@ export default function Page() {
                     return;
                 }
 
-                setDavtalabPicUrl("/images/person.png");
+                setDavtalabPicUrl("/person.png");
             } catch {
-                if (!cancelled) setDavtalabPicUrl("/images/person.png");
+                if (!cancelled) setDavtalabPicUrl("/person.png");
             } finally {
                 if (!cancelled) setLoadingDavtalabPic(false);
             }
@@ -501,7 +501,7 @@ export default function Page() {
         <>
             {/* مودال نمایش خبر */}
             {modalOpenKhabar && selectedRow && (
-                <div className="fixed inset-0 z-50 flex items-start justify-center mt-10">
+                <div className="fixed inset-0 z-[30000] flex items-start justify-center mt-10">
                     <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalOpenKhabar(false)} />
                     <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-[800px] max-w-[95vw] relative">
                         <div className="bg-gray-200 -mx-6 p-3 border-0 border-b-2 border-purple-500 flex items-center justify-between">
@@ -683,7 +683,7 @@ export default function Page() {
                                         src={davtalabPicUrl}
                                         alt="عکس داوطلب"
                                         className="w-full h-[120px] object-contain rounded-lg"
-                                        onError={() => setDavtalabPicUrl("/images/person.png")}
+                                        onError={() => setDavtalabPicUrl("/person.png")}
                                     />
                                 )}
                             </div>
@@ -813,7 +813,7 @@ export default function Page() {
             </div>
 
             {viewerOpen && files.length > 0 && (
-                <div className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center overflow-hidden">
+                <div className="fixed inset-0 z-[30010] bg-black/90 flex items-center justify-center overflow-hidden">
                     {/* backdrop */}
                     <div
                         className="absolute inset-0"

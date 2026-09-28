@@ -29,40 +29,20 @@ export async function GetUserPic(username) {
             cache: "no-store",
         });
 
-        // ✅ حالت عادی: عکس وجود ندارد
-        if (res.status === 404) return null;
-
-        // سایر خطاها
-        if (!res.ok) {
-            const ct = res.headers.get("content-type") || "";
-
-            // امن بخونیم (ممکنه بدنه خالی باشه)
-            if (ct.includes("application/json")) {
-                const j = await res.json().catch(() => null);
-                // فقط اگر واقعاً چیزی هست لاگ کن
-                if (j && (j.message || j.status)) {
-                    console.error("GetUserPic error:", j);
-                }
-            } else {
-                const t = await res.text().catch(() => "");
-                if (t) console.error("GetUserPic error:", t);
-            }
-
-            return null;
-        }
+        // نداشتن تصویر پرسنلی خطا محسوب نمی‌شود.
+        if (!res.ok) return null;
 
         const contentType = res.headers.get("content-type") || "";
 
-        // اگر به جای عکس JSON برگشت (مثلاً پیام)
-        if (contentType.includes("application/json")) {
-            // این هم حالت غیرعادی است، ولی لازم نیست console.error بدهیم
-            return null;
-        }
+        // بعضی پاسخ‌های بدون تصویر به صورت JSON یا بدنه خالی برمی‌گردند.
+        if (contentType.includes("application/json")) return null;
 
-        // ✅ عکس/باینری
-        return await res.blob();
-    } catch (error) {
-        console.error("GetUserPic fatal:", error);
+        const blob = await res.blob().catch(() => null);
+        if (!blob || blob.size === 0) return null;
+
+        return blob;
+    } catch {
+        // در هر خطای دریافت تصویر، UI باید تصویر پیش‌فرض را نمایش دهد.
         return null;
     }
 }

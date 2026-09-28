@@ -37,7 +37,7 @@ export default function ImageViewer({ isOpen, files, initialIndex, onClose }: Im
     if (!isOpen || files.length === 0) return null;
 
     return (
-        <div className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center overflow-hidden">
+        <div className="fixed inset-0 z-[30010] bg-black/90 flex items-center justify-center overflow-hidden">
             {/* backdrop */}
             <div className="absolute inset-0" onClick={onClose} />
 

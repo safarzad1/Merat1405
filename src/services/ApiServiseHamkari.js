@@ -21,13 +21,18 @@ export async function GetPersonHamkari(mahal, page, sizepage, indexsort, ascdesc
 // -----------------------------------------------------------------
 export async function GetPersonHamkariKholaseh(personId) {
     try {
+        const normalizedPersonId = String(personId ?? "").trim();
+        if (!normalizedPersonId) {
+            return { status: 400, data: [], error: "PersonId is invalid" };
+        }
+
         const res = await fetch("/Api/Hamkari/GetPersonHamkariKholaseh", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
 
             },
-            body: JSON.stringify({ personId }),
+            body: JSON.stringify({ personId: normalizedPersonId }),
         });
 
         const data = await res.json();

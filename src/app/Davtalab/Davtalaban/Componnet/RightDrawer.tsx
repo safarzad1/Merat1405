@@ -48,7 +48,7 @@ export default function RightDrawer({
     return (
         <div
             className={[
-                "fixed inset-0 z-[10050]",
+                "fixed inset-0 z-[15000]",
                 open ? "pointer-events-auto" : "pointer-events-none",
             ].join(" ")}
             aria-hidden={!open}

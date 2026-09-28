@@ -27,33 +27,20 @@ export async function GetDavtalabPic(shomarehParvandeh) {
             cache: "no-store",
         });
 
-        if (res.status === 404) return null;
-
-        if (!res.ok) {
-            const ct = res.headers.get("content-type") || "";
-
-            if (ct.includes("application/json")) {
-                const j = await res.json().catch(() => null);
-                if (j && (j.message || j.status)) {
-                    console.error("DavtalabPic error:", j);
-                }
-            } else {
-                const t = await res.text().catch(() => "");
-                if (t) console.error("DavtalabPic error:", t);
-            }
-
-            return null;
-        }
+        // نداشتن تصویر پرسنلی یک وضعیت عادی است و نباید خطا در Console ایجاد کند.
+        if (!res.ok) return null;
 
         const contentType = res.headers.get("content-type") || "";
 
-        if (contentType.includes("application/json")) {
-            return null;
-        }
+        // API در حالت «بدون تصویر» ممکن است JSON خالی/پیام برگرداند.
+        if (contentType.includes("application/json")) return null;
 
-        return await res.blob();
-    } catch (error) {
-        console.error("DavtalabPic fatal:", error);
+        const blob = await res.blob();
+        if (!blob || blob.size === 0) return null;
+
+        return blob;
+    } catch {
+        // خطای دریافت تصویر نباید مانع نمایش اطلاعات داوطلب شود.
         return null;
     }
 }

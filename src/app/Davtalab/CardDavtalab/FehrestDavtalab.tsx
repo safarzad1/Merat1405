@@ -178,7 +178,7 @@ export default function FehrestUsersClient({
         () => String(form.ShomarehParvandeh ?? "").trim(),
         [form.ShomarehParvandeh]
     );
-    const [imgSrc, setImgSrc] = useState("/images/person.png");
+    const [imgSrc, setImgSrc] = useState("/person.png");
     const [detail, setDetail] = useState<DavtalabDetail | null>(null);
     const [loadingDetail, setLoadingDetail] = useState(false);
     const [peyvast, setPeyvast] = useState<PeyvastItem[]>([]);
@@ -289,7 +289,7 @@ export default function FehrestUsersClient({
         setModalOpenUser(false);
         setForm({ ShomarehParvandeh: 0 });
         setDetail(null);
-        setImgSrc("/images/person.png");
+        setImgSrc("/person.png");
         setPeyvast([]);
         setLoadingDetail(false);
         setLoadingPeyvast(false);
@@ -391,7 +391,7 @@ export default function FehrestUsersClient({
         let cancelled = false;
         const loadPic = async () => {
             if (!ModalOpenUser || !parvandehStr) {
-                setImgSrc("/images/person.png");
+                setImgSrc("/person.png");
                 return;
             }
             if (picObjectUrlRef.current) {
@@ -412,7 +412,7 @@ export default function FehrestUsersClient({
                         setImgSrc(url);
                         return;
                     } else {
-                        setImgSrc("/images/person.png");
+                        setImgSrc("/person.png");
                         return;
                     }
                 }
@@ -426,11 +426,10 @@ export default function FehrestUsersClient({
                         return;
                     }
                 }
-                setImgSrc("/images/person.png");
+                setImgSrc("/person.png");
             } catch (error) {
                 if (!cancelled) {
-                    console.log("خطا در دریافت تصویر، عکس پیش‌فرض جایگزین شد.");
-                    setImgSrc("/images/person.png");
+                    setImgSrc("/person.png");
                 }
             }
         };
@@ -777,26 +776,60 @@ export default function FehrestUsersClient({
           مودال اطلاعات فرد
       ========================= */}
             {data.length > 0 && ModalOpenUser && (
-                <div className="fixed inset-0 z-50 flex items-start justify-center pt-4">
+                <div className="fixed inset-0 z-[30000] flex items-start justify-center" style={{ paddingTop: "44px" }}>
                     <div className="absolute inset-0 bg-black opacity-40" onClick={closeUserModal} />
-                    <div className="bg-white rounded-lg px-6 pb-4 m-4 shadow-lg z-50 w-[1000px] relative max-h-[85vh] overflow-auto">
-                        <div className="bg-sky-300 -mx-6 p-3 rounded-t-lg border-b border-gray-300 sticky top-0 z-10">
-                            <h2 className="text-lg font-bold">اطلاعات فرد</h2>
+                    <div className="bg-white rounded-2xl pb-4 mx-4 shadow-2xl z-50 w-[1000px] relative max-h-[82vh] overflow-visible border border-gray-200">
+                        <div className="bg-sky-300 px-5 py-2 rounded-t-2xl border-b border-gray-300 h-[46px] flex items-center">
+                            <h2 className="text-base font-normal text-white">اطلاعات فرد</h2>
                         </div>
-                        <div className="flex justify-center -mt-8">
-                            <div className="z-10 w-[90px] h-[90px] rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center">
-                                <Image
-                                    src={imgSrc}
+                        <div
+                            className="absolute left-1/2 z-30"
+                            style={{ transform: "translateX(-50%)", top: "-32px" }}
+                        >
+                            <div
+                                style={{
+                                    width: "84px",
+                                    height: "84px",
+                                    minWidth: "84px",
+                                    minHeight: "84px",
+                                    borderRadius: "9999px",
+                                    background: "#ffffff",
+                                    border: "3px solid #ffffff",
+                                    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.14)",
+                                    outline: "1px solid #d9e3ef",
+                                    overflow: "hidden",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <img
+                                    src={imgSrc || "/person.png"}
                                     alt="پروفایل"
-                                    width={90}
-                                    height={90}
-                                    className="rounded-full object-cover"
-                                    unoptimized
-                                    onError={() => setImgSrc("/images/person.png")}
+                                    width={84}
+                                    height={84}
+                                    style={{
+                                        width: "84px",
+                                        height: "84px",
+                                        minWidth: "84px",
+                                        minHeight: "84px",
+                                        borderRadius: "9999px",
+                                        objectFit: "cover",
+                                        display: "block",
+                                        background: "#ffffff",
+                                        flexShrink: 0,
+                                    }}
+                                    draggable={false}
+                                    onError={(event) => {
+                                        const target = event.currentTarget;
+                                        if (!target.src.endsWith("/person.png")) {
+                                            target.src = "/person.png";
+                                        }
+                                    }}
                                 />
                             </div>
                         </div>
-                        <div className="mt-4">
+                        <div className="mt-5 max-h-[calc(82vh-100px)] overflow-y-auto px-6 pr-6">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                 <ReadOnlyField label="نام" value={detail?.FirstName} loading={loadingDetail} />
                                 <ReadOnlyField label="نام خانوادگی" value={detail?.LastName} loading={loadingDetail} />
@@ -855,7 +888,7 @@ export default function FehrestUsersClient({
                                 )}
                             </div>
                         </div>
-                        <div className="flex justify-end gap-2 mt-4">
+                        <div className="flex justify-end gap-2 mt-4 px-6">
                             <button
                                 className="flex gap-2 bg-green-700 hover:bg-green-700 text-white px-4 py-2 rounded-xl cursor-pointer"
                                 onClick={() => {
@@ -925,7 +958,7 @@ export default function FehrestUsersClient({
           Viewer بزرگ + سوایپ + زوم + Pan
       ========================= */}
             {viewerOpen && peyvast.length > 0 && (
-                <div className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center overflow-hidden">
+                <div className="fixed inset-0 z-[30010] bg-black/80 flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0" onClick={closeViewer} />
                     <div className="relative w-full h-full flex items-center justify-center">
                         {viewerIndex > 0 && (
@@ -1044,7 +1077,7 @@ export default function FehrestUsersClient({
             )}
             {
                 ModalOpenCreateForm && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center">
+                    <div className="fixed inset-0 z-[30000] flex items-center justify-center">
                         {/* پس‌زمینه تیره */}
                         <div
                             className="absolute inset-0 bg-black opacity-40"
@@ -1197,7 +1230,7 @@ export default function FehrestUsersClient({
                                                         height={90}
                                                         className="rounded-full object-cover"
                                                         unoptimized
-                                                        onError={() => setImgSrc("/images/person.png")}
+                                                        onError={() => setImgSrc("/person.png")}
                                                     />
                                                 </div>
                                             </div>
@@ -1376,8 +1409,8 @@ export default function FehrestUsersClient({
             {
                 ModalOpenFehrestParvandh && (
                     <>
-                        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
-                        <div className="fixed inset-0 z-50 flex flex-col bg-white h-screen w-screen">
+                        <div className="fixed inset-0 z-[30000] bg-black/50 backdrop-blur-sm" />
+                        <div className="fixed inset-0 z-[30000] flex flex-col bg-white h-screen w-screen">
                             <div className="flex items-center justify-between px-6 h-15 bg-sky-700 shadow-md">
                                 <div className="flex items-center gap-4">
                                     <button
@@ -1412,8 +1445,8 @@ export default function FehrestUsersClient({
             {
                 ModalOpenKholasehSalahiyat && (
                     <>
-                        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
-                        <div className="fixed inset-0 z-50 flex flex-col bg-white h-screen w-screen">
+                        <div className="fixed inset-0 z-[30000] bg-black/50 backdrop-blur-sm" />
+                        <div className="fixed inset-0 z-[30000] flex flex-col bg-white h-screen w-screen">
                             <div className="flex items-center justify-between px-6 h-15 bg-sky-700 shadow-md">
                                 <div className="flex items-center gap-4">
                                     <button
@@ -1448,7 +1481,7 @@ export default function FehrestUsersClient({
             }
 
             {data.length > 0 && ModalHamyar && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center">
+                <div className="fixed inset-0 z-[30000] flex items-center justify-center">
                     <div
                         className="absolute inset-0 bg-black opacity-40"
                         onClick={() => setModalHamyar(false)}

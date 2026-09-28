@@ -13,7 +13,15 @@ export async function POST(req: NextRequest) {
         );
     }
     const body = await req.json();
-    const { personId } = body;
+    const personIdRaw = body?.personId;
+    const personId = String(personIdRaw ?? "").trim();
+
+    if (!personId || !/^\d+$/.test(personId)) {
+        return NextResponse.json(
+            { status: 400, error: "PersonId is invalid" },
+            { status: 400 }
+        );
+    }
 
     try {
         verifyToken(token);
@@ -28,7 +36,7 @@ export async function POST(req: NextRequest) {
         const pool = await getConnection();
         const result = await pool
             .request()
-            .input("PersonId", sql.NVarChar, personId)
+            .input("PersonId", sql.NVarChar(50), personId)
             .execute("[Hamkari].[SP_GetPersonHamkariKholaseh]");
 
         return NextResponse.json(

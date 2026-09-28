@@ -69,3 +69,28 @@ a { color: inherit; }
   background: var(--app-gradient);
   box-shadow: 0 7px 18px color-mix(in srgb, var(--app-primary) 18%, transparent);
 }
+
+
+/* Unified legacy modal title bars across migrated pages. */
+.fixed.inset-0 :is(
+  .bg-sky-300, .bg-sky-400, .bg-sky-500, .bg-sky-600, .bg-sky-700,
+  .bg-blue-500, .bg-blue-600, .bg-blue-700,
+  .bg-green-600, .bg-green-700,
+  .bg-purple-600, .bg-purple-700,
+  .bg-gray-200
+).-mx-6 {
+  background: var(--app-gradient) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+}
+
+.fixed.inset-0 :is(
+  .bg-sky-300, .bg-sky-400, .bg-sky-500, .bg-sky-600, .bg-sky-700,
+  .bg-blue-500, .bg-blue-600, .bg-blue-700,
+  .bg-green-600, .bg-green-700,
+  .bg-purple-600, .bg-purple-700,
+  .bg-gray-200
+).-mx-6 :is(h1, h2, h3, label) {
+  color: #fff !important;
+  font-weight: 400 !important;
+}

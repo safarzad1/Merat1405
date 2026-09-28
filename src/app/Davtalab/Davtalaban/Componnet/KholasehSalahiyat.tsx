@@ -1078,9 +1078,9 @@ export default function PageLayout({
                 onClose={() => setViewerOpen(false)}
             />
 
-            <div className="w-full h-screen flex bg-gray-100 font-sans overflow-hidden shabnam">
+            <div dir="rtl" className="w-full h-screen flex bg-gray-100 font-sans overflow-hidden shabnam">
                 {/* ===== LEFT (30%) ===== */}
-                <div className="w-[30%] h-full bg-white flex flex-col shadow-lg z-10 m-0 p-0">
+                <div dir="rtl" className="w-[30%] h-full bg-white flex flex-col shadow-lg z-10 m-0 p-0">
                     <div className="w-full bg-gray-100 border-b border-gray-300 p-2">
                         <div className="flex items-center gap-2 mb-2">
                             <button
@@ -1160,6 +1160,40 @@ export default function PageLayout({
                                 })
                             )}
                         </div>
+
+                        <div data-tour="zoom-controls" className="mt-3 flex justify-end items-center gap-2">
+                            {/* دکمه‌ها از روی سند برداشته شدند و بالای باکس تصویر قرار گرفتند. */}
+                            <button
+                                type="button"
+                                onClick={toggleImgAccordion}
+                                disabled={fehrestAccordionRows.length === 0}
+                                className="inline-flex items-center gap-1.5 px-2.5 h-9 rounded-lg bg-white hover:bg-slate-50 shadow-sm border border-gray-200 text-xs text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                                title={imgAccordionOpen ? "بستن فهرست عناوین" : "نمایش فهرست عناوین"}
+                            >
+                                {imgAccordionOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                <span>{imgAccordionOpen ? "بستن عناوین" : "نمایش عناوین"}</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={openViewer}
+                                disabled={!activeImageUrl}
+                                className="p-2 rounded-lg bg-white hover:bg-slate-50 shadow-sm border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                title="باز کردن در مودال (زوم کامل)"
+                            >
+                                <Maximize2 className="w-4 h-4" />
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={resetZoom}
+                                disabled={!activeImageUrl}
+                                className="p-2 rounded-lg bg-white hover:bg-slate-50 shadow-sm border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                title="بازگشت به اندازه اصلی"
+                            >
+                                <RotateCcw className="w-4 h-4" />
+                            </button>
+                        </div>
                     </div>
 
                     <div
@@ -1179,38 +1213,6 @@ export default function PageLayout({
                             </div>
                         )}
 
-                        <div data-tour="zoom-controls" className="absolute top-2 right-2 z-30 flex items-center gap-2">
-                            {/* ✅ دکمه آکاردون */}
-                            <button
-                                type="button"
-                                onClick={toggleImgAccordion}
-                                disabled={!activeImageUrl && fehrestAccordionRows.length === 0}
-                                className="p-2 rounded-lg bg-white/90 hover:bg-white shadow border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                                title={imgAccordionOpen ? "بستن پنل" : "باز کردن پنل (فهرست پرونده)"}
-                            >
-                                {imgAccordionOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={openViewer}
-                                disabled={!activeImageUrl}
-                                className="p-2 rounded-lg bg-white/90 hover:bg-white shadow border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                                title="باز کردن در مودال (زوم کامل)"
-                            >
-                                <Maximize2 className="w-4 h-4" />
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={resetZoom}
-                                disabled={!activeImageUrl}
-                                className="p-2 rounded-lg bg-white/90 hover:bg-white shadow border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                                title="بازگشت به اندازه اصلی"
-                            >
-                                <RotateCcw className="w-4 h-4" />
-                            </button>
-                        </div>
 
                         <div className="absolute bottom-2 right-2 z-30 flex items-center gap-1 bg-white/90 rounded-lg shadow border border-gray-200 p-1">
                             <button
@@ -1257,6 +1259,11 @@ export default function PageLayout({
                                     " "
                                 )}
                                 style={{
+                                    maxWidth: "calc(100% - 20px)",
+                                    maxHeight: "calc(100% - 20px)",
+                                    width: "auto",
+                                    height: "auto",
+                                    objectFit: "contain",
                                     transform: `translate(-50%, -50%) translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
                                     transition: dragRef.current.isDown ? "none" : "transform 0.12s ease-out",
                                     transformOrigin: "center center",
@@ -1274,39 +1281,16 @@ export default function PageLayout({
                             </div>
                         )}
 
-                        {/* ✅ Overlay Accordion */}
-                        <div
-                            className={[
-                                "absolute inset-0 z-[60] bg-white",
-                                "transition-all duration-200 ease-out",
-                                imgAccordionOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
-                            ].join(" ")}
-                        >
-                            <div className="h-12 border-b border-gray-200 flex items-center justify-between px-3 bg-gray-50">
-                                <div className="text-sm font-bold text-gray-800">فهرست پرونده</div>
-                                <button
-                                    type="button"
-                                    onClick={closeImgAccordion}
-                                    className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md border border-gray-300 bg-white hover:bg-gray-100 transition"
-                                    title="بستن"
-                                >
-                                    <ChevronUp className="w-4 h-4" />
-                                    بستن
-                                </button>
-                            </div>
-
-                            <div className="p-3 h-[calc(100%-48px)] overflow-y-auto">
-                                <div className="text-[11px] text-gray-600 mb-3 text-right">
-                                    روی هر ردیف کلیک کنید تا همان <b>AzSafheh</b> فعال شود و در ناوبری بالایی نمایش داده شود.
-                                </div>
-
-                                <div className="rounded-lg border border-gray-200 overflow-hidden">
-                                    <div className="bg-sky-700 text-white text-xs px-3 py-2 flex items-center justify-between">
+                        {/* ✅ Overlay Accordion - hidden by default and only opens over the document */}
+                        {imgAccordionOpen && (
+                            <div className="absolute inset-0 z-[60] bg-white/98 backdrop-blur-[1px] p-2">
+                                <div className="h-full rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">
+                                    <div className="shrink-0 bg-sky-700 text-white text-xs px-3 py-2 flex items-center justify-between">
                                         <span>لیست عناوین</span>
                                         <span className="opacity-90">{ShomarehParvandeh ? `پرونده: ${ShomarehParvandeh}` : ""}</span>
                                     </div>
 
-                                    <div className="p-2 bg-white">
+                                    <div className="p-2 bg-white flex-1 overflow-y-auto">
                                         {loadingPages ? (
                                             <div className="text-xs text-gray-600 py-2 flex items-center gap-2 justify-end">
                                                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -1357,40 +1341,40 @@ export default function PageLayout({
                                             </div>
                                         )}
                                     </div>
-                                </div>
 
-                                <div className="mt-3 flex items-center justify-end gap-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            closeImgAccordion();
-                                            openViewer();
-                                        }}
-                                        disabled={!activeImageUrl}
-                                        className="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs disabled:opacity-60"
-                                    >
-                                        باز کردن تصویر در مودال
-                                    </button>
+                                    <div className="shrink-0 border-t border-slate-200 bg-slate-50 px-3 py-2 flex items-center justify-end gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                closeImgAccordion();
+                                                openViewer();
+                                            }}
+                                            disabled={!activeImageUrl}
+                                            className="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs disabled:opacity-60"
+                                        >
+                                            باز کردن تصویر در مودال
+                                        </button>
 
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            resetZoom();
-                                            closeImgAccordion();
-                                        }}
-                                        disabled={!activeImageUrl}
-                                        className="px-3 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-xs disabled:opacity-60"
-                                    >
-                                        ریست زوم و بستن پنل
-                                    </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                resetZoom();
+                                                closeImgAccordion();
+                                            }}
+                                            disabled={!activeImageUrl}
+                                            className="px-3 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-xs disabled:opacity-60"
+                                        >
+                                            بستن لیست عناوین
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
 
                 {/* ===== RIGHT (70%) ===== */}
-                <div className="w-[70%] h-full flex flex-col m-0 p-0">
+                <div dir="rtl" className="w-[70%] h-full flex flex-col m-0 p-0">
                     {/* Tags */}
                     <div className="w-full bg-blue-100 m-0 p-2">
                         <div className="flex items-start justify-between gap-2">
@@ -1448,12 +1432,12 @@ export default function PageLayout({
                     )}
 
                     {/* ================= Two-Column Summary Area ================= */}
-                    <div className="flex-1 p-2 overflow-hidden">
-                        <div className="h-full grid grid-cols-12 gap-2">
+                    <div className="flex-1 p-2 overflow-hidden min-h-[560px]">
+                        <div className="h-full min-h-[540px] grid grid-cols-12 gap-2">
                             {/* ستون بزرگ‌تر: نوشتن خلاصه */}
                             <div
                                 data-tour="textarea-section"
-                                className="col-span-12 lg:col-span-7 bg-white rounded-xl shadow border border-gray-200 p-3 min-h-0 flex flex-col relative"
+                                className="col-span-12 lg:col-span-7 bg-white rounded-xl shadow border border-gray-200 p-3 min-h-[540px] h-full flex flex-col relative"
                             >
                                 {loadingByTag && (
                                     <div className="absolute inset-0 bg-white/60 z-10 flex items-center justify-center rounded-xl">
@@ -1507,7 +1491,7 @@ export default function PageLayout({
 
                                 {errorByTag && <div className="text-xs text-red-600 mb-2 text-right">{errorByTag}</div>}
 
-                                <div className="flex-1 min-h-0">
+                                <div className="flex-1 min-h-[520px] h-full">
                                     <TextArea1
                                         key={`ta-${activeTag}`}
                                         fullHeight
@@ -1562,7 +1546,7 @@ export default function PageLayout({
                                     </div>
                                 </div>
 
-                                <div className="mb-2 text-[11px] text-gray-600 bg-gray-50 border border-gray-200 rounded px-2 py-1">
+                                <div className="mb-3 text-[12px] text-slate-600 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
                                     {isLocked ? "پرونده نهایی شده است" : "پرونده قابل ویرایش است"}
                                 </div>
 
@@ -1585,10 +1569,10 @@ export default function PageLayout({
                                                 return (
                                                     <li key={it.id}>
                                                         <div
-                                                            className="w-full min-h-[92px] bg-gray-50 text-right border border-green-800/70 rounded-lg p-2.5 hover:bg-white transition flex flex-col"
+                                                            className="group w-full min-h-[112px] bg-white text-right border border-slate-200 rounded-xl p-3 hover:border-sky-300 hover:shadow-md transition flex flex-col gap-2 shadow-sm"
                                                             title={it.tagId != null ? `TagId: ${it.tagId}` : "TagId موجود نیست"}
                                                         >
-                                                            <div className="flex items-start justify-between gap-2 mb-1">
+                                                            <div className="flex items-start justify-between gap-2">
                                                                 {!isLocked ? (
                                                                     <button
                                                                         type="button"
@@ -1597,7 +1581,7 @@ export default function PageLayout({
                                                                             handleDeleteTagSummary(it);
                                                                         }}
                                                                         disabled={isDeletingThisTag || deletingTagId !== null}
-                                                                        className="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-md border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 text-[11px] disabled:opacity-60"
+                                                                        className="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 text-[11px] disabled:opacity-60"
                                                                         title="حذف خلاصه این تگ"
                                                                     >
                                                                         {isDeletingThisTag ? (
@@ -1608,7 +1592,7 @@ export default function PageLayout({
                                                                         حذف
                                                                     </button>
                                                                 ) : (
-                                                                    <span className="text-[10px] text-gray-400">قفل</span>
+                                                                    <span className="inline-flex items-center px-2 py-1 rounded-lg bg-slate-100 text-[10px] text-slate-500 border border-slate-200">قفل</span>
                                                                 )}
 
                                                                 <button
@@ -1616,8 +1600,8 @@ export default function PageLayout({
                                                                     onClick={() => onClickKholasehItem(it)}
                                                                     className="flex-1 text-right"
                                                                 >
-                                                                    <div className="text-sky-800 font-medium text-xs line-clamp-1">
-                                                                        {it.tagName || "—"}
+                                                                    <div className="inline-flex items-center rounded-full bg-sky-50 text-sky-800 border border-sky-200 px-2.5 py-1 text-[12px] font-medium max-w-full">
+                                                                        <span className="truncate">{it.tagName || "—"}</span>
                                                                     </div>
                                                                 </button>
                                                             </div>
@@ -1625,9 +1609,9 @@ export default function PageLayout({
                                                             <button
                                                                 type="button"
                                                                 onClick={() => onClickKholasehItem(it)}
-                                                                className="text-right flex-grow"
+                                                                className="text-right flex-grow rounded-lg border border-slate-100 bg-slate-50/70 px-3 py-2 hover:bg-slate-50"
                                                             >
-                                                                <div className="text-gray-700 whitespace-pre-wrap leading-5 overflow-hidden text-xs">
+                                                                <div className="text-slate-700 whitespace-pre-wrap leading-6 overflow-hidden text-[12.5px]">
                                                                     <div className="line-clamp-4">{it.text || "—"}</div>
                                                                 </div>
                                                             </button>
@@ -1705,7 +1689,7 @@ export default function PageLayout({
 
             {/* ================= Final Modal ================= */}
             {finalModalOpen && (
-                <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 p-4">
+                <div className="fixed inset-0 z-[30020] flex items-center justify-center bg-black/40 p-4">
                     <div className="w-full max-w-lg bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
                         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-green-600">
                             <div className="text-sm text-white font-semibold">ثبت نظر پرونده</div>
@@ -1833,7 +1817,7 @@ export default function PageLayout({
 
             {ModalNemone && (
                 <>
-                    <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 p-4">
+                    <div className="fixed inset-0 z-[30020] flex items-center justify-center bg-black/40 p-4">
                         <div className="w-full max-w-lg bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
                             <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-green-600">
                                 <div className="text-white">نمونه نشانه گذاری صفحات در خلاصه پرونده</div>

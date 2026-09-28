@@ -625,7 +625,7 @@ export default function PageLayout({
                 onClose={() => setViewerOpen(false)}
             />
 
-            <div className="w-full h-screen flex bg-gray-100 font-sans overflow-hidden shabnam">
+            <div dir="rtl" className="w-full h-screen flex bg-gray-100 font-sans overflow-hidden shabnam">
                 {/* ===== LEFT (30%) ===== */}
                 <div className="w-[30%] h-full bg-white flex flex-col shadow-lg z-10 m-0 p-0">
                     <div className="w-full bg-gray-100 border-b border-gray-300 p-2">
@@ -705,6 +705,28 @@ export default function PageLayout({
                                 })
                             )}
                         </div>
+
+                        <div data-tour="zoom-controls" className="mt-3 flex justify-end items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={openViewer}
+                                disabled={!activeImageUrl}
+                                className="p-2 rounded-lg bg-white hover:bg-slate-50 shadow-sm border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                title="باز کردن در مودال (زوم کامل)"
+                            >
+                                <Maximize2 className="w-4 h-4" />
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={resetZoom}
+                                disabled={!activeImageUrl}
+                                className="p-2 rounded-lg bg-white hover:bg-slate-50 shadow-sm border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                title="بازگشت به اندازه اصلی"
+                            >
+                                <RotateCcw className="w-4 h-4" />
+                            </button>
+                        </div>
                     </div>
 
                     <div
@@ -724,27 +746,6 @@ export default function PageLayout({
                             </div>
                         )}
 
-                        <div data-tour="zoom-controls" className="absolute top-2 right-2 z-30 flex items-center gap-2">
-                            <button
-                                type="button"
-                                onClick={openViewer}
-                                disabled={!activeImageUrl}
-                                className="p-2 rounded-lg bg-white/90 hover:bg-white shadow border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                                title="باز کردن در مودال (زوم کامل)"
-                            >
-                                <Maximize2 className="w-4 h-4" />
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={resetZoom}
-                                disabled={!activeImageUrl}
-                                className="p-2 rounded-lg bg-white/90 hover:bg-white shadow border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                                title="بازگشت به اندازه اصلی"
-                            >
-                                <RotateCcw className="w-4 h-4" />
-                            </button>
-                        </div>
 
                         <div className="absolute bottom-2 right-2 z-30 flex items-center gap-1 bg-white/90 rounded-lg shadow border border-gray-200 p-1">
                             <button
@@ -792,6 +793,11 @@ export default function PageLayout({
                                     scale > 1 ? "cursor-grab" : "cursor-default",
                                 ].join(" ")}
                                 style={{
+                                    maxWidth: "calc(100% - 20px)",
+                                    maxHeight: "calc(100% - 20px)",
+                                    width: "auto",
+                                    height: "auto",
+                                    objectFit: "contain",
                                     transform: `translate(-50%, -50%) translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
                                     transition: dragRef.current.isDown ? "none" : "transform 0.12s ease-out",
                                     transformOrigin: "center center",
