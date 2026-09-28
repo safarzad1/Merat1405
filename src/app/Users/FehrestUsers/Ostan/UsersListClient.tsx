@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./UsersList.module.css";
+import { Dropdown } from "@/component/Dropdown";
 
 type StoredUser = {
   Mahal?: number | string | null;
@@ -707,25 +708,27 @@ export default function UsersListClient() {
                   {formErrors.person ? <small>{formErrors.person}</small> : null}
                 </div>
 
-                <label className={styles.field}>
+                <div className={styles.field}>
                   <span>انتخاب پست</span>
-                  <select
-                    value={selectedPostId ?? ""}
-                    onChange={(event) => {
-                      const value = Number(event.target.value) || null;
-                      setSelectedPostId(value);
+                  <Dropdown<number>
+                    value={selectedPostId}
+                    options={postOptions.map((post) => ({
+                      value: Number(post.PostId),
+                      label: post.OnvanPost,
+                    }))}
+                    onChange={(value) => {
+                      setSelectedPostId(Number(value));
                       if (formErrors.post) setFormErrors((current) => ({ ...current, post: "" }));
                     }}
-                    className={formErrors.post ? styles.fieldError : ""}
-                    disabled={postsLoading}
-                  >
-                    <option value="">{postsLoading ? "در حال بارگذاری..." : "پست مورد نظر را انتخاب کنید"}</option>
-                    {postOptions.map((post) => (
-                      <option key={post.PostId} value={post.PostId}>{post.OnvanPost}</option>
-                    ))}
-                  </select>
+                    placeholder="پست مورد نظر را انتخاب کنید"
+                    loading={postsLoading}
+                    loadingText="در حال بارگذاری..."
+                    emptyText="پستی برای انتخاب وجود ندارد."
+                    error={Boolean(formErrors.post)}
+                    ariaLabel="انتخاب پست کاربر"
+                  />
                   {formErrors.post ? <small>{formErrors.post}</small> : null}
-                </label>
+                </div>
               </div>
 
               {formErrors.submit ? <div className={styles.submitError}>{formErrors.submit}</div> : null}
