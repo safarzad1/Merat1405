@@ -132,6 +132,25 @@ function getCityTitle(city: CityRow) {
   return String(city.FullName || city.Name || `شهر ${city.CityId}`).trim();
 }
 
+function uniqueCities(rows: CityRow[]) {
+  const map = new Map<number, CityRow>();
+  for (const row of rows) {
+    const id = Number(row.CityId);
+    if (id && !map.has(id)) map.set(id, row);
+  }
+  return Array.from(map.values());
+}
+
+function uniqueUsers(rows: UserRow[]) {
+  const seen = new Set<string>();
+  return rows.filter((row) => {
+    const stableKey = `${Number(row.UserId) || 0}-${Number(row.PersonId) || 0}-${Number(row.CityId ?? row.Mahal) || 0}-${String(row.CodeMelli || "")}`;
+    if (seen.has(stableKey)) return false;
+    seen.add(stableKey);
+    return true;
+  });
+}
+
 export default function UsersListClient() {
   const router = useRouter();
   const cityRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -140,7 +159,11 @@ export default function UsersListClient() {
   const [cities, setCities] = useState<CityRow[]>([]);
   const [citiesLoading, setCitiesLoading] = useState(true);
   const [citiesError, setCitiesError] = useState("");
-  const [citySearch, setCitySearch] = useState("");
+  const [userSearch, setUserSearch] = useState("");
+  const [searchResultsByCity, setSearchResultsByCity] = useState<Record<number, UserRow[]>>({});
+  const [searchMatchedCityIds, setSearchMatchedCityIds] = useState<number[] | null>(null);
+  const [searchingUsers, setSearchingUsers] = useState(false);
+  const [searchError, setSearchError] = useState("");
   const [expandedCityId, setExpandedCityId] = useState<number | null>(null);
   const [usersByCity, setUsersByCity] = useState<Record<number, UserRow[]>>({});
   const [usersLoading, setUsersLoading] = useState<Record<number, boolean>>({});
@@ -191,7 +214,7 @@ export default function UsersListClient() {
           return;
         }
         if (result.status !== 200) throw new Error(result.error || result.message || "خطا در دریافت شهرها");
-        setCities(Array.isArray(result.data) ? result.data : []);
+        setCities(uniqueCities(Array.isArray(result.data) ? result.data : []));
       } catch (error) {
         if (active) setCitiesError(error instanceof Error ? error.message : "خطا در دریافت شهرها");
       } finally {
@@ -222,14 +245,18 @@ export default function UsersListClient() {
           return;
         }
         const rows = Array.isArray(result.data) ? result.data : [];
-        setPostOptions(
-          rows
-            .map((item) => ({
-              PostId: Number(item.PostId),
-              OnvanPost: String(item.OnvanPost || "").trim(),
-            }))
-            .filter((item) => item.PostId && item.OnvanPost),
+        const uniquePosts = Array.from(
+          new Map(
+            rows
+              .map((item) => ({
+                PostId: Number(item.PostId),
+                OnvanPost: String(item.OnvanPost || "").trim(),
+              }))
+              .filter((item) => item.PostId && item.OnvanPost)
+              .map((item) => [item.PostId, item] as const),
+          ).values(),
         );
+        setPostOptions(uniquePosts);
       } catch {
         if (active) setPostOptions([]);
       } finally {
@@ -264,12 +291,17 @@ export default function UsersListClient() {
           return;
         }
         const rows = Array.isArray(result.data) ? result.data : [];
-        const mapped = rows
-          .map((item) => ({
-            PersonId: Number(item.PersonId),
-            FullName: String(item.FullName || "").trim(),
-          }))
-          .filter((item) => item.PersonId && item.FullName);
+        const mapped = Array.from(
+          new Map(
+            rows
+              .map((item) => ({
+                PersonId: Number(item.PersonId),
+                FullName: String(item.FullName || "").trim(),
+              }))
+              .filter((item) => item.PersonId && item.FullName)
+              .map((item) => [item.PersonId, item] as const),
+          ).values(),
+        );
         setPersonOptions(mapped);
         setPersonMenuOpen(true);
       } catch {
@@ -288,11 +320,108 @@ export default function UsersListClient() {
     };
   }, [personQuery, selectedPerson, modalOpen, currentUser.Mahal, router]);
 
+  useEffect(() => {
+    const query = userSearch.trim();
+    const mahal = currentUser.Mahal;
+
+    if (!query) {
+      setSearchResultsByCity({});
+      setSearchMatchedCityIds(null);
+      setSearchingUsers(false);
+      setSearchError("");
+      return;
+    }
+
+    if (mahal === undefined || mahal === null || mahal === "" || cities.length === 0) return;
+
+    let active = true;
+    const timer = window.setTimeout(async () => {
+      setSearchingUsers(true);
+      setSearchError("");
+
+      try {
+        let grouped: Record<number, UserRow[]> = {};
+        let usedPagedSearch = false;
+
+        const globalResult = await postJson<UserRow[]>("/Api/Users/GetUsers", {
+          mahal,
+          page: 1,
+          sizepage: 1000,
+          indexsort: 1,
+          ascdesc: 1,
+          search: query,
+        });
+
+        if (!active) return;
+        if (globalResult.status === 401 || globalResult.state === 401) {
+          router.replace("/Login");
+          return;
+        }
+
+        if (globalResult.status === 200 && Array.isArray(globalResult.data)) {
+          const knownCityIds = new Set(cities.map((city) => Number(city.CityId)));
+          for (const row of globalResult.data) {
+            const cityId = Number(row.CityId ?? row.Mahal);
+            if (!cityId || !knownCityIds.has(cityId)) continue;
+            if (!grouped[cityId]) grouped[cityId] = [];
+            grouped[cityId].push(row);
+          }
+          usedPagedSearch = Object.keys(grouped).length > 0 || globalResult.data.length === 0;
+        }
+
+        if (!usedPagedSearch) {
+          const results = await Promise.all(
+            cities.map(async (city) => {
+              const cityId = Number(city.CityId);
+              const result = await postJson<UserRow[]>("/Api/Users/GetListUsers", { mahal: cityId, search: query });
+              return { cityId, result };
+            }),
+          );
+
+          if (!active) return;
+          grouped = {};
+          for (const item of results) {
+            if (item.result.status === 401 || item.result.state === 401) {
+              router.replace("/Login");
+              return;
+            }
+            if (item.result.status === 200 && Array.isArray(item.result.data) && item.result.data.length > 0) {
+              grouped[item.cityId] = item.result.data;
+            }
+          }
+        }
+
+        for (const cityId of Object.keys(grouped).map(Number)) {
+          grouped[cityId] = uniqueUsers(grouped[cityId] || []);
+        }
+
+        const matchedIds = Object.keys(grouped).map(Number).filter(Boolean);
+        setSearchResultsByCity(grouped);
+        setSearchMatchedCityIds(matchedIds);
+        setExpandedCityId(matchedIds[0] ?? null);
+      } catch (error) {
+        if (active) {
+          setSearchResultsByCity({});
+          setSearchMatchedCityIds([]);
+          setSearchError(error instanceof Error ? error.message : "خطا در جستجوی کاربران");
+        }
+      } finally {
+        if (active) setSearchingUsers(false);
+      }
+    }, 3000);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
+  }, [userSearch, currentUser.Mahal, cities, router]);
+
   const filteredCities = useMemo(() => {
-    const q = citySearch.trim();
-    if (!q) return cities;
-    return cities.filter((city) => getCityTitle(city).includes(q) || String(city.CityId).includes(q));
-  }, [cities, citySearch]);
+    const q = userSearch.trim();
+    if (!q || searchMatchedCityIds === null) return cities;
+    const matched = new Set(searchMatchedCityIds);
+    return cities.filter((city) => matched.has(Number(city.CityId)));
+  }, [cities, userSearch, searchMatchedCityIds]);
 
   const totalLoadedUsers = useMemo(
     () => (Object.values(usersByCity) as UserRow[][]).reduce((sum, rows) => sum + rows.length, 0),
@@ -317,7 +446,7 @@ export default function UsersListClient() {
       const result = await postJson<UserRow[]>("/Api/Users/GetListUsers", { mahal: cityId, search: "" });
       if (handleUnauthorized(result)) return;
       if (result.status !== 200) throw new Error(result.error || result.message || "خطا در دریافت کاربران");
-      setUsersByCity((current) => ({ ...current, [cityId]: Array.isArray(result.data) ? result.data : [] }));
+      setUsersByCity((current) => ({ ...current, [cityId]: uniqueUsers(Array.isArray(result.data) ? result.data : []) }));
     } catch (error) {
       setUsersError((current) => ({
         ...current,
@@ -455,16 +584,25 @@ export default function UsersListClient() {
           <div className={styles.searchBox}>
             <span><SearchIcon /></span>
             <input
-              value={citySearch}
-              onChange={(event) => setCitySearch(event.target.value)}
-              placeholder="جستجو در استان و شهرستان‌ها..."
-              aria-label="جستجوی شهر"
+              value={userSearch}
+              onChange={(event) => {
+                setUserSearch(event.target.value);
+                setSearchResultsByCity({});
+                setSearchMatchedCityIds(null);
+                setSearchingUsers(false);
+                setSearchError("");
+              }}
+              placeholder="جستجو بر اساس نام یا کد کاربر..."
+              aria-label="جستجوی کاربر بر اساس نام یا کد کاربر"
             />
           </div>
           <button
             type="button"
             className={styles.refreshButton}
             onClick={() => {
+              setUserSearch("");
+              setSearchResultsByCity({});
+              setSearchMatchedCityIds(null);
               setUsersByCity({});
               setExpandedCityId(null);
               const mahal = currentUser.Mahal;
@@ -473,7 +611,7 @@ export default function UsersListClient() {
                 void postJson<CityRow[]>("/Api/Citys/GetCitys", { pcityId: mahal })
                   .then((result) => {
                     if (!handleUnauthorized(result) && result.status === 200) {
-                      setCities(Array.isArray(result.data) ? result.data : []);
+                      setCities(uniqueCities(Array.isArray(result.data) ? result.data : []));
                       setCitiesError("");
                     }
                   })
@@ -495,20 +633,25 @@ export default function UsersListClient() {
             </div>
           ) : citiesError ? (
             <div className={`${styles.stateBox} ${styles.errorState}`}>{citiesError}</div>
+          ) : searchingUsers ? (
+            <div className={styles.stateBox}><span className={styles.spinner} />در حال جستجوی کاربران...</div>
+          ) : searchError ? (
+            <div className={`${styles.stateBox} ${styles.errorState}`}>{searchError}</div>
           ) : filteredCities.length === 0 ? (
-            <div className={styles.stateBox}>موردی برای نمایش وجود ندارد.</div>
+            <div className={styles.stateBox}>کاربری با نام یا کد واردشده پیدا نشد.</div>
           ) : (
             <div className={styles.cityList}>
-              {filteredCities.map((city) => {
+              {filteredCities.map((city, cityIndex) => {
                 const cityId = Number(city.CityId);
                 const isOpen = expandedCityId === cityId;
-                const rows = usersByCity[cityId] || [];
-                const loading = Boolean(usersLoading[cityId]);
+                const isSearching = Boolean(userSearch.trim());
+                const rows = isSearching ? (searchResultsByCity[cityId] || []) : (usersByCity[cityId] || []);
+                const loading = isSearching ? false : Boolean(usersLoading[cityId]);
                 const error = usersError[cityId] || "";
 
                 return (
                   <div
-                    key={cityId}
+                    key={`${cityId}-${Number(city.PCityId) || 0}-${cityIndex}`}
                     ref={(node) => { cityRefs.current[cityId] = node; }}
                     className={`${styles.cityCard} ${isOpen ? styles.cityCardOpen : ""}`}
                   >
@@ -521,7 +664,7 @@ export default function UsersListClient() {
                         </div>
                       </div>
                       <div className={styles.cityMeta}>
-                        {usersByCity[cityId] ? <span>{rows.length} کاربر</span> : <span>نمایش کاربران</span>}
+                        {isSearching || usersByCity[cityId] ? <span>{rows.length} کاربر</span> : <span>نمایش کاربران</span>}
                       </div>
                     </button>
 
@@ -559,8 +702,8 @@ export default function UsersListClient() {
                                 </tr>
                               </thead>
                               <tbody>
-                                {rows.map((item) => (
-                                  <tr key={item.UserId}>
+                                {rows.map((item, rowIndex) => (
+                                  <tr key={`${cityId}-${Number(item.UserId) || 0}-${Number(item.PersonId) || 0}-${String(item.CodeMelli || "")}-${rowIndex}`}>
                                     <td data-label="نام کاربری">{item.UserId}</td>
                                     <td data-label="شماره ملی">{item.CodeMelli || "-"}</td>
                                     <td data-label="نام و نام خانوادگی">{item.FullName || "-"}</td>
@@ -685,9 +828,9 @@ export default function UsersListClient() {
                         ) : personOptions.length === 0 ? (
                           <div className={styles.personMenuState}>نتیجه‌ای پیدا نشد.</div>
                         ) : (
-                          personOptions.map((person) => (
+                          personOptions.map((person, personIndex) => (
                             <button
-                              key={person.PersonId}
+                              key={`${person.PersonId}-${personIndex}`}
                               type="button"
                               onMouseDown={(event) => event.preventDefault()}
                               onClick={() => {

@@ -31,6 +31,17 @@ export async function POST(req: NextRequest) {
 
     try {
         const pool = await getConnection();
+        const rawSearch = String(search ?? "").trim();
+        let normalizedSearch = rawSearch;
+
+        if (rawSearch) {
+            const normalized = await pool
+                .request()
+                .input("SearchText", sql.NVarChar(sql.MAX), rawSearch)
+                .query("SELECT [dbo].[NormalizePersianText](@SearchText) AS NormalizedSearch");
+
+            normalizedSearch = String(normalized.recordset?.[0]?.NormalizedSearch ?? rawSearch).trim();
+        }
         const result = await pool
             .request()
             .input("Mahal", sql.Int, mahal)
@@ -38,7 +49,7 @@ export async function POST(req: NextRequest) {
             .input("SizePage", sql.Int, sizepage)
             .input("SortIndex", sql.Int, indexsort)
             .input("SECDEC", sql.Int, ascdesc)
-            .input("Search", sql.NVarChar(200), search)
+            .input("Search", sql.NVarChar(200), normalizedSearch)
             .execute("[Users].[SP_GetUsersPage]");
 
         return NextResponse.json(

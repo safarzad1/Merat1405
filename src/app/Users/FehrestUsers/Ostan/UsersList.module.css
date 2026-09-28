@@ -454,7 +454,7 @@
 .confirmCard {
   position: relative;
   z-index: 1;
-  width: min(680px, 100%);
+  width: min(860px, 96vw);
   overflow: visible;
   border: 1px solid color-mix(in srgb, var(--app-primary) 18%, #d9e1ea);
   border-radius: 18px;
@@ -731,4 +731,26 @@
     font-size: 13px;
   }
   .modalLayer { padding: 9px; }
+}
+
+/* User search + modal title visibility */
+.addButton span {
+  display: inline-block;
+  color: #fff;
+  opacity: 1;
+}
+
+.modalHeader strong {
+  display: block;
+  color: #fff;
+  opacity: 1;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+.modalHeader span {
+  display: block;
+  color: rgba(255, 255, 255, .86);
+  opacity: 1;
 }
