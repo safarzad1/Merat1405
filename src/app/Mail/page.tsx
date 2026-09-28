@@ -1,7 +1,2 @@
-import PanelPage from "@/component/PanelPage";
-
-export const dynamic = "force-dynamic";
-
-export default function Page() {
-  return <PanelPage title="صندوق پستی" />;
-}
+import { redirect } from "next/navigation";
+export default function MailRoot(){ redirect("/Mail/inbox"); }
