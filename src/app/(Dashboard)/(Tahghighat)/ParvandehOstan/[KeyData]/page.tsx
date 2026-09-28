@@ -1510,7 +1510,7 @@ export default function ParvandehPage() {
   return (
     <>
       {/* Header */}
-      <div className="bg-sky-200 rounded py-2 px-10">
+      <div className="bg-sky-200 rounded py-2 px-10 research-detail-breadcrumb-wrap">
         <Breadcrumbkhabar
           items={[
             { label: "داشبورد", href: "/Dashboard", icon: <Home className="w-4 h-4" /> },
@@ -1521,15 +1521,15 @@ export default function ParvandehPage() {
         />
       </div>
 
-      <div className="bg-white m-1 py-2 px-2 flex flex-col md:flex-row gap-4 rounded-b-xl">
-        <div className="bg-white rounded-b-xl shadow w-full flex flex-col gap-2">
+      <div className="bg-white m-1 py-2 px-2 flex flex-col md:flex-row gap-4 rounded-b-xl research-detail-shell">
+        <div className="bg-white rounded-b-xl shadow w-full flex flex-col gap-2 research-detail-surface">
           {/* Top info row */}
           {data.length > 0 && (
             <div
-              className={`h-12 p-2 rounded-lg shadow w-full items-center gap-4 ${data[0].IsDone === true ? "bg-green-100" : "bg-gray-200"
+              className={`h-12 p-2 rounded-lg shadow w-full items-center gap-4 research-case-toolbar ${data[0].IsDone === true ? "bg-green-100" : "bg-gray-200"
                 }`}
             >
-              <div className="mx-10 flex gap-5 whitespace-nowrap items-center justify-between">
+              <div className="mx-10 flex gap-5 whitespace-nowrap items-center justify-between research-case-toolbar-inner">
 
 
                 {(user.PostId <= 5) && (
@@ -1683,7 +1683,7 @@ export default function ParvandehPage() {
 
                     <button
                       onClick={() => setModalOpenStatus(true)}
-                      className="flex items-center gap-1 p-1 px-4 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition-colors text-sm cursor-pointer"
+                      className="flex items-center gap-1 p-1 px-4 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition-colors text-sm cursor-pointer research-referral-action"
                     >
                       وضعیت
 
@@ -1800,7 +1800,7 @@ export default function ParvandehPage() {
 
 
                 {/* Info */}
-                <div className="flex gap-5">
+                <div className="flex gap-5 research-case-info">
                   <p
                     onClick={() => {
                       setFileName(data[0].FileName);
@@ -1835,19 +1835,19 @@ export default function ParvandehPage() {
 
           {/* Panels */}
           {data.length > 0 && (
-            <div className="mx-5 border rounded-xl shadow-sm bg-slate-100">
-              <div className="flex items-center justify-between p-3 select-none hover:bg-gray-100 hover:rounded-xl transition-colors">
+            <div className="mx-5 border rounded-xl shadow-sm bg-slate-100 research-referral-card">
+              <div className="flex items-center justify-between p-3 select-none hover:bg-gray-100 hover:rounded-xl transition-colors research-referral-header">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="text-purple-600 w-5 h-5" />
                   <h2
                     onClick={() => setIsOpen1(!isOpen1)}
-                    className="cursor-pointer Roya text-[18px] text-purple-800 font-semibold flex items-center gap-2"
+                    className="cursor-pointer Roya text-[18px] text-purple-800 font-semibold flex items-center gap-2 research-referral-title"
                   >
                     ارجاع به حوزه انتخابیه
-                    <span className="bg-gray-400 text-white rounded-full w-7 h-7 flex items-center justify-center">
+                    <span className="bg-gray-400 text-white rounded-full w-7 h-7 flex items-center justify-center research-count-total">
                       {data[0].CountErjaShahrestan || 0}
                     </span>
-                    <span className="bg-green-700 text-white rounded-full w-7 h-7 flex items-center justify-center">
+                    <span className="bg-green-700 text-white rounded-full w-7 h-7 flex items-center justify-center research-count-done">
                       {data[0].CountErjaShahrestanDone || 0}
                     </span>
                   </h2>
@@ -1860,7 +1860,7 @@ export default function ParvandehPage() {
                         setModalOpenErjaBeHozeh(true);
                         setTozihat("");
                       }}
-                      className="flex items-center gap-1 p-1 px-4 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition-colors text-sm cursor-pointer"
+                      className="flex items-center gap-1 p-1 px-4 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition-colors text-sm cursor-pointer research-referral-action"
                     >
                       <PlusCircle className="w-4 h-4" />
                       ارجاع به حوزه انتخابیه
@@ -1891,19 +1891,19 @@ export default function ParvandehPage() {
           )}
 
           {data.length > 0 && data[0].MahalSender == 1 && (
-            <div className="mx-5 border rounded-xl shadow-sm bg-slate-100">
-              <div className="flex items-center justify-between p-3 select-none hover:bg-gray-100 hover:rounded-xl transition-colors">
+            <div className="mx-5 border rounded-xl shadow-sm bg-slate-100 research-referral-card">
+              <div className="flex items-center justify-between p-3 select-none hover:bg-gray-100 hover:rounded-xl transition-colors research-referral-header">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="text-purple-600 w-5 h-5" />
                   <h2
                     onClick={() => setIsOpen3(!isOpen3)}
-                    className="cursor-pointer Roya text-[18px] text-purple-800 font-semibold flex items-center gap-2"
+                    className="cursor-pointer Roya text-[18px] text-purple-800 font-semibold flex items-center gap-2 research-referral-title"
                   >
                     ارجاع به استان دیگر
-                    <span className="bg-gray-400 text-white rounded-full w-7 h-7 flex items-center justify-center">
+                    <span className="bg-gray-400 text-white rounded-full w-7 h-7 flex items-center justify-center research-count-total">
                       {data[0].CountErjaOstan || 0}
                     </span>
-                    <span className="bg-green-700 text-white rounded-full w-7 h-7 flex items-center justify-center">
+                    <span className="bg-green-700 text-white rounded-full w-7 h-7 flex items-center justify-center research-count-done">
                       {data[0].CountErjaOstanDone || 0}
                     </span>
                   </h2>
@@ -1916,7 +1916,7 @@ export default function ParvandehPage() {
                         setModalOpenErjaBeOstan(true);
                         setTozihat("");
                       }}
-                      className="flex items-center gap-1 p-1 px-4 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition-colors text-sm cursor-pointer"
+                      className="flex items-center gap-1 p-1 px-4 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition-colors text-sm cursor-pointer research-referral-action"
                     >
                       <PlusCircle className="w-4 h-4" />
                       ارجاع به استان دیگر
@@ -1934,19 +1934,19 @@ export default function ParvandehPage() {
           )}
 
           {data.length > 0 && (
-            <div className="mx-5 border rounded-xl shadow-sm bg-slate-100">
-              <div className="flex items-center justify-between p-3 select-none hover:bg-gray-100 hover:rounded-xl transition-colors">
+            <div className="mx-5 border rounded-xl shadow-sm bg-slate-100 research-referral-card">
+              <div className="flex items-center justify-between p-3 select-none hover:bg-gray-100 hover:rounded-xl transition-colors research-referral-header">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="text-purple-600 w-5 h-5" />
                   <h2
                     onClick={() => setIsOpen2(!isOpen2)}
-                    className="cursor-pointer Roya text-[18px] text-purple-800 font-semibold flex items-center gap-2"
+                    className="cursor-pointer Roya text-[18px] text-purple-800 font-semibold flex items-center gap-2 research-referral-title"
                   >
                     ارجاع به محقق ویژه استان
-                    <span className="bg-gray-400 text-white rounded-full w-7 h-7 flex items-center justify-center">
+                    <span className="bg-gray-400 text-white rounded-full w-7 h-7 flex items-center justify-center research-count-total">
                       {data[0].CountErjaMohaghegh || 0}
                     </span>
-                    <span className="bg-green-700 text-white rounded-full w-7 h-7 flex items-center justify-center">
+                    <span className="bg-green-700 text-white rounded-full w-7 h-7 flex items-center justify-center research-count-done">
                       {data[0].CountErjaMohagheghDone || 0}
                     </span>
                   </h2>
@@ -1959,7 +1959,7 @@ export default function ParvandehPage() {
                         setModalOpenErjaBeMohaghegh(true);
                         setTozihat("");
                       }}
-                      className="flex items-center gap-1 p-1 px-4 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition-colors text-sm cursor-pointer"
+                      className="flex items-center gap-1 p-1 px-4 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition-colors text-sm cursor-pointer research-referral-action"
                     >
                       <PlusCircle className="w-4 h-4" />
                       ارجاع به محقق ویژه استان
@@ -1984,18 +1984,8 @@ export default function ParvandehPage() {
           )}
 
           {/* Attachments */}
-          <div
-            style={{
-              width: "98%",
-              justifyContent: "center",
-              margin: "auto",
-              border: "2px solid #000",
-              borderRadius: "5px",
-              padding: "10px",
-              boxSizing: "border-box",
-            }}
-          >
-            <div className="bnaznin text-[22px] mb-2">پیوست‌ها :</div>
+          <div className="research-attachments-card">
+            <div className="bnaznin text-[22px] mb-2 research-section-title">پیوست‌ها</div>
 
             <div className="flex flex-wrap gap-2">
               {jambandiFiles?.length ? (
@@ -2054,20 +2044,8 @@ export default function ParvandehPage() {
 
           {/* Shora table */}
           {user.PostId != 54 && (
-            <div
-              className="mt-3"
-              style={{
-                width: "98%",
-                justifyContent: "center",
-                margin: "auto",
-                border: "2px solid #000",
-                borderRadius: "5px",
-                padding: "10px",
-                boxSizing: "border-box",
-                background: "#fff",
-              }}
-            >
-              <div className="bnaznin bg-sky-300 p-2 text-[25px] rounded-2xl">ارجاع به شورای تحقیق</div>
+            <div className="mt-3 research-council-card">
+              <div className="bnaznin bg-sky-300 p-2 text-[25px] rounded-2xl research-section-title research-council-title">ارجاع به شورای تحقیق</div>
 
               {shoraLoading ? (
                 <div className="shabnam text-[15px] text-gray-500">در حال دریافت اطلاعات...</div>

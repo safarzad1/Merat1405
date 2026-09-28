@@ -1,0 +1,122 @@
+/* ================= برگه A4 + کادر دور برگه ================= */
+
+#print-area {
+    direction: rtl;
+    color: #111;
+
+    /* ✅ اندازه واقعی A4 */
+    width: 210mm;
+    min-height: 297mm;
+
+    /* ✅ حاشیه داخلی برگه */
+    padding: 10mm;
+    box-sizing: border-box;
+
+    /* ✅ وسط‌چین در نمایش */
+    margin: 0 auto;
+
+    /* ✅ کادر دور کل برگه */
+    border: 2px solid #111;
+    border-radius: 6px;
+
+    background: #fff;
+}
+
+/* ================= تیترها ================= */
+
+.report-header {
+    text-align: center;
+    margin-bottom: 8mm;
+}
+
+.print-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0 0 4px 0;
+}
+
+.print-subtitle {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+}
+
+/* ================= جدول ================= */
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    /* باعث میشه از کاغذ بیرون نزنه */
+    font-size: 13px;
+}
+
+.report-table thead th {
+    background-color: #f1f1f1;
+    border: 1px solid #333;
+    padding: 8px 6px;
+    font-weight: 700;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.report-table tbody td {
+    border: 1px solid #666;
+    padding: 7px 6px;
+    vertical-align: middle;
+    text-align: center;
+
+    /* ✅ جلوگیری از بیرون‌زدن متن */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.report-table tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+/* ================= چاپ ================= */
+
+@media print {
+
+    /* فقط خود برگه چاپ شود */
+    body * {
+        visibility: hidden;
+    }
+
+    #print-area,
+    #print-area * {
+        visibility: visible;
+    }
+
+    #print-area {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 0;
+
+        width: 210mm;
+        min-height: 297mm;
+
+        /* اگر نمی‌خوای کادر از لبه بیرون بزنه، کمی margin بده */
+        border: 2px solid #111;
+        border-radius: 6px;
+    }
+
+    @page {
+        size: A4 portrait;
+        margin: 0;
+        /* صفحه دقیقاً هم‌سایز A4 */
+    }
+
+    thead {
+        display: table-header-group;
+        /* تکرار هدر در هر صفحه */
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+}
