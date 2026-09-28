@@ -1,0 +1,7 @@
+import path from "path";
+import { NextRequest, NextResponse } from "next/server";
+import sql from "mssql";
+import { getConnection } from "@/lib/db";
+import { authorize, errorResponse, positiveNumber } from "../_shared";
+function contentType(name:string){const ext=path.extname(name).toLowerCase();if(ext===".png")return "image/png";if(ext===".jpg"||ext===".jpeg")return "image/jpeg";if(ext===".mp3")return "audio/mpeg";if(ext===".webm")return "video/webm";if(ext===".mov")return "video/quicktime";return "video/mp4";}
+export async function GET(req:NextRequest){const denied=authorize(req);if(denied)return denied;try{const q=req.nextUrl.searchParams;const sh=positiveNumber(q.get("shomareKhabar"),"شماره خبر");const uid=positiveNumber(q.get("userId"),"UserId");const fileName=String(q.get("fileName")||"").trim();if(!fileName)return NextResponse.json({status:400,error:"نام فایل نامعتبر است."},{status:400});const pool=await getConnection();const r=await pool.request().input("ShomareKhabar",sql.BigInt,sh).input("FileName",sql.NVarChar(250),fileName).input("UserId",sql.BigInt,uid).execute("Akhbar.SP_GetKhabarPeyvastFile");const row=r.recordset?.[0];if(!row?.Files)return NextResponse.json({status:404,error:"فایل یافت نشد."},{status:404});const body=Buffer.isBuffer(row.Files)?row.Files:Buffer.from(row.Files);return new NextResponse(new Uint8Array(body),{status:200,headers:{"Content-Type":contentType(fileName),"Content-Length":String(body.length),"Cache-Control":"private, max-age=300"}});}catch(err){return errorResponse(err)}}

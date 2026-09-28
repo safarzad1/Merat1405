@@ -182,7 +182,8 @@ export default function AppTopbar({ fullName, postId = 0 }: AppTopbarProps) {
       ];
     }
 
-    if (mahalLength === 1) {
+    // اخبار برای تمام سطوح سازمانی فعال است؛ پست‌های RollId=5 فعلاً در گردش خبر نقشی ندارند.
+    if (![54, 55, 56].includes(postId)) {
       base.push({ label: "مدیریت اخبار", href: "/AkhbarManage", icon: "news" });
     }
 
