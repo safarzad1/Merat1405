@@ -26,7 +26,7 @@ export default async function PanelPage({ title, children }: PanelPageProps) {
   try {
     session = verifyToken(token) as SessionPayload;
   } catch {
-    redirect("/Api/Auth/Logout");
+    redirect("/Logout");
   }
 
   return (

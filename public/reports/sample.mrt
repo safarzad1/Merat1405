@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StiReport>
+  <ReportName>SampleReport</ReportName>
+  <EngineVersion>2024.1.1</EngineVersion>
+  <Dictionary>
+    <DataSources />
+  </Dictionary>
+  <Pages>
+    <StiPage Name="Page1">
+      <Components>
+        <StiText Name="Text1" Left="1cm" Top="1cm" Width="10cm" Height="1cm" Text="Hello Stimulsoft!" />
+      </Components>
+    </StiPage>
+  </Pages>
+</StiReport>

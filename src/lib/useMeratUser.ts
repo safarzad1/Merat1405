@@ -10,6 +10,7 @@ export type MeratUser = {
   FullName: string;
   NameMahal?: string;
   OnvanSemat?: string;
+  OnvanPost?: string;
   DateNow?: string;
   IsMarkazShahrestan?: string | boolean;
 };

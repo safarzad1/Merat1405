@@ -18,8 +18,8 @@ async function postJson(url, body) {
 
 export const GetAkhbarLookups = (userId) => postJson("/Api/Akhbar/GetLookups", { userId });
 export const GetKhabarCounts = (userId) => postJson("/Api/Akhbar/GetCounts", { userId });
-export const GetKhabarList = (userId, page, sizePage, sortIndex, sortDirection, search, boxType) =>
-  postJson("/Api/Akhbar/GetList", { userId, page, sizePage, sortIndex, sortDirection, search, boxType });
+export const GetKhabarList = (userId, page, sizePage, sortIndex, sortDirection, search, boxType, filters = {}) =>
+  postJson("/Api/Akhbar/GetList", { userId, page, sizePage, sortIndex, sortDirection, search, boxType, ...filters });
 export const GetKhabar = (shomareKhabar, userId) => postJson("/Api/Akhbar/GetById", { shomareKhabar, userId });
 export const InsertKhabar = (payload) => postJson("/Api/Akhbar/Insert", payload);
 export const UpdateKhabar = (payload) => postJson("/Api/Akhbar/Update", payload);
@@ -34,10 +34,12 @@ export const DeleteKhabarShakhs = (khabarShakhsId, userId) => postJson("/Api/Akh
 export const GetKhabarPeyvastha = (shomareKhabar, userId) => postJson("/Api/Akhbar/GetAttachments", { shomareKhabar, userId });
 export const DeleteKhabarPeyvast = (khabarPeyvastId, userId) => postJson("/Api/Akhbar/DeleteAttachment", { khabarPeyvastId, userId });
 export const GetNextKhabarDestination = (shomareKhabar, userId) => postJson("/Api/Akhbar/GetNextDestination", { shomareKhabar, userId });
-export const SendKhabar = (shomareKhabar, userId, tozihat, expectedToUserId) =>
-  postJson("/Api/Akhbar/Send", { shomareKhabar, userId, tozihat, expectedToUserId });
-export const ReturnKhabar = (shomareKhabar, userId, tozihat, eshkalatIds) =>
-  postJson("/Api/Akhbar/Return", { shomareKhabar, userId, tozihat, eshkalatIds });
+export const SendKhabar = (shomareKhabar, userId, tozihat, expectedToUserId, requestKey) =>
+  postJson("/Api/Akhbar/Send", { shomareKhabar, userId, tozihat, expectedToUserId, requestKey });
+export const GetReturnKhabarRecipient = (shomareKhabar, userId) =>
+  postJson("/Api/Akhbar/GetReturnRecipient", { shomareKhabar, userId });
+export const ReturnKhabar = (shomareKhabar, userId, tozihat, eshkalatIds, dalilBargasht) =>
+  postJson("/Api/Akhbar/Return", { shomareKhabar, userId, tozihat, eshkalatIds, dalilBargasht });
 export const GetKhabarGardesh = (shomareKhabar, userId) => postJson("/Api/Akhbar/GetWorkflow", { shomareKhabar, userId });
 
 export async function UploadKhabarPeyvast(shomareKhabar, userId, file) {

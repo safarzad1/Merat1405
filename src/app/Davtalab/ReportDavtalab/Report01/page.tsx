@@ -82,7 +82,7 @@ export default function Page() {
                         </button>
                     </div>
 
-                    <section id="print-area">
+                    <section id="print-area" className="merat-legacy-print-form">
 
                         <div className="print-page-header">
                             <h1 className="print-title titr text-center">{title}</h1>

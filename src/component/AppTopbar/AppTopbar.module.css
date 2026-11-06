@@ -24,7 +24,7 @@
   --drawer-footer-bg: rgba(255,255,255,.10);
   --drawer-logout-bg: rgba(16, 75, 82, .22);
   --drawer-logout-hover: rgba(16, 75, 82, .32);
-  --banner-background: var(--banner-background);
+  --banner-background: var(--app-gradient);
   --banner-shadow: 0 10px 24px rgba(31, 111, 120, .16);
 }
 
@@ -1127,3 +1127,275 @@
     margin-right: 254px;
   }
 }
+
+/* Bazargani visual-language mapping, managed centrally by ThemeRuntime. */
+.header {
+  --drawer-panel: var(--app-panel);
+  --drawer-panel-solid: var(--app-primary);
+  --drawer-panel-dark: var(--app-primary-dark);
+  --drawer-accent: var(--app-soft);
+  --drawer-accent-soft: var(--app-soft);
+  --drawer-item-active-text: var(--app-primary);
+  --drawer-item-active-bg: #fff;
+  --banner-background: var(--app-gradient);
+  --banner-shadow: var(--app-shadow);
+}
+.drawer { border-radius: 14px 0 0 14px; box-shadow: -14px 8px 28px rgba(17,20,55,.19); }
+.drawerItem { min-height: 42px; border-radius: 10px; font-size: 14px; }
+.drawerSubitem { min-height: 36px; font-size: 13px; }
+.drawerBrand strong { font-family: "PeydaApp", "ShabnamApp", sans-serif; font-weight: 600; }
+.legacyBanner { border-radius: 14px; }
+
+/* ====================================================================
+   Bazargani v2 top shell: no saturated full-width purple banner.
+   Logos are transparent white artwork, recolored visually by filter.
+   User themes affect the sidebar and primary interactions, not the
+   white masthead, to preserve balance across palettes.
+   ==================================================================== */
+.header {
+  --drawer-panel:var(--app-panel);
+  --drawer-panel-solid:var(--app-primary-dark);
+  --drawer-item-hover:rgba(255,255,255,.075);
+  --drawer-item-active-text:#F8F9FF;
+  --drawer-item-active-bg:color-mix(in srgb,var(--app-primary) 28%,transparent);
+  --drawer-submenu-border:rgba(255,255,255,.16);
+  --banner-background:var(--ui-surface);
+  --banner-shadow:0 3px 14px rgba(35,46,85,.035);
+  color:var(--ui-text);
+}
+.legacyBanner {
+  height:66px;
+  color:var(--ui-text);
+  background:var(--ui-surface);
+  border:1px solid var(--ui-line);
+  border-radius:12px;
+  box-shadow:var(--ui-card-shadow);
+  padding:0 17px;
+}
+.legacyBanner::before,.legacyBanner::after {display:none;}
+.legacyCouncilImage,.legacyMarkImage {
+  filter:brightness(0) saturate(100%) invert(17%) sepia(15%) saturate(1386%) hue-rotate(189deg) brightness(96%) contrast(94%);
+}
+.legacyCouncilImage {height:56px;max-width:100%;}
+.legacyMarkImage {height:54px;width:90px;}
+.drawer {
+  background:var(--app-panel);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:0;
+  box-shadow:-9px 0 25px rgba(20,26,53,.14);
+}
+.drawerHeader {min-height:72px;padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.11);}
+.drawerBrand strong {font:600 15px "PeydaApp","ShabnamApp",sans-serif;color:#FAFBFF;}
+.drawerBrand small {font-size:12.5px;color:#C1C8E0;}
+.drawerNav {gap:4px;padding:10px 9px 13px;}
+.drawerItem {min-height:42px;padding:0 11px;border:1px solid transparent;border-radius:10px;font-size:max(13px,calc(13px * var(--ui-font-scale)));color:#D4D9EC;}
+.drawerItemIcon {background:transparent;color:#BFC8E6;}
+.drawerItem:hover {background:rgba(255,255,255,.08);color:#FFFFFF;}
+.drawerItem:hover .drawerItemIcon {background:rgba(255,255,255,.055);color:#FFFFFF;}
+.drawerItemActive {
+  color:#FFFFFF;
+  background:color-mix(in srgb,var(--app-primary) 27%,transparent);
+  border-color:color-mix(in srgb,var(--app-primary) 34%,transparent);
+  box-shadow:inset -3px 0 0 color-mix(in srgb,var(--app-primary) 60%,#C7C0FF);
+}
+.drawerItemActive .drawerItemIcon {color:#FFFFFF;background:rgba(255,255,255,.07);}
+.drawerItemActive .drawerChevron {color:#FFFFFF;}
+.drawerSubitem {font-size:max(12.5px,calc(12.5px * var(--ui-font-scale)));color:#C9D1E9;}
+.drawerSubitemActive {background:rgba(255,255,255,.10);color:#FFFFFF;}
+.drawerUserCard {background:rgba(255,255,255,.07);}
+.drawerFooter {border-color:rgba(255,255,255,.12);}
+.drawerReopen {background:var(--app-panel);border-color:rgba(255,255,255,.14);}
+@media(max-width:900px) {
+ .legacyBanner {height:59px;padding:0 11px;}
+ .legacyCouncilImage{height:47px;}
+ .legacyMarkImage{height:45px;width:70px;}
+}
+@media(max-width:520px) {
+ .legacyBanner {height:54px;padding:0 8px;}
+ .legacyCouncilImage{height:41px;}
+ .legacyMarkImage{height:39px;width:55px;}
+}
+
+
+/* Merat v4 / Bazargani: readable, balanced drawer typography.
+   Use scalable text while keeping the original sidebar and mobile behavior. */
+.drawer { font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif); }
+.drawerBrand strong {
+  font-family: var(--merat-font-heading, "PeydaApp", "ShabnamApp", sans-serif);
+  font-size: max(16px, calc(16px * var(--ui-font-scale, 1)));
+  font-weight: 700;
+  line-height: 1.5;
+  font-synthesis: weight;
+}
+.drawerBrand small {
+  font-size: max(13px, calc(13px * var(--ui-font-scale, 1)));
+  font-weight: 400;
+  line-height: 1.55;
+  color: #c5cce5;
+}
+.drawerItem {
+  min-height: 43px;
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif);
+  font-size: max(14px, calc(14px * var(--ui-font-scale, 1)));
+  font-weight: 500;
+  line-height: 1.65;
+  color: #e2e6f5;
+  font-synthesis: weight;
+}
+.drawerItemActive { color: #fff; font-weight: 600; }
+.drawerSubitem {
+  min-height: 37px;
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif);
+  font-size: max(13.5px, calc(13.5px * var(--ui-font-scale, 1)));
+  font-weight: 500;
+  line-height: 1.65;
+  color: #d2d9ee;
+}
+.drawerSubitemActive { color: #fff; font-weight: 600; }
+.drawerUserInfo strong {
+  font-size: max(14px, calc(14px * var(--ui-font-scale, 1)));
+  font-weight: 600;
+}
+.drawerUserInfo small, .drawerLogout {
+  font-size: max(13px, calc(13px * var(--ui-font-scale, 1)));
+  font-weight: 400;
+}
+@media (max-width: 520px) {
+  .drawerItem { min-height: 42px; }
+  .drawerSubitem { min-height: 36px; }
+}
+
+/* Phase 84: status dot at the far left, followed by the logged-in user's real
+   post title (with its city/province). The user card has moved out of drawer. */
+.legacyBanner {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+.legacyIdentity {
+  position: relative;
+  z-index: 2;
+  justify-self: end;
+  display: inline-flex;
+  direction: ltr;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  max-width: 100%;
+  color: var(--ui-text, #24324c);
+}
+.positionTitle {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif);
+  font-size: max(12px, calc(13px * var(--ui-font-scale, 1)));
+  font-weight: 600;
+  line-height: 1.7;
+}
+@media (max-width: 900px) {
+  .legacyIdentity { gap: 5px; }
+  .positionTitle { font-size: 11.5px; }
+}
+@media (max-width: 520px) {
+  .legacyIdentity { gap: 4px; }
+  .positionTitle { font-size: 10px; }
+}
+
+/* Phase 85: preserve the signed-in person's name in the drawer;
+   only the redundant post/account-type subtitle is removed. */
+.drawerUserCard { margin-bottom: 10px; }
+.drawerUserInfo { min-width: 0; flex: 1; }
+
+/* Phase 87: a compact gear next to the live-connection indicator replaces
+   the former drawer settings item and the floating theme launcher. */
+.legacyBanner { overflow: visible; }
+.headerSettings {
+  position: relative;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.settingsTrigger {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  padding: 6px;
+  border: 1px solid var(--ui-line, #e1e5ef);
+  border-radius: 10px;
+  background: var(--ui-surface, #fff);
+  color: var(--ui-text, #273455);
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.settingsTrigger:hover, .settingsTriggerActive {
+  background: var(--app-soft, #eff0ff);
+  border-color: var(--app-primary, #5b50dd);
+  color: var(--app-primary, #5b50dd);
+}
+.settingsTrigger:focus-visible { outline: 2px solid var(--app-primary, #5b50dd); outline-offset: 3px; }
+.settingsTrigger svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.settingsDropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 100;
+  width: max-content;
+  min-width: 210px;
+  max-width: min(290px, calc(100vw - 18px));
+  padding: 7px;
+  border: 1px solid var(--ui-line, #e2e6f1);
+  border-radius: 12px;
+  background: var(--ui-surface, #fff);
+  box-shadow: 0 12px 28px rgba(29, 37, 71, .16);
+  color: var(--ui-text, #25334d);
+  direction: rtl;
+}
+.settingsOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 41px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: inherit;
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif);
+  font-size: 13.5px;
+  text-align: right;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.settingsOption:hover, .settingsOptionActive {
+  background: var(--app-soft, #f0f0ff);
+  color: var(--app-primary, #5b50dd);
+}
+.settingsOption svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (max-width: 520px) {
+  .settingsTrigger { width: 30px; height: 30px; padding: 5px; border-radius: 9px; }
+  .settingsTrigger svg { width: 17px; height: 17px; }
+  .settingsDropdown { min-width: 185px; }
+}
+
+/* User profile is accessible by clicking the user card in the drawer. */
+.drawerUserCard{text-decoration:none;cursor:pointer;}
+.drawerUserCard:hover{background:rgba(255,255,255,.13);}
+.drawerUserCard:focus-visible{outline:2px solid #fff;outline-offset:2px;}

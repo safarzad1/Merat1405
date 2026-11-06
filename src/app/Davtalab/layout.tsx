@@ -12,6 +12,6 @@ export default async function DavtalabLayout({children}:{children:React.ReactNod
   const hasSession=cookieStore.get("merat-new-session")?.value==="1";
   if(!token||!hasSession)redirect("/Login");
   let session:SessionPayload;
-  try{session=verifyToken(token) as SessionPayload}catch{redirect("/Api/Auth/Logout")}
+  try{session=verifyToken(token) as SessionPayload}catch{redirect("/Logout")}
   return <div dir="rtl"><AppTopbar fullName={session.fullName||session.username} postId={Number(session.postId||0)}/><ResearchProviders><main className="davtalab-page-shell"><div className="davtalab-page-content">{children}</div></main></ResearchProviders></div>
 }

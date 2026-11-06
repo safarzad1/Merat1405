@@ -2,11 +2,13 @@
   "name": "merat",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
+ "scripts": {
+  "dev": "node scripts/dev-with-socket.cjs",
+  "dev:next": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "socket": "node socket-server.cjs"
+},
   "dependencies": {
     "crypto-js": "^4.1.1",
     "dom-to-image": "^2.6.0",
@@ -16,7 +18,8 @@
     "next": "16.3.6",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "uuid": "^14.0.2"
+    "uuid": "^14.0.2",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

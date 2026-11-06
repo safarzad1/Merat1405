@@ -1,9 +1,10 @@
+import { newsAttachmentSignatureValid } from "@/lib/newsAttachmentValidation";
 import { randomUUID } from "crypto";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 import sql from "mssql";
 import { getConnection } from "@/lib/db";
-import { authorize, errorResponse, positiveNumber } from "../_shared";
+import { authorize, errorResponse, positiveNumber, assertSessionUser, NewsInputError } from "../_shared";
 
 const allowedImage = new Set([".jpg", ".jpeg", ".png"]);
 const allowedVideo = new Set([".mp4", ".webm", ".mov", ".m4v"]);
@@ -12,9 +13,14 @@ const allowedAudio = new Set([".mp3"]);
 export async function POST(req: NextRequest) {
   const denied=authorize(req); if(denied)return denied;
   try {
+    const declaredLength = req.headers.get("content-length");
+    // Media files are capped at 10 MiB; allow a small multipart envelope.
+    if (declaredLength && /^\d+$/.test(declaredLength) && Number(declaredLength) > 11 * 1024 * 1024)
+      return NextResponse.json({status:413,error:"حجم درخواست از سقف مجاز پیوست اخبار بیشتر است."},{status:413});
     const form = await req.formData();
     const shomareKhabar = positiveNumber(form.get("shomareKhabar"), "شماره خبر");
     const userId = positiveNumber(form.get("userId"), "UserId");
+    await assertSessionUser(req,userId);
     const file = form.get("file");
     if (!(file instanceof File)) return NextResponse.json({status:400,error:"فایل ارسال نشده است."},{status:400});
     const ext = path.extname(file.name || "").toLowerCase();
@@ -22,6 +28,9 @@ export async function POST(req: NextRequest) {
     const maxBytes = allowedVideo.has(ext) ? 10*1024*1024 : 5*1024*1024;
     if (file.size<=0 || file.size>maxBytes) return NextResponse.json({status:400,error:allowedVideo.has(ext)?"حجم ویدئو حداکثر 10MB است.":"حجم فایل حداکثر 5MB است."},{status:400});
     const bytes = Buffer.from(await file.arrayBuffer());
+    if (!newsAttachmentSignatureValid(ext, bytes)) {
+      throw new NewsInputError("محتوای فایل با نوع تصویر، صوت یا ویدئوی انتخاب‌شده مطابقت ندارد.");
+    }
     const storedName = `${randomUUID()}${ext}`;
     const pool = await getConnection();
     const r = await pool.request()

@@ -1,4 +1,28 @@
 // -----------------------------------------------------------------
+export async function GetPersonResearchHistory(personId, page = 1) {
+    const res = await fetch("/Api/Hamkari/GetPersonResearchHistory", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ personId, page }),
+    });
+    const data = await res.json();
+    if (!res.ok && res.status !== 401) throw new Error(data?.error || "خطا در دریافت سوابق تحقیق");
+    return data;
+}
+
+// -----------------------------------------------------------------
+export async function GetPersonSentNews(personId, page = 1) {
+    const res = await fetch("/Api/Hamkari/GetPersonSentNews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ personId, page }),
+    });
+    const data = await res.json();
+    if (!res.ok && res.status !== 401) throw new Error(data?.error || "خطا در دریافت سوابق اخبار");
+    return data;
+}
+
+// -----------------------------------------------------------------
 export async function GetPersonHamkari(mahal, page, sizepage, indexsort, ascdesc, search, noehamkari) {
     try {
         const res = await fetch("/Api/Hamkari/GetPersonHamkari", {

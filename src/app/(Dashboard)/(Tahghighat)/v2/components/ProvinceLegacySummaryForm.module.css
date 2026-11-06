@@ -1,0 +1,121 @@
+.root {direction:rtl;color:var(--ui-text,#222b3f);font-family:'ShabnamApp',Tahoma,sans-serif;}
+.toolbar {display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 12px;border:1px solid #d7ddea;background:#f5f8fc;border-radius:10px;margin-bottom:12px;}
+.toolbar span {font-size:12px;color:#64748b;}
+.editor {display:grid;gap:10px;}
+.editQuestion {padding:12px;border:1px solid #dce2ec;border-radius:10px;background:#fff;display:grid;gap:7px;}
+.editQuestion>strong {font-size:14px;line-height:1.9;}
+.editOptions {display:flex;flex-wrap:wrap;gap:5px 14px;}
+.editOptions label {display:inline-flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;}
+.editOptions input {accent-color:var(--app-primary,#4f46e5);width:17px;height:17px;}
+.editLabel {font-size:13px;color:#53627c;font-weight:600;}
+.editQuestion textarea {font:inherit;font-size:14px;line-height:1.9;border:1px solid #cbd5e1;resize:vertical;border-radius:8px;padding:8px 10px;background:#fff;color:#243047;width:100%;min-height:54px;}
+.editQuestion textarea:disabled {background:#f6f7fa;}
+.actions {display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0;}
+.actions button {border:1px solid #b9c8dd;border-radius:8px;background:#eff6ff;color:#1e5188;padding:8px 16px;font:inherit;cursor:pointer;}
+.actions button.primary {color:#fff;background:var(--app-primary,#4f46e5);border-color:transparent;}
+.actions button:disabled {opacity:.5;cursor:not-allowed;}
+.saved {font-size:12px;color:#137347;}
+.error,.success,.info {padding:8px 12px;border-radius:8px;margin:10px 0;font-size:13px;}
+.error {color:#9f1239;background:#fff1f2;}.success{color:#166534;background:#edfdf3;}.info{background:#fff8e7;color:#8b5e16;}
+.previewTitle {font-size:14px;border-top:1px solid #e5e7eb;padding-top:13px;margin:15px 0 8px;}
+.sheetStack {display:grid;gap:16px;justify-items:center;overflow:auto;max-width:100%;}
+.sheet {width:100%;max-width:1247px;min-height:1761px;box-sizing:border-box;flex:none;padding:16px;border:3px solid #2563eb;border-radius:9px;background:#fff;color:#111;direction:rtl;font-family:'B Nazanin','BNazanin',serif;font-size:19px;line-height:1.7;display:flex;flex-direction:column;gap:8px;box-shadow:0 3px 15px #10182822;}
+.header{height:125px;border:2px solid #111;display:grid;grid-template-columns:25% 45% 30%;align-items:center;gap:4px;padding:5px;flex:none;}
+.logo img {max-width:145px;max-height:100px;width:100%;object-fit:contain;}.logoMain img {max-height:112px;max-width:380px;width:100%;object-fit:contain;}
+.headerMeta {font-size:18px;line-height:1.6;}.headerMeta p{margin:0;}
+.panel {border:2px solid #111;border-radius:5px;display:flex;min-height:94px;flex:none;}
+.sideHeading {background:#e9e9e9;border-left:2px solid #111;writing-mode:vertical-rl;transform:none;display:flex;align-items:center;justify-content:center;font:700 16px 'B Titr','B Nazanin',serif;padding:5px;}
+.fields {display:flex;flex-wrap:wrap;align-items:center;align-content:center;gap:5px 14px;padding:8px 12px;font-size:17px;}
+.fields b {display:inline-block;background:#efefef;border-radius:9px;padding:1px 7px;font-weight:500;}
+.questions {border:2px solid #111;border-radius:5px;padding:10px 14px;display:grid;align-content:start;gap:7px;flex:1;}
+.question{padding:3px 0;border-bottom:1px dashed #bbb;font-size:18px;line-height:1.55;}
+.optionRow {display:flex;flex-wrap:wrap;gap:2px 16px;align-items:center;margin:3px 5px;}
+.option {display:inline-flex;gap:5px;align-items:center;font-size:16px;}
+.circle{width:12px;height:12px;display:inline-block;border:1px solid #333;border-radius:50%;background:#fff;}
+.checked{background:#555;box-shadow:inset 0 0 0 2px #fff;}
+.answerLabel{font-size:15px;}
+.answerText {font-size:17px;color:#0c4a6e;white-space:pre-wrap;overflow-wrap:anywhere;margin:2px 0 5px;line-height:1.65;}
+.footer {display:flex;flex-wrap:wrap;justify-content:space-between;gap:9px;border-top:1px solid #777;margin-top:auto;padding:8px 4px 3px;font-size:17px;}
+.continuationHeader{display:flex;align-items:center;justify-content:space-between;border:2px solid #111;padding:10px;}
+.continuationContent {flex:1;display:grid;gap:12px;align-content:start;border:1px solid #222;padding:12px;}
+.continuationContent section {border-bottom:1px dashed #ccc;padding-bottom:8px;}
+.attachmentBlock {margin-top:16px;border-top:1px solid #dce2ec;padding-top:12px;}
+.printStaging {position:fixed;left:-20000px;top:0;visibility:visible;pointer-events:none;z-index:-1;width:1247px;}
+.printStaging .sheetStack {overflow:visible;width:1247px;max-width:none;}
+.printStaging .sheet {width:1247px;max-width:none;min-height:1761px;box-shadow:none;}
+@media(max-width:700px){.sheet {min-width:690px;}.sheetStack {justify-items:start;}.fields{font-size:15px;}.editOptions{gap:8px;}}
+@media print {.sheet {box-shadow:none;break-after:page;} .toolbar,.editor,.actions,.previewTitle,.attachmentBlock {display:none;}}
+
+/* Enter data directly on the official sheet; do not duplicate the form in an editor above it. */
+.directEditHint {color:#64748b;font-size:13px;line-height:1.8;margin:8px 0 12px;}
+.editableOption {cursor:pointer;}
+.editableOption:has(input:disabled) {cursor:default;}
+.editableOption input[type="radio"] {width:15px;height:15px;accent-color:#2563eb;cursor:inherit;margin:0 2px 0 0;flex:none;}
+.sheetTextArea {display:block;box-sizing:border-box;width:100%;min-height:60px;max-height:144px;resize:vertical;
+  border:1px dashed #a7b6cb;border-radius:5px;padding:5px 8px;margin:5px 0 7px;
+  font:inherit;font-size:17px;line-height:1.65;direction:rtl;text-align:right;background:#fbfdff;color:#0c4a6e;}
+.sheetTextArea:focus {outline:2px solid #60a5fa;outline-offset:1px;border-color:#60a5fa;background:#fff;}
+.sheetTextArea:disabled {background:#f7f8fb;color:#0c4a6e;}
+.unsaved {font-size:12px;color:#9a6700;}
+@media print {.directEditHint {display:none;} }
+
+/* Direct entry and preview are distinct screens. The entry sheet expands naturally;
+   multi-page print sheets are generated only in the on-demand preview and export. */
+.editStack .sheet {min-height:0;height:auto;box-shadow:none;}
+.editStack .questions {flex:none;}
+.editStack .sheetTextArea {max-height:none;min-height:68px;}
+.actions .sendDirector {background:#15803d;color:#fff;border-color:#15803d;font-weight:700;}
+.actions .sendDirector:hover:not(:disabled) {background:#166534;}
+.previewOverlay {position:fixed;inset:0;z-index:2147483000;background:rgba(25,32,56,.67);
+  display:flex;align-items:center;justify-content:center;padding:12px;direction:rtl;}
+.previewDialog {display:flex;flex-direction:column;width:min(98vw,1320px);height:min(96dvh,940px);
+  background:#f4f7fd;border:1px solid #d1daeb;border-radius:14px;overflow:hidden;
+  box-shadow:0 22px 72px #0f172a55;}
+.previewHeader {display:flex;justify-content:space-between;align-items:center;gap:12px;flex:none;
+  background:#fff;padding:11px 16px;border-bottom:1px solid #dbe3f1;}
+.previewHeader button {cursor:pointer;background:#edf2fa;border:1px solid #d0dbec;border-radius:8px;
+  font:inherit;padding:7px 14px;color:#1e3a5f;}
+.previewBody {flex:1;min-height:0;overflow:auto;padding:14px;overscroll-behavior:contain;}
+.previewWarning {margin:9px 15px 0;padding:7px 10px;background:#fff7e1;color:#8b5e16;border-radius:8px;font-size:13px;}
+@media(max-width:700px){.previewOverlay{padding:4px;}.previewDialog{height:99dvh;width:100%;}
+.previewHeader{padding:8px;}.previewHeader strong{font-size:12px;}.previewBody{padding:6px;}}
+
+/* Province form, faithfully retaining the old birth-year / national-code fields.
+   The same digits are rendered in both direct-entry and printed preview sheets. */
+.numberField { display:inline-flex;align-items:center;gap:6px;white-space:nowrap;min-height:36px; }
+.digitBoxes { display:inline-flex;align-items:center;gap:2px;white-space:nowrap;flex-direction:row;direction:ltr; }
+.digitBox {box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;
+  height:32px;border:1px solid #111;border-radius:6px;background:#fff;
+  font-family:'B Nazanin','BNazanin',serif;font-size:18px;font-weight:400;line-height:1;}
+.yearBoxes .digitBox { width:24px; }
+.nationalCodeBoxes .digitBox { width:20px; }
+
+/* Phase 165: faithful two-row applicant panel and three-row investigation panel.
+   The national-code group always STARTS the second row, also in captured PNGs. */
+.fieldRows{display:flex;flex-direction:column;justify-content:center;flex:1;min-width:0;
+  gap:6px;padding:8px 10px;font-size:17px;}
+.fieldRow{display:flex;flex-wrap:wrap;align-items:center;column-gap:13px;row-gap:4px;min-width:0;}
+.fieldRow>span{display:inline-flex;align-items:center;gap:5px;min-width:0;}
+.fieldRows b{display:inline-flex;align-items:center;border-radius:14px;background:#e8e9ec;
+  padding:1px 7px;font-weight:500;max-width:100%;overflow-wrap:anywhere;line-height:1.5;}
+.fieldRow .numberField{white-space:nowrap;flex-shrink:0;}
+.fieldRow .worksheetHeading{font-weight:600;}
+.fieldRow .attachmentCounter{white-space:nowrap;gap:5px;}
+.attachmentCountValue{background:#e0f2fe!important;min-width:28px;justify-content:center;}
+.attachmentCountInput{box-sizing:border-box;width:54px;height:32px;border:1px solid #a6c6db;
+ border-radius:12px;background:#e0f2fe;text-align:center;font:inherit;font-size:17px;color:#0f4167;}
+.attachmentCountInput:focus{outline:2px solid #60a5fa;outline-offset:1px;}
+.dottedResearchLine{border-bottom:2px dotted #aeb9c9;flex:1;min-width:50px;min-height:2px;}
+@media(max-width:700px){.fieldRows{font-size:16px;}.fieldRow{column-gap:10px;}}
+
+/* Phase 166: the final research summary starts on its own official page;
+   overflow produces further true sheets in both preview and exported images. */
+.finalSummaryPanel {border:2px solid #111;border-radius:5px;display:flex;flex-direction:column;
+  flex:1;min-height:auto;padding:16px;gap:16px;}
+.finalSummaryHeading {font-family:'B Nazanin','BNazanin',serif;font-size:18px;font-weight:400;text-align:right;line-height:1.8;}
+.finalSummaryBody {flex:1;min-height:auto;border:1px dashed #a3a3a3;border-radius:10px;
+  padding:18px;white-space:pre-wrap;overflow-wrap:anywhere;}
+.finalSummaryText {white-space:pre-wrap;overflow-wrap:anywhere;font:20px/1.85 'B Nazanin','BNazanin',serif;
+  color:#111;margin:0;}
+.finalSummaryFooter {display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;
+  padding:10px 5px 3px;gap:16px;font-size:18px;}

@@ -1,5 +1,7 @@
 "use client";
 
+import { meratAlert } from "@/component/MeratFeedback/feedback";
+
 import { useMeratUser } from "@/lib/useMeratUser";
 
 import PdfModal from '@/component/PdfBox'
@@ -13,7 +15,7 @@ import DynamicTable from "@/component/DataTable/CustomTable1";
 import { GetFileNamePic } from '@/services/ApiServiceNameha'
 import { useAlert } from "@/component/AlertContext";
 import EjraBeMohaghegh from '@/app/(Dashboard)/(Tahghighat)/Componnet/EjraBeMohaghegh'
-import PersianDateInput from '@/component/Objects/InputPersianDatePicker'
+import PersianDateInput, { getTodayJalali } from '@/component/Objects/InputPersianDatePicker'
 import { InsertHamyarHoghoghi, GetamyarHoghoghi } from '@/services/ApiServiceShorayeTahghigh' // ✅ ایمپورت سرویس
 import {
     GetDavtalabPic,
@@ -158,7 +160,7 @@ export default function FehrestUsersClient({
     const [zoomLevel, setZoomLevel] = useState<number>(1);
     const [dragStartY, setDragStartY] = useState<number | null>(null);
     const [dragDeltaY, setDragDeltaY] = useState(0);
-    const [tarikh, settarikh] = useState<string | null>(null);
+    const [tarikh, settarikh] = useState<string | null>(() => getTodayJalali());
     const router = useRouter();
     const { showConfirm } = useConfirm();
     const [tozihat, setTozihat] = useState("");
@@ -252,7 +254,7 @@ export default function FehrestUsersClient({
         try {
             const result = await GetFileNamePic(fileName, user.UserId);
             if (!result || !(result instanceof Blob)) {
-                alert("خطا در دریافت فایل.");
+                meratAlert("خطا در دریافت فایل.");
                 return;
             }
             const url = window.URL.createObjectURL(result);
@@ -266,7 +268,7 @@ export default function FehrestUsersClient({
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error("خطا در دانلود فایل:", error);
-            alert("خطا در دانلود فایل. لطفاً دوباره امتحان کنید.");
+            meratAlert("خطا در دانلود فایل. لطفاً دوباره امتحان کنید.");
         }
     };
 
@@ -936,6 +938,7 @@ export default function FehrestUsersClient({
                                     onClick={() => {
                                         setShomarehParvandeh(detail?.ShomarehParvandeh || 0);
                                         setFullName(detail?.FirstName + " " + detail?.LastName || "");
+                                        settarikh(getTodayJalali());
                                         setModalHamyar(true);
                                     }}
                                 >
@@ -1486,8 +1489,8 @@ export default function FehrestUsersClient({
                         className="absolute inset-0 bg-black opacity-40"
                         onClick={() => setModalHamyar(false)}
                     ></div>
-                    <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-96 relative">
-                        <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+                    <div className="merat-referral-dialog bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-96 relative">
+                        <div className="merat-modal-header--legacy merat-modal-tone--neutral bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
                             <h2 className="text-lg font-bold">انتخاب همیار حقوقی</h2>
                         </div>
                         <hr className="mb-3 text-blue-800" />
@@ -1507,6 +1510,7 @@ export default function FehrestUsersClient({
                         <div className="">
                             <PersianDateInput
                                 label="مهلت انجام"
+                                value={tarikh}
                                 allowPastDates={false}
                                 onChange={(v: any) => {
                                     settarikh(v)

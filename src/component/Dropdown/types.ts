@@ -6,6 +6,7 @@ export type DropdownOption<T extends DropdownValue = string> = {
   value: T;
   label: string;
   description?: string;
+  searchText?: string;
   disabled?: boolean;
 };
 

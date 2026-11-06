@@ -1,0 +1,20 @@
+.status {
+  z-index: 1;
+  display: inline-flex;
+  flex: 0 0 14px;
+  width: 14px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 10px;
+  border-radius: 50%;
+  background: #fbbf24;
+}
+.online .dot { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.16); }
+.offline .dot { background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.13); }
+.connecting .dot { background: #fbbf24; box-shadow: 0 0 0 3px rgba(251,191,36,.13); }

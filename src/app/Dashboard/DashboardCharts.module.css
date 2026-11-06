@@ -1,0 +1,166 @@
+/* Merat v4 / Bazargani dashboard: typography, cards and spacing.
+   Preserves the two chart blocks, 4-up metrics, and responsive breakpoints. */
+.main {
+  direction: rtl;
+  min-height: 100%;
+  background: var(--ui-bg, #f5f6fb);
+  padding: 18px 20px 22px;
+  color: var(--ui-text, #263553);
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif);
+  font-size: max(14px, calc(14px * var(--ui-font-scale, 1)));
+  line-height: 1.75;
+}
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+.heading h1 {
+  font-family: var(--merat-font-heading, "PeydaApp", "ShabnamApp", sans-serif);
+  font-size: max(20px, calc(20px * var(--ui-font-scale, 1)));
+  line-height: 1.45;
+  font-weight: 700;
+  color: #263553;
+  margin: 0 0 4px;
+}
+.heading p, .cardHead p {
+  font-size: max(13px, calc(13px * var(--ui-font-scale, 1)));
+  margin: 0;
+  line-height: 1.85;
+  color: var(--merat-text-muted, #687794);
+}
+.tabs {
+  display: flex;
+  gap: 5px;
+  border: 1px solid var(--ui-line, #e1e7f2);
+  border-radius: 11px;
+  background: var(--ui-surface, #fff);
+  padding: 4px;
+}
+.tabs button {
+  border: 0;
+  border-radius: 8px;
+  padding: 7px 15px;
+  min-height: 35px;
+  cursor: pointer;
+  background: transparent;
+  color: #53617e;
+  font-size: max(13px, calc(13px * var(--ui-font-scale, 1)));
+  font-weight: 500;
+  font-family: var(--merat-font-body, "ShabnamApp", sans-serif);
+}
+.tabs button.active { background: var(--app-primary, #5b50dc); color: #fff; font-weight: 600; }
+.tabs button:focus-visible { outline: 2px solid var(--app-primary, #5b50dc); outline-offset: 2px; }
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 11px;
+  margin-bottom: 13px;
+}
+.metric {
+  min-width: 0;
+  background: var(--ui-surface, #fff);
+  border: 1px solid var(--ui-line, #e1e7f2);
+  border-radius: var(--ui-card-radius, 13px);
+  padding: 13px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: var(--ui-card-shadow, 0 3px 14px rgba(35,46,85,.035));
+}
+.metric span {
+  font-size: max(14px, calc(14px * var(--ui-font-scale, 1)));
+  font-weight: 500;
+  line-height: 1.65;
+  color: #63718d;
+}
+.metric strong {
+  font-family: var(--merat-font-heading, "PeydaApp", "ShabnamApp", sans-serif);
+  font-size: max(24px, calc(24px * var(--ui-font-scale, 1)));
+  line-height: 1.35;
+  font-weight: 700;
+  color: #263b69;
+  font-variant-numeric: tabular-nums;
+}
+.charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+.chartCard {
+  background: var(--ui-surface, #fff);
+  border: 1px solid var(--ui-line, #e1e7f2);
+  border-radius: var(--ui-card-radius, 13px);
+  box-shadow: var(--ui-card-shadow, 0 3px 14px rgba(35,46,85,.035));
+  padding: 15px 16px;
+  min-width: 0;
+}
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e8ecf5;
+}
+.cardHead h2 {
+  font-family: var(--merat-font-heading, "PeydaApp", "ShabnamApp", sans-serif);
+  font-size: max(16px, calc(16px * var(--ui-font-scale, 1)));
+  font-weight: 700;
+  line-height: 1.5;
+  color: #263553;
+  margin: 0 0 4px;
+}
+.count {
+  background: var(--app-soft, #eeedff);
+  border-radius: 9px;
+  padding: 6px 10px;
+  font-family: var(--merat-font-heading, "PeydaApp", "ShabnamApp", sans-serif);
+  font-size: max(15px, calc(15px * var(--ui-font-scale, 1)));
+  font-weight: 700;
+  color: var(--app-primary-dark, #34349a);
+  white-space: nowrap;
+}
+.bars { display: flex; flex-direction: column; gap: 12px; padding-top: 17px; }
+.barRow { display: grid; grid-template-columns: 110px minmax(0, 1fr) 56px; align-items: center; gap: 10px; min-width: 0; }
+.barName {
+  font-size: max(13.5px, calc(13.5px * var(--ui-font-scale, 1)));
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #485a78;
+  direction: rtl;
+}
+.track { height: 14px; background: #edf0f7; border-radius: 5px; overflow: hidden; }
+.fill { height: 100%; border-radius: 5px; }
+.barValue {
+  text-align: left;
+  color: #364765;
+  font-size: max(13.5px, calc(13.5px * var(--ui-font-scale, 1)));
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.footnote { margin: 15px 0 0; font-size: max(13px, calc(13px * var(--ui-font-scale, 1))); color: #72809a; line-height: 1.85; }
+.empty { font-size: max(14px, calc(14px * var(--ui-font-scale, 1))); color: #73809a; padding: 30px 0; text-align: center; }
+.note { font-size: max(13px, calc(13px * var(--ui-font-scale, 1))); color: #67758f; line-height: 1.85; margin-top: 15px; }
+:global(:root[data-merat-density="compact"]) .metric { padding: 10px 12px; }
+:global(:root[data-merat-density="compact"]) .chartCard { padding: 12px 13px; }
+@media (max-width: 1050px) {
+  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .charts { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .main { padding: 12px; }
+  .heading h1 { font-size: max(19px, calc(19px * var(--ui-font-scale, 1))); }
+  .metric { padding: 12px; }
+  .metric strong { font-size: max(22px, calc(22px * var(--ui-font-scale, 1))); }
+  .tabs { width: 100%; justify-content: space-between; }
+  .tabs button { flex: 1; padding: 7px 4px; }
+  .chartCard { padding: 12px; }
+  .barRow { grid-template-columns: 88px minmax(0, 1fr) 48px; gap: 6px; }
+}

@@ -1,0 +1,22 @@
+/* فاز ۲D — جمع‌بندی و تجمیع؛ سبک راست‌به‌چپ، واکنش‌گرا */
+.panel { background:linear-gradient(145deg,#f5faff,#fff);border:1px solid #cddff0;border-radius:16px;padding:clamp(14px,2vw,22px);margin-block:17px; }
+.heading { font-size:1.1rem;font-weight:800;color:#1d446c;margin:0 0 7px; }
+.help { font-size:.86rem;color:#526a83;line-height:1.8;margin:0 0 14px; }
+.label { display:block;font-weight:750;color:#314e69;margin:14px 0 7px; }
+.textarea { display:block;width:100%;min-height:145px;border:1px solid #b8cadc;border-radius:11px;padding:12px;background:#fff;color:#20364e;resize:vertical;font:inherit;line-height:1.9; }
+.tableWrap { width:100%;overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch;border:1px solid #e4edf6;border-radius:12px; }
+.table { width:100%;min-width:590px;border-collapse:collapse;text-align:right; }
+.table th { background:#ebf3fb;color:#284c72;text-align:right;font-weight:800;padding:11px;white-space:nowrap; }
+.table td { padding:12px;border-top:1px solid #eaf0f7;vertical-align:top; }
+.pre { white-space:pre-wrap;overflow-wrap:anywhere;margin:0;max-width:430px;line-height:1.85; }
+.actions { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-block:12px; }
+.button { background:#1c659e!important;border:1px solid #1c659e!important;color:#fff!important;padding:9px 22px!important;border-radius:11px;font-weight:750; }
+.button:disabled { background:#dce6ee!important;color:#718599!important;border-color:#dce6ee!important; }
+.stateGood { border-radius:20px;padding:3px 9px;font-size:.77rem;color:#17644b;background:#dff8ed; }
+.stateBad { border-radius:20px;padding:3px 9px;font-size:.77rem;color:#8c5c16;background:#fff3d8; }
+.warning { color:#a63736;font-size:.88rem;margin:10px 0; }
+.success { color:#17644b;font-size:.88rem;margin:10px 0; }
+.meta { color:#677a8c;font-size:.81rem; }
+.cardGrid { display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:10px;margin-top:14px; }
+.card { border:1px solid #dce9f5;border-radius:12px;padding:14px;background:#fff; }
+@media(max-width:620px) { .panel {padding:13px;border-radius:12px;} .actions{align-items:stretch;} .actions button {width:100%;} }

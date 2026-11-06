@@ -1,5 +1,9 @@
 "use client";
 
+import { meratAlert } from "@/component/MeratFeedback/feedback";
+
+import { isResearchMutationSuccessful, isResearchDuplicateReferral, isResearchSessionExpired } from "@/lib/researchMutationResult";
+
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useMeratUser } from "@/lib/useMeratUser";
 import { useParams, useRouter } from "next/navigation";
@@ -24,7 +28,7 @@ import { useConfirm } from "@/Utils/ConfirmModalContext";
 import { useAlert } from "@/component/AlertContext";
 import { showToast } from "@/component/CustomToast";
 
-import PersianDateInput from "@/component/Objects/InputPersianDatePicker";
+import PersianDateInput, { getTodayJalali } from "@/component/Objects/InputPersianDatePicker";
 import InputUserDropdown from "@/component/Objects/DropDownCitys";
 import TextArea1 from "@/component/Objects/Textarea1";
 
@@ -40,11 +44,11 @@ import { motion, AnimatePresence } from "@/lib/framerCompat";
 import { v4 as uuidv4 } from "uuid";
 
 
-import { GetFileNamePic, InsertFile } from "@/services/ApiServiceNameha";
+import { GetFileNamePic } from "@/services/ApiServiceNameha";
 import { GetCheckEmteyaz, GetTahghighByID, ErjaBeMohaghegh as ErjaBeMohagheghApi, JambandiOstan1 } from "@/services/ApiService";
 import {
   GetJambandiNahiiOstan,
-  InsertJambandiOstan,
+  CommitJambandiOstanAtomic,
   GetJambandiOstanPeyvast,
   GetErjaByID,
   Update_ErjaParvandeh,
@@ -227,6 +231,16 @@ const formatDT = (dt?: string) => {
   const t = dt.replace("T", " ");
   return t.length >= 16 ? t.substring(0, 16) : t;
 };
+
+/** Convert values returned by older/newer SQL drivers to a safe zero-based
+ *  report option index.  `0` is a VALID choice; null/empty/-1 mean not set. */
+function normalizeReportOption(value: unknown): number {
+  if (value === null || value === undefined || value === "") return -1;
+  const numberValue = typeof value === "number" ? value : Number(String(value).trim());
+  return Number.isInteger(numberValue) && numberValue >= 0 && numberValue <= 4
+    ? numberValue
+    : -1;
+}
 
 // -------------------- Jambandi Panel (Drop-in) --------------------
 type JambandiResponse = {
@@ -693,6 +707,9 @@ export default function ParvandehPage() {
   const { showAlert } = useAlert();
   const user = useMeratUser();
 
+  const summarySavingRef = useRef(false);
+  const [summarySaving, setSummarySaving] = useState(false);
+
   // ✅ refs for Pasokh 1..8 (span)
   const pasokhRefs = useMemo(
     () => Array.from({ length: 8 }, () => React.createRef<HTMLSpanElement>()),
@@ -751,6 +768,9 @@ export default function ParvandehPage() {
   // Shora
   const [shoraItems, setShoraItems] = useState<ShorayeTahghighItem[]>([]);
   const [shoraLoading, setShoraLoading] = useState(false);
+  // جلوگیری از ارسال هم‌زمان دوباره به شورا پیش از دریافت نتیجه SQL
+  const shoraSubmitPendingRef = useRef(false);
+  const [shoraSubmitting, setShoraSubmitting] = useState(false);
   const [shoraError, setShoraError] = useState("");
 
   // modals / controls
@@ -780,7 +800,7 @@ export default function ParvandehPage() {
 
   const [CityMarkaz, setCityMarkaz] = useState<number | null>(null);
   const [CodeMohaghegh, setCodeMohaghegh] = useState<number | null>(null);
-  const [tarikh, settarikh] = useState<string | null>(null);
+  const [tarikh, settarikh] = useState<string | null>(() => getTodayJalali());
   const [errorMohaghegh, setErrorMohaghegh] = useState(false);
   const [errorTarikh, seterrorTarikh] = useState(false);
 
@@ -1020,17 +1040,17 @@ export default function ParvandehPage() {
     if (resultjambandi?.status === 200 && resultjambandi?.data?.length > 0) {
       const row = resultjambandi.data[0];
 
-      setSelected((prev) => {
-        const next = [...prev];
-        next[0] = row.ValueSoal1 ?? -1;
-        next[1] = row.ValueSoal2 ?? -1;
-        next[2] = row.ValueSoal3 ?? -1;
-        next[3] = row.ValueSoal4 ?? -1;
-        next[4] = row.ValueSoal5 ?? -1;
-        next[5] = row.ValueSoal6 ?? -1;
-        next[6] = row.ValueSoal7 ?? -1;
-        return next;
-      });
+      // SQL/API can return ValueSoal as either number or string.
+      // Always restore saved choices as numeric indexes (including index 0).
+      setSelected([
+        normalizeReportOption(row.ValueSoal1),
+        normalizeReportOption(row.ValueSoal2),
+        normalizeReportOption(row.ValueSoal3),
+        normalizeReportOption(row.ValueSoal4),
+        normalizeReportOption(row.ValueSoal5),
+        normalizeReportOption(row.ValueSoal6),
+        normalizeReportOption(row.ValueSoal7),
+      ]);
 
       const stripHtmlAndClampBlankLines = (html?: string) => {
         if (!html) return "";
@@ -1094,6 +1114,8 @@ export default function ParvandehPage() {
         setHasApiJambandi(false);
         setJambandiDirty(false);
         jambandiDraftRef.current = "";
+        setJambandiOstan("");
+        if (jambandiBoxRef.current) jambandiBoxRef.current.textContent = "";
       }
 
       const p: string[] = [
@@ -1107,6 +1129,16 @@ export default function ParvandehPage() {
         row.PasokhSoal8 ?? "",
       ];
       setPasokh(p);
+    } else {
+      // Clearing all report data prevents previous case answers from leaking
+      // into a new/empty report modal.
+      setSelected(Array(7).fill(-1));
+      setPasokh(Array(8).fill(""));
+      setHasApiJambandi(false);
+      setJambandiDirty(false);
+      jambandiDraftRef.current = "";
+      setJambandiOstan("");
+      if (jambandiBoxRef.current) jambandiBoxRef.current.textContent = "";
     }
 
     if (result?.data?.length > 0) {
@@ -1116,122 +1148,160 @@ export default function ParvandehPage() {
     }
   };
 
+  // تغییر وضعیت تنها پس از تایید موفقیت واقعی SP در UI اعمال می‌شود.
   const ResultTo = async (id: number, stateerja: number, sharheghdam: string) => {
-    const result = await Update_ErjaParvandeh(id, true, stateerja, sharheghdam, user.UserId);
-    if ((result as any)?.state === 401) router.push("/Login");
-    else {
+    try {
+      const result = await Update_ErjaParvandeh(id, true, stateerja, sharheghdam, user.UserId);
+      if (isResearchSessionExpired(result)) { router.push("/Login"); return; }
+      if (!isResearchMutationSuccessful(result)) {
+        showToast.error("برگشت/ثبت وضعیت پرونده انجام نشد؛ دوباره تلاش کنید.", "خطا در پرونده");
+        return;
+      }
       setModalOpenAdamNeyazBeTahghigh(false);
       setModalOpenAdamEmkanTahghigh(false);
       setModalOpenErjabeOstanBedonTahghigh(false);
+      await loadData(erjaId);
       router.refresh();
+    } catch (error) {
+      console.error(error);
+      showToast.error("ارتباط با سرور برقرار نشد.", "خطا در پرونده");
     }
   };
 
   const ResultParvandeh = async (id: number, stateparvandeh: number, text: string) => {
-    const result = await Update_ErjaParvandehState(id, stateparvandeh, text, user.UserId);
-    if ((result as any)?.state === 401) router.push("/Login");
-    else {
+    try {
+      const result = await Update_ErjaParvandehState(id, stateparvandeh, text, user.UserId);
+      if (isResearchSessionExpired(result)) { router.push("/Login"); return; }
+      if (!isResearchMutationSuccessful(result)) {
+        showToast.error("تغییر وضعیت پرونده ثبت نشد.", "خطا در تأیید");
+        return;
+      }
       setModalNazarParvandeh(false);
       router.push("/TahghighatManage");
+    } catch (error) {
+      console.error(error);
+      showToast.error("ارتباط با سرور برقرار نشد.", "خطا در تأیید");
     }
   };
 
   const saveErjaHozeh = async (mahalSender: number, mahalReciver: number, isInsert: number) => {
+    if (!mahalReciver || mahalReciver <= 0) {
+      showToast.error("مقصد ارجاع را انتخاب کنید.", "ارجاع پرونده");
+      return;
+    }
     try {
       const res = await fetch("/Api/Tahghigh/InsertErjaTahghigh", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          perjaid: erjaId,
-          mahalSender,
-          mahalReciver,
-          description: tozihat,
-          userId: UserId,
-          isInsert,
-        }),
+        body: JSON.stringify({ perjaid: erjaId, mahalSender, mahalReciver,
+          description: tozihat, userId: user.UserId, isInsert }),
       });
-
       const result = await res.json();
-      if (res.ok) {
-        if (result?.data?.[0]?.IsSuccess === false) {
-          showConfirm(
-            "آیا از ارجاع مجدد اطمینان دارید؟",
-            () => saveErjaHozeh(user.Mahal, mahalReciver, 1),
-            "هشدار!",
-            "warning"
-          );
-        }
-        setModalOpenErjaBeHozeh(false);
-        setModalOpenErjaBeOstan(false);
-        loadData(erjaId);
-      } else {
-        alert("⚠️ خطا در ذخیره اطلاعات");
+      if (res.status === 401 || isResearchSessionExpired(result)) { router.push("/Login"); return; }
+      if (res.ok && isResearchDuplicateReferral(result) && isInsert === 0) {
+        showConfirm("آیا از ارجاع مجدد اطمینان دارید؟",
+          () => saveErjaHozeh(mahalSender, mahalReciver, 1), "هشدار!", "warning");
+        return; // در پاسخ تکراری مودال نباید بسته یا فهرست نوسازی شود.
       }
-    } catch (err) {
-      console.error(err);
-      alert("❌ خطا در برقراری ارتباط با سرور");
+      if (!res.ok || !isResearchMutationSuccessful(result)) {
+        showToast.error("ارجاع ثبت نشد. لطفاً اطلاعات را بررسی کنید.", "خطا در ارجاع");
+        return;
+      }
+      setModalOpenErjaBeHozeh(false);
+      setModalOpenErjaBeOstan(false);
+      await loadData(erjaId);
+    } catch (error) {
+      console.error(error);
+      showToast.error("ارتباط با سرور برقرار نشد.", "خطا در ارجاع");
     }
   };
 
   const saveErjaMohaghegh = async (isInsert: number) => {
-    if (!CodeMohaghegh || CodeMohaghegh === 0) {
-      setErrorMohaghegh(true);
-      return;
-    }
-    if (!tarikh) {
-      seterrorTarikh(true);
-      return;
-    }
+    if (!CodeMohaghegh || CodeMohaghegh <= 0) { setErrorMohaghegh(true); return; }
+    if (!tarikh) { seterrorTarikh(true); return; }
     setErrorMohaghegh(false);
     seterrorTarikh(false);
-
-    const result = await ErjaBeMohagheghApi(erjaId, erjaId, CodeMohaghegh, tarikh, tozihat, UserId, isInsert);
-    if ((result as any)?.data?.[0]?.InSuccess === true) {
+    try {
+      const result = await ErjaBeMohagheghApi(erjaId, erjaId, CodeMohaghegh, tarikh, tozihat, UserId, isInsert);
+      if (isResearchSessionExpired(result)) { router.push("/Login"); return; }
+      if (isResearchDuplicateReferral(result) && isInsert === 0) {
+        showConfirm("آیا از ارجاع مجدد اطمینان دارید؟",
+          () => saveErjaMohaghegh(1), "هشدار!", "warning");
+        return;
+      }
+      if (!isResearchMutationSuccessful(result)) {
+        showToast.error("ارجاع به محقق ثبت نشد.", "خطا در ارجاع");
+        return;
+      }
       setModalOpenErjaBeMohaghegh(false);
       setCodeMohaghegh(null);
       settarikh(null);
-      loadData(erjaId);
-    } else if ((result as any)?.data?.[0]?.IsSuccess === false && (result as any)?.data?.[0]?.Status === 201) {
-      showConfirm("آیا از ارجاع مجدد اطمینان دارید؟", () => saveErjaMohaghegh(1), "هشدار!", "warning");
+      await loadData(erjaId);
+    } catch (error) {
+      console.error(error);
+      showToast.error("ارتباط با سرور برقرار نشد.", "خطا در ارجاع");
     }
   };
 
-  const ReferToTeam = async () => setModalOpenErjaBeShorayeTahghigh(true);
+  const ReferToTeam = async () => {
+    settarikh(getTodayJalali());
+    setModalOpenErjaBeShorayeTahghigh(true);
+  };
 
   const saveErjaBeShorayeTahghigh = async (
-    erjaid: number,
-    description: string,
-    expireDate: string,
-    userid: number,
-    createUserId: number
+    erjaid: number, description: string, expireDate: string,
+    userid: number, createUserId: number
   ) => {
-    await InsertTahghigh(erjaid, description, expireDate, userid, createUserId);
-    await Update_ErjaParvandeh(erjaid, 0, 4, "ارسال به شورای تحقیق", user.UserId);
-    setModalOpenErjaBeShorayeTahghigh(false);
-    router.push("/TahghighatManage");
+    if (!userid || userid <= 0) { setErrorMohaghegh(true); return; }
+    if (!expireDate) { seterrorTarikh(true); return; }
+    if (shoraSubmitPendingRef.current) return;
+    shoraSubmitPendingRef.current = true;
+    setShoraSubmitting(true);
+    try {
+      const inserted = await InsertTahghigh(erjaid, description, expireDate, userid, createUserId);
+      if (isResearchSessionExpired(inserted)) { router.push("/Login"); return; }
+      if (!isResearchMutationSuccessful(inserted)) {
+        showToast.error("ارجاع شورای تحقیق ثبت نشد؛ وضعیت پرونده تغییر نکرد.", "شورای تحقیق");
+        return;
+      }
+      const updated = await Update_ErjaParvandeh(erjaid, 0, 4, "ارسال به شورای تحقیق", user.UserId);
+      if (isResearchSessionExpired(updated)) { router.push("/Login"); return; }
+      if (!isResearchMutationSuccessful(updated)) {
+        showToast.error("ارجاع ثبت شد اما تغییر وضعیت پرونده موفق نبود؛ برای جلوگیری از ارجاع مجدد، وضعیت را بررسی کنید.", "شورای تحقیق");
+        await loadData(erjaId);
+        return;
+      }
+      setModalOpenErjaBeShorayeTahghigh(false);
+      router.push("/TahghighatManage");
+    } catch (error) {
+      console.error(error);
+      showToast.error("در ارسال به شورا خطا رخ داد؛ قبل از تلاش مجدد وضعیت پرونده را بررسی کنید.", "شورای تحقیق");
+    } finally {
+      shoraSubmitPendingRef.current = false;
+      setShoraSubmitting(false);
+    }
   };
 
   const deleteShoraItem = async () => {
-    try {
-      showConfirm(
-        "آیا از حذف ارجاع شورای تحقیق (بدون اقدام) مطمئن هستید؟",
-        async () => {
-          const res = await DeleteParvandehShorayeTahghighByID(erjaId, user.UserId);
-          if ((res as any)?.status === 200 || (res as any)?.data?.status === 200) {
-            showToast.success("حذف با موفقیت انجام شد", "شورای تحقیق");
-          } else {
-            showToast.success("حذف انجام شد", "شورای تحقیق");
+    showConfirm(
+      "آیا از حذف ارجاع شورای تحقیق (بدون اقدام) مطمئن هستید؟",
+      async () => {
+        try {
+          const result = await DeleteParvandehShorayeTahghighByID(erjaId, user.UserId);
+          if (isResearchSessionExpired(result)) { router.push("/Login"); return; }
+          if (!isResearchMutationSuccessful(result)) {
+            showToast.error("حذف ارجاع شورای تحقیق موفق نبود.", "شورای تحقیق");
+            return;
           }
+          showToast.success("حذف با موفقیت انجام شد", "شورای تحقیق");
           await loadData(erjaId);
           router.refresh();
-        },
-        "هشدار!",
-        "warning"
-      );
-    } catch (e) {
-      console.error(e);
-      showToast.error("خطا در حذف اطلاعات شورای تحقیق", "خطا");
-    }
+        } catch (error) {
+          console.error(error);
+          showToast.error("خطا در حذف اطلاعات شورای تحقیق", "شورای تحقیق");
+        }
+      }, "هشدار!", "warning"
+    );
   };
 
   const downloadfilenameh = async () => {
@@ -1260,6 +1330,22 @@ export default function ParvandehPage() {
   };
 
   // -------------------- domtoimage export --------------------
+  // Wait for legacy B Nazanin / B Lotus / B Titr fonts and React painting the
+  // checked radio SVGs before capturing the saved report image.
+  const waitForReportPaint = async () => {
+    if (typeof document === "undefined") return;
+    try { await document.fonts.ready; } catch { /* proceed with fallback fonts */ }
+    const printableImages = document.querySelectorAll<HTMLImageElement>(
+      ".merat-legacy-print-form img"
+    );
+    await Promise.all(Array.from(printableImages).map((img) =>
+      img.decode().catch(() => undefined)
+    ));
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
+  };
+
   const dataUrlToFile = async (dataUrl: string, fileName: string): Promise<File> => {
     const res = await fetch(dataUrl);
     const blob = await res.blob();
@@ -1296,91 +1382,67 @@ export default function ParvandehPage() {
 
   // -------------------- Save Karbarg Tajmi (fixed Pasokh via EditableSpan) --------------------
   const SaveKarbargTajmiOstan = async () => {
+    if (summarySavingRef.current) return;
+    summarySavingRef.current = true;
+    setSummarySaving(true);
+    try {
+    // Snapshot the visible document BEFORE validation / PNG export. The old
+    // form only committed contentEditable answers on blur; a fast Save could
+    // otherwise submit an out-of-date React state.
+    const latestAnswers = pasokh.map((answer, index) =>
+      pasokhRefs[index]?.current?.innerText ?? answer
+    );
+    const latestSummary = jambandiDirty
+      ? (jambandiBoxRef.current?.innerText ?? jambandiDraftRef.current)
+          .replace(/\r/g, "")
+          .replace(/\n{3,}/g, "\n\n")
+          .trim()
+      : JambandiOstan;
+
     // validations
     for (let i = 0; i < 7; i++) {
-      if (selected[i] === -1) {
-        showToast.error(`پاسخ گزینه شماره ${i + 1} را انتخاب نمایید`, "عزیز دل برادر");
+      if (normalizeReportOption(selected[i]) === -1) {
+        showToast.error(`پاسخ گزینه شماره ${i + 1} را انتخاب نمایید`, "تکمیل فرم");
         return;
       }
-      if (!pasokh[i] || pasokh[i].trim().length === 0) {
-        showToast.error(`پاسخ سوال شماره ${i + 1} را وارد نمایید`, "عزیز دل برادر");
+      if (!latestAnswers[i] || latestAnswers[i].trim().length === 0) {
+        showToast.error(`پاسخ سوال شماره ${i + 1} را وارد نمایید`, "تکمیل فرم");
         return;
       }
     }
-    if (!pasokh[7] || pasokh[7].trim().length === 0) {
-      showToast.error("پاسخ سوال شماره 8 را وارد نمایید", "عزیز دل برادر");
+    if (!latestAnswers[7] || latestAnswers[7].trim().length === 0) {
+      showToast.error("پاسخ سوال شماره 8 را وارد نمایید", "تکمیل فرم");
       return;
     }
 
     try {
+      // Keep form state, saved answer strings, and PNG capture in sync.
+      setPasokh(latestAnswers);
+      setJambandiOstan(latestSummary);
+      await waitForReportPaint();
       const f1 = await exportNodeToPNGFile("div_image_page1", "page1.png");
       if (!f1) return;
       const f2 = await exportNodeToPNGFile("div_image_page2", "page2.png");
       if (!f2) return;
 
-      const file1: JambandiFile = {
-        file: f1.file,
-        url: f1.previewUrl,
-        fileExtend: "png",
-        fileSize: (f1.file.size / 1024 / 1024).toFixed(2),
-        FileName: f1.file.name,
-        FileNameGUID: uuidv4() + ".png",
-        isServer: false,
-      };
-
-      const file2: JambandiFile = {
-        file: f2.file,
-        url: f2.previewUrl,
-        fileExtend: "png",
-        fileSize: (f2.file.size / 1024 / 1024).toFixed(2),
-        FileName: f2.file.name,
-        FileNameGUID: uuidv4() + ".png",
-        isServer: false,
-      };
-
-      const newFiles = [file1, file2];
-
-      setJambandiFiles((prev) => {
-        prev.forEach((p) => {
-          if (!p.isServer && p.url) URL.revokeObjectURL(p.url);
-        });
-        return newFiles;
-      });
-
-      await InsertJambandiOstan(
-        erjaId,
-        pasokh[0],
-        pasokh[1],
-        pasokh[2],
-        pasokh[3],
-        pasokh[4],
-        pasokh[5],
-        pasokh[6],
-        pasokh[7],
-        selected[0],
-        selected[1],
-        selected[2],
-        selected[3],
-        selected[4],
-        selected[5],
-        selected[6],
-        JambandiOstan,
-        newFiles[0].FileNameGUID,
-        newFiles[1].FileNameGUID,
-        user.UserId
+      // One request: both PNGs, all answers and the Erja state change share
+      // one SQL transaction. No partial summary after a failed image upload.
+      await CommitJambandiOstanAtomic(
+        erjaId, latestAnswers, selected, latestSummary,
+        StateDoneTahghigh, StateTahghigh, user.UserId, f1.file, f2.file,
+        data?.[0]?.ErjaLastState
       );
-
-      await InsertFile(newFiles[0].FileNameGUID, user.UserId, f1.file);
-      await InsertFile(newFiles[1].FileNameGUID, user.UserId, f2.file);
-
-      const resultDone = await Update_ErjaParvandeh(erjaId, StateDoneTahghigh, StateTahghigh, JambandiOstan, user.UserId);
-      if ((resultDone as any)?.status === 200) {
-        setModalOpenCreateForm(false);
-        router.push("/TahghighatManage");
-      }
+      URL.revokeObjectURL(f1.previewUrl);
+      URL.revokeObjectURL(f2.previewUrl);
+      setModalOpenCreateForm(false);
+      router.push("/TahghighatManage");
     } catch (err) {
-      console.error("❌ خطا:", err);
-      alert("❌ خطا در تولید یا ارسال فایل");
+      console.error("خطای ثبت یکپارچه جمع‌بندی:", err);
+      showToast.error(err instanceof Error ? err.message : "ثبت جمع‌بندی انجام نشد.", "خطای ذخیره");
+    }
+    } finally {
+      summarySavingRef.current = false;
+      setSummarySaving(false);
     }
   };
 
@@ -1395,15 +1457,15 @@ export default function ParvandehPage() {
     setManabe6(Manabe6 ?? "");
 
     if (!SoalatParvandeh.trim() || SoalatParvandeh.length < 10) {
-      showToast.error("سوالی ثبت نشده است", "عزیز دل برادر");
+      showToast.error("سوالی ثبت نشده است", "تکمیل فرم");
       return;
     }
     if (!PasokhParvandeh.trim() || PasokhParvandeh.length < 10) {
-      showToast.error("پاسخی ثبت نشده است", "عزیز دل برادر");
+      showToast.error("پاسخی ثبت نشده است", "تکمیل فرم");
       return;
     }
     if (!TozihatMohaghegh.trim() || TozihatMohaghegh.length < 10) {
-      showToast.error("توضیحات محقق ثبت نشده است", "عزیز دل برادر");
+      showToast.error("توضیحات محقق ثبت نشده است", "تکمیل فرم");
       return;
     }
 
@@ -1437,7 +1499,7 @@ export default function ParvandehPage() {
       setModalOpenKargroupMosahebe(false);
     } catch (err) {
       console.error("❌ خطا:", err);
-      alert("❌ خطا در تولید یا ارسال فایل");
+      meratAlert("❌ خطا در تولید یا ارسال فایل");
     }
   };
 
@@ -1857,6 +1919,7 @@ export default function ParvandehPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => {
+                        setCityMarkaz(null);
                         setModalOpenErjaBeHozeh(true);
                         setTozihat("");
                       }}
@@ -1913,6 +1976,7 @@ export default function ParvandehPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => {
+                        setCityMarkaz(null);
                         setModalOpenErjaBeOstan(true);
                         setTozihat("");
                       }}
@@ -1956,6 +2020,8 @@ export default function ParvandehPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => {
+                        settarikh(getTodayJalali());
+                        setCodeMohaghegh(0);
                         setModalOpenErjaBeMohaghegh(true);
                         setTozihat("");
                       }}
@@ -2196,8 +2262,8 @@ export default function ParvandehPage() {
               setTozihat("");
             }}
           />
-          <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-96 relative">
-            <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+          <div className="merat-referral-dialog bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-96 relative">
+            <div className="merat-modal-header--legacy merat-modal-tone--neutral bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
               <h2 className="text-lg font-bold">افزودن ارجاع جدید</h2>
             </div>
             <hr className="mb-3 text-blue-800" />
@@ -2235,8 +2301,8 @@ export default function ParvandehPage() {
       {data.length > 0 && ModalOpenErjaBeOstan && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalOpenErjaBeOstan(false)} />
-          <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-96 relative">
-            <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+          <div className="merat-referral-dialog bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-96 relative">
+            <div className="merat-modal-header--legacy merat-modal-tone--neutral bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
               <h2 className="text-lg font-bold">افزودن ارجاع جدید</h2>
             </div>
             <hr className="mb-3 text-blue-800" />
@@ -2274,8 +2340,8 @@ export default function ParvandehPage() {
       {data.length > 0 && ModalOpenErjaBeMohaghegh && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalOpenErjaBeMohaghegh(false)} />
-          <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-96 relative">
-            <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+          <div className="merat-referral-dialog bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-96 relative">
+            <div className="merat-modal-header--legacy merat-modal-tone--neutral bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
               <h2 className="text-lg font-bold">افزودن ارجاع جدید</h2>
             </div>
             <hr className="mb-3 text-blue-800" />
@@ -2297,6 +2363,7 @@ export default function ParvandehPage() {
             <div className="">
               <PersianDateInput
                 label="مهلت انجام"
+                value={tarikh}
                 allowPastDates={false}
                 onChange={(v: any) => {
                   settarikh(v);
@@ -2330,8 +2397,8 @@ export default function ParvandehPage() {
       {data.length > 0 && ModalOpenErjaBeShorayeTahghigh && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalOpenErjaBeShorayeTahghigh(false)} />
-          <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-96 relative">
-            <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+          <div className="merat-referral-dialog bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-96 relative">
+            <div className="merat-modal-header--legacy merat-modal-tone--neutral bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
               <h2 className="text-lg font-bold">انتخاب شورای تحقیق</h2>
             </div>
             <hr className="mb-3 text-blue-800" />
@@ -2353,6 +2420,7 @@ export default function ParvandehPage() {
             <div className="">
               <PersianDateInput
                 label="مهلت انجام"
+                value={tarikh}
                 allowPastDates={false}
                 onChange={(v: any) => {
                   settarikh(v);
@@ -2377,8 +2445,9 @@ export default function ParvandehPage() {
               <button
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded cursor-pointer"
                 onClick={() => saveErjaBeShorayeTahghigh(erjaId, tozihat, tarikh!, CodeMohaghegh!, user.UserId)}
+                disabled={shoraSubmitting}
               >
-                تایید
+                {shoraSubmitting ? "در حال ثبت..." : "تایید"}
               </button>
             </div>
           </div>
@@ -2390,7 +2459,7 @@ export default function ParvandehPage() {
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalOpenAdamNeyazBeTahghigh(false)} />
           <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-[30%] max-h-[90vh] overflow-hidden absolute top-5 left-1/2 -translate-x-1/2">
-            <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+            <div className="merat-modal-header--legacy merat-modal-tone--notice bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
               <h2 className="text-lg font-bold">عدم امکان تحقیق استان دیگر</h2>
             </div>
             <hr className="mb-3 text-blue-800" />
@@ -2436,7 +2505,7 @@ export default function ParvandehPage() {
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalOpenAdamEmkanTahghigh(false)} />
           <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-[30%] max-h-[90vh] overflow-hidden absolute top-5 left-1/2 -translate-x-1/2">
-            <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+            <div className="merat-modal-header--legacy merat-modal-tone--notice bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
               <h2 className="text-lg font-bold">عدم امکان تحقیق</h2>
             </div>
             <hr className="mb-3 text-blue-800" />
@@ -2482,7 +2551,7 @@ export default function ParvandehPage() {
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalOpenErjabeOstanBedonTahghigh(false)} />
           <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-[30%] max-h-[90vh] overflow-hidden absolute top-5 left-1/2 -translate-x-1/2">
-            <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+            <div className="merat-modal-header--legacy merat-modal-tone--notice bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
               <h2 className="text-lg font-bold">عدم نیاز به تحقیق</h2>
             </div>
             <hr className="mb-3 text-blue-800" />
@@ -2528,7 +2597,7 @@ export default function ParvandehPage() {
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalNazarParvandeh(false)} />
           <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-[30%] max-h-[90vh] overflow-hidden absolute top-5 left-1/2 -translate-x-1/2">
-            <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+            <div className="merat-modal-header--legacy merat-modal-tone--return bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
               <h2 className="text-lg font-bold">برگشت پرونده</h2>
             </div>
             <hr className="mb-3 text-blue-800" />
@@ -2581,12 +2650,22 @@ export default function ParvandehPage() {
           >
             <div className="w-full h-full flex flex-col items-center">
               <div className="w-[210mm] flex justify-center gap-3 mt-3">
-                <button onClick={SaveKarbargTajmiOstan} className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                <button onClick={SaveKarbargTajmiOstan} disabled={summarySaving} className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                  {summarySaving ? "در حال ثبت..." : <>
                   {StateTahghigh == 15 && "ثبت جمع بندی و ارسال به ستاد"}
                   {StateTahghigh == 8 && "ثبت جمع بندی و ارسال به رئیس دفتر"}
                   {StateTahghigh == 6 && "ثبت جمع بندی"}
                   {StateTahghigh == 10 && "تایید جمع بندی"}
                   {StateTahghigh == 12 && "تایید پرونده"}
+                  </>}
+                </button>
+                <button type="button" onClick={() => document.getElementById("div_image_page1")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                  className="cursor-pointer bg-slate-100 border border-slate-300 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200">
+                  بازگشت به صفحه اول
+                </button>
+                <button type="button" onClick={() => document.getElementById("div_image_page2")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                  className="cursor-pointer bg-slate-100 border border-slate-300 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200">
+                  رفتن به صفحه دوم
                 </button>
                 <button onClick={() => setModalOpenCreateForm(false)} className="cursor-pointer bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
                   بستن
@@ -2619,7 +2698,7 @@ export default function ParvandehPage() {
 
               {/* Page 1 */}
               <div
-                id="div_image_page1"
+                id="div_image_page1" className="merat-legacy-print-form"
                 style={{
                   width: "330mm",
                   minHeight: "466mm",
@@ -3040,27 +3119,48 @@ export default function ParvandehPage() {
                     return (
                       <div key={qi} className="mb-2">
                         <div className="flex flex-col bnaznin text-[22px] leading-[1.3] mt-2">
-                          <span>{q}</span>
+                          <span id={`merat-report-question-${qi}`}>{q}</span>
                         </div>
 
                         {isRadio && (
-                          <div className="flex items-center bnaznin text-[23px] leading-[1.2] flex-wrap">
-                            {radioItems[qi].map((text, idx) => (
-                              <div key={idx} className="flex items-center mr-8">
-                                <span className="mx-1">{text}</span>
-                                <span
-                                  onClick={() =>
-                                    setSelected((prev) => {
-                                      const next = [...prev];
-                                      next[qi] = idx;
-                                      return next;
-                                    })
-                                  }
-                                  className={`w-5 h-5 inline-block rounded-full border border-black cursor-pointer ${selected[qi] === idx ? "bg-gray-600" : "bg-white"
-                                    }`}
-                                />
-                              </div>
-                            ))}
+                          <div
+                            className="merat-report-options bnaznin text-[23px]"
+                            role="radiogroup"
+                            aria-labelledby={`merat-report-question-${qi}`}
+                          >
+                            {radioItems[qi].map((text, idx) => {
+                              const checked = selected[qi] === idx;
+                              return (
+                                <label key={idx} className="merat-report-option">
+                                  <input
+                                    type="radio"
+                                    name={`merat-report-answer-${erjaId}-${qi}`}
+                                    value={idx}
+                                    checked={checked}
+                                    onChange={() => {
+                                      setSelected((prev) => {
+                                        const next = [...prev];
+                                        next[qi] = idx;
+                                        return next;
+                                      });
+                                    }}
+                                    className="merat-report-option-native"
+                                  />
+                                  <span className="merat-report-option-text">{text}</span>
+                                  {/* Native controls are interactive; SVG is intentionally
+                                      visible in PNG/print exports and independent of Tailwind. */}
+                                  <svg
+                                    aria-hidden="true"
+                                    className="merat-report-option-mark"
+                                    width="20" height="20" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <circle cx="10" cy="10" r="8.6" fill="#fff" stroke="#1f2937" strokeWidth="1.4" />
+                                    {checked && <circle cx="10" cy="10" r="5.1" fill="#1f2937" />}
+                                  </svg>
+                                </label>
+                              );
+                            })}
                           </div>
                         )}
 
@@ -3069,7 +3169,9 @@ export default function ParvandehPage() {
                         </div>
 
                         <div className="flex text-sky-900 flex-col shabnam text-[18px] leading-loose mb-3">
-                          <span className="text-red-600 text-[16px] text-center">{errorPasokh[qi]}</span>
+                          {errorPasokh[qi] && (
+                            <span role="alert" className="text-red-600 text-[16px] text-center">{errorPasokh[qi]}</span>
+                          )}
 
                           <EditableSpan
                             value={pasokh[qi]}
@@ -3097,7 +3199,7 @@ export default function ParvandehPage() {
 
               {/* Page 2 (Jambandi) */}
               <div
-                id="div_image_page2"
+                id="div_image_page2" className="merat-legacy-print-form"
                 style={{
                   width: "330mm",
                   minHeight: "466mm",
@@ -3125,20 +3227,31 @@ export default function ParvandehPage() {
                     boxSizing: "border-box",
                     display: "flex",
                     flexDirection: "column",
-                    gap: "12px",
+                    gap: "8px",
                   }}
                 >
-                  <p className="text-[22px] m-0 bnaznin" style={{ lineHeight: "3.4rem", marginTop: 0 }}>
+                  <p
+                    className="text-[22px] bnaznin"
+                    style={{ margin: 0, lineHeight: 1.5, flexShrink: 0 }}
+                  >
                     جمع بندی تحقیقات صورت گرفته براساس مهم ترین موارد درج شده در کاربرگ های تحقیق :
                   </p>
-                  <p className="text-red-500 text-[16px]">{errorjambandiOsatn}</p>
+                  {errorjambandiOsatn && (
+                    <p
+                      role="alert"
+                      className="text-red-500 text-[16px]"
+                      style={{ margin: 0, lineHeight: 1.4, flexShrink: 0 }}
+                    >
+                      {errorjambandiOsatn}
+                    </p>
+                  )}
 
                   {/* ✅ FIX: keep draft + dirty, commit HTML, no revert on click */}
                   <div
                     ref={jambandiBoxRef}
                     contentEditable
                     suppressContentEditableWarning
-                    className="shabnam text-[18px] leading-loose"
+                    className="bnaznin text-[20px] leading-loose"
                     style={{
                       flex: 1,
                       minHeight: "280mm",
@@ -3151,7 +3264,7 @@ export default function ParvandehPage() {
                     }}
                     onInput={(e) => {
                       // ✅ keep plain text; prevents html tags from persisting
-                      jambandiDraftRef.current = e.currentTarget.textContent || "";
+                      jambandiDraftRef.current = e.currentTarget.innerText || "";
                       if (!jambandiDirty) setJambandiDirty(true);
                     }}
                     onBlur={() => {
@@ -3201,7 +3314,7 @@ export default function ParvandehPage() {
               </div>
 
               <div
-                id="div_image_page3"
+                id="div_image_page3" className="merat-legacy-print-form"
                 style={{
                   width: "330mm",
                   minHeight: "466mm",

@@ -1,0 +1,511 @@
+/* ParvandehOstan V2: old workflow UX, current Merat design tokens.
+   Scoped to this page; no changes to API or referral behavior. */
+.page {
+  --case-primary: var(--app-primary, #4f46e5);
+  --case-line: var(--ui-line, #e6e8f2);
+  --case-ink: var(--ui-text, #1e2440);
+  --case-muted: var(--ui-muted, #737a96);
+  --case-surface: var(--ui-surface, #fff);
+  direction: rtl;
+  min-height: 40vh;
+  padding: 3px 7px 16px;
+  color: var(--case-ink);
+  background: transparent;
+  font-family: "ShabnamApp", Tahoma, Arial, sans-serif;
+  font-size: max(12.5px, calc(13px * var(--ui-font-scale, 1)));
+  line-height: 1.7;
+}
+.page *, .page *::before, .page *::after { box-sizing: border-box; }
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 0 0 7px;
+  padding: 5px 9px;
+  min-height: 39px;
+  border: 1px solid var(--case-line);
+  border-radius: 11px;
+  background: var(--case-surface);
+  color: var(--case-muted);
+  font-size: 12.5px;
+}
+.breadcrumb button {
+  border: 1px solid var(--case-line);
+  border-radius: 8px;
+  padding: 3px 10px;
+  background: #f8f9ff;
+  color: var(--case-primary);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+.crumbPerson {
+  flex: 1 1 220px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--case-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+.breadcrumb .backLink {
+  background: var(--app-soft, #eeefff);
+  color: var(--case-primary);
+  border-color: color-mix(in srgb, var(--case-primary) 17%, var(--case-line));
+}
+.metaBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 11px;
+  min-height: 44px;
+  padding: 7px 10px;
+  margin: 0 0 8px;
+  border: 1px solid var(--case-line);
+  border-radius: 11px;
+  background: var(--case-surface);
+  font-size: 12.5px;
+  color: var(--case-ink);
+}
+.metaBar b { color: var(--case-muted); margin-left: 4px; font-weight: 600; }
+.metaDescription { flex: 1 1 160px; min-width: 120px; max-height: 48px; overflow: auto; }
+.metaState {
+  padding: 3px 8px;
+  border-radius: 20px;
+  color: var(--case-primary);
+  background: var(--app-soft, #eeefff);
+  white-space: nowrap;
+  font-weight: 500;
+}
+.greenButton, .yellowButton, .addButton, .outlineButton, .primary, .secondary, .cancelButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 5px 11px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  font-family: "ShabnamApp", Tahoma, Arial, sans-serif;
+  font-size: max(12.5px, calc(13px * var(--ui-font-scale, 1)));
+  font-weight: 500;
+  line-height: 1.6;
+  text-align: center;
+  cursor: pointer;
+  white-space: normal;
+  transition: background .15s, border-color .15s;
+}
+.addButton, .primary {
+  background: var(--app-gradient, linear-gradient(135deg, #4f46e5, #6d5dfc));
+  color: #fff;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--case-primary) 14%, transparent);
+}
+.greenButton {
+  background: #eff9f3;
+  color: #137347;
+  border-color: #bde4ce;
+}
+.yellowButton {
+  background: #fff8e7;
+  color: #986613;
+  border-color: #f0ddb0;
+}
+.outlineButton, .secondary, .cancelButton {
+  background: #f7f8fc;
+  color: #56647e;
+  border-color: var(--case-line);
+  box-shadow: none;
+}
+.greenButton:hover:not(:disabled) { background: #e0f4e9; }
+.yellowButton:hover:not(:disabled) { background: #fff0c8; }
+.outlineButton:hover:not(:disabled), .secondary:hover:not(:disabled), .cancelButton:hover:not(:disabled) { background: #edeffc; }
+.greenButton:disabled, .yellowButton:disabled, .addButton:disabled, .outlineButton:disabled,
+.primary:disabled, .secondary:disabled, .cancelButton:disabled {
+  opacity: .51;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.referralPanel {
+  overflow: hidden;
+  margin: 7px 0;
+  border: 1px solid var(--case-line);
+  border-radius: 11px;
+  background: var(--case-surface);
+  box-shadow: 0 2px 8px rgba(31, 37, 86, .035);
+}
+.panelHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 46px;
+  padding: 7px 10px;
+  background: #fafbfe;
+}
+.panelTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  color: var(--case-ink);
+  font-family: "ShabnamApp", Tahoma, Arial, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.6;
+  cursor: pointer;
+  text-align: right;
+}
+.panelTitle strong {
+  font-family: "PeydaApp", "ShabnamApp", Tahoma, sans-serif;
+  font-size: max(13.5px, calc(14px * var(--ui-font-scale, 1)));
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--case-ink);
+}
+.chevron { color: var(--case-primary); font-size: 13px; }
+.countGray, .countGreen {
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  min-width: 23px;
+  height: 23px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #eef0f6;
+  border: 1px solid #dfe3ed;
+  color: #5d6a85;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+.countGreen { background: #eaf8ef; border-color: #caead8; color: #177d4a; }
+.panelBody { background: var(--case-surface); border-top: 1px solid var(--case-line); padding: 10px 12px; }
+.compactBox {
+  margin: 7px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--case-line);
+  border-radius: 11px;
+  background: var(--case-surface);
+}
+.hint { margin: 4px 0 9px; color: var(--case-muted); font-size: 12.5px; line-height: 1.8; }
+.label { display: block; margin: 7px 0 4px; color: #56647e; font-size: 13px; font-weight: 500; }
+.field {
+  display: block;
+  width: 100%;
+  margin: 4px 0 9px;
+  padding: 7px 10px;
+  border: 1px solid #d9dfed;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--case-ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.75;
+  outline: none;
+  resize: vertical;
+}
+.field:focus { border-color: var(--case-primary); box-shadow: none; outline: none; }
+.field:disabled { background: #f7f8fb; color: #8a92a6; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 8px; }
+.tableWrap { overflow: auto; border: 1px solid var(--case-line); border-radius: 8px; }
+.table { width: 100%; border-collapse: collapse; text-align: right; }
+.table th, .table td { padding: 8px 10px; border-bottom: 1px solid var(--case-line); font-size: 13px; }
+.table th { background: #f5f7fc; color: #3b4764; font-weight: 600; }
+.table tr:last-child td { border: 0; }
+.linkButton { border: 0; background: transparent; color: var(--case-primary); text-decoration: underline; cursor: pointer; font: inherit; }
+.error, .success, .warning { margin: 7px 0; padding: 9px 12px; border-radius: 9px; font-size: 13px; line-height: 1.8; }
+.error { background: #fff1f2; border: 1px solid #f3b9c1; color: #a72039; }
+.success { background: #e6fff2; border: 1px solid #b7e9cd; color: #13744c; }
+.warning { background: #fff7e6; border: 1px solid #f6d69a; color: #84541d; }
+.empty { padding: 24px; border: 1px dashed #d7dced; border-radius: 10px; background: #fff; text-align: center; color: var(--case-muted); }
+.rowHeading { display: flex; align-items: center; justify-content: space-between; gap: 9px; }
+.cancelBox { margin-top: 9px; padding: 10px; border: 1px solid #f7d2bd; border-radius: 9px; background: #fffaf6; }
+.attachments { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--case-line); }
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147482000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: rgba(29, 37, 71, .45);
+}
+.modal {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 460px);
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+  border: 1px solid var(--case-line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 20px 56px rgba(27, 37, 74, .18);
+}
+/* Summary is accessed from the case toolbar, not a permanent bottom card. */
+.summaryDialog { width: min(98vw, 1250px); }
+.summaryDialog .modalBody { padding-block: 15px; }
+.summaryDialog .attachments { margin-top: 14px; }
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: none;
+  gap: 12px;
+  min-height: 46px;
+  padding: 8px 13px;
+  border: 0;
+  border-bottom: 1px solid var(--case-line);
+  border-radius: 13px 13px 0 0;
+  background: var(--merat-dialog-head, #f1f2fb);
+  color: var(--case-ink);
+}
+.modalHeader h2 {
+  margin: 0;
+  font-family: "PeydaApp", "ShabnamApp", Tahoma, sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--case-ink);
+}
+.modalHeader button {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--case-line);
+  border-radius: 9px;
+  background: #fff;
+  color: #67728b;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.modalBody {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 15px 13px;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.modalBody .label { margin: 5px 0 3px; font-size: 12.5px; }
+.modalBody .field { margin: 3px 0 7px; }
+.modalTextarea { min-height: 82px; max-height: 116px; resize: vertical; }
+.modalActions {
+  display: flex;
+  flex: none;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 9px 15px 11px;
+  border-top: 1px solid #edf0f6;
+  background: #fff;
+}
+.modalActions button { min-height: 34px; padding: 5px 13px; font-size: 12.5px; }
+.dateBox { position: relative; max-width: 100%; }
+.page :where(button):focus-visible { outline: none; }
+.modal :where(input, textarea, button):focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+@media (max-width: 800px) {
+  .page { padding: 3px 4px 12px; }
+  .breadcrumb { gap: 5px; padding: 6px 7px; }
+  .crumbPerson { flex-basis: 150px; }
+  .metaBar { gap: 6px; }
+  .panelHeading { flex-wrap: wrap; }
+  .panelTitle strong { font-size: 13.5px; }
+  .modalOverlay { padding: 10px; }
+  .modal { width: min(100%, 460px); }
+  .modalBody { padding: 9px 11px 11px; }
+}
+@media (max-height: 620px) {
+  .modalOverlay { align-items: flex-start; }
+  .modal { margin-block: auto; }
+  .modalTextarea { min-height: 62px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page button { transition: none; }
+}
+
+/* Destination and investigator popup menus use the shared portal-based
+   SearchableDropdown, so no inline list occupies modal layout space. */
+.pickerError {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+  color: #a72039;
+  font-size: 12.5px;
+}
+.pickerError button {
+  align-self: flex-start;
+  border: 1px solid #f3b9c1;
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: #fff4f5;
+  color: #a72039;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Parent / child referral hierarchy */
+.mainCaseBar {
+  border-inline-start: 4px solid var(--case-primary);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--case-primary) 5%, #fff), #fff 55%);
+}
+.mainCaseBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border: 1px solid color-mix(in srgb, var(--case-primary) 24%, #fff);
+  border-radius: 999px;
+  color: var(--case-primary);
+  background: color-mix(in srgb, var(--case-primary) 9%, #fff);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.hozePanel { --group-color: #0d9488; --group-soft: #effaf8; }
+.provincePanel { --group-color: #3478c8; --group-soft: #f0f6ff; }
+.investigatorPanel { --group-color: #7255d9; --group-soft: #f5f2ff; }
+.hozePanel .panelHeading,
+.provincePanel .panelHeading,
+.investigatorPanel .panelHeading {
+  border-inline-start: 4px solid var(--group-color);
+  background: linear-gradient(90deg, var(--group-soft), #fbfcff 72%);
+}
+.groupHint {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-start: 3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: var(--group-color, var(--case-muted));
+  background: var(--group-soft, #f2f4f8);
+  font-size: 10.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.childList { display: grid; gap: 7px; }
+.childCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 9px 11px;
+  border: 1px solid var(--case-line);
+  border-inline-start: 3px solid var(--group-color, #7255d9);
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--group-soft, #f7f5ff), #fff 42%);
+}
+.hozePanel .childCard { --group-color: #0d9488; --group-soft: #effaf8; }
+.provincePanel .childCard { --group-color: #3478c8; --group-soft: #f0f6ff; }
+.investigatorCard { --group-color: #7255d9; --group-soft: #f5f2ff; }
+.childWaiting { box-shadow: inset 0 0 0 1px rgba(205, 145, 35, .035); }
+.childReceived { border-inline-start-color: #16945e; }
+.childIndex {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 27px;
+  width: 27px;
+  height: 27px;
+  border-radius: 8px;
+  color: var(--group-color, var(--case-primary));
+  background: var(--group-soft, #f2f3ff);
+  border: 1px solid color-mix(in srgb, var(--group-color, var(--case-primary)) 20%, #fff);
+  font-size: 12px;
+  font-weight: 700;
+}
+.deleteReferralButton {
+  flex: 0 0 auto;
+  border: 1px solid #f1c3cc;
+  border-radius: 8px;
+  padding: 4px 10px;
+  min-height: 30px;
+  background: #fff5f6;
+  color: #b42339;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.deleteReferralButton:hover:not(:disabled) { background: #ffe7eb; border-color: #e6a8b5; }
+.deleteReferralButton:focus-visible { outline: 2px solid #b42339; outline-offset: 2px; }
+.deleteReferralButton:disabled { opacity: .55; cursor: not-allowed; }
+.childContent { flex: 1 1 auto; min-width: 0; }
+.childTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.childTitleRow strong {
+  overflow-wrap: anywhere;
+  color: var(--case-ink);
+  font-size: 13px;
+  font-weight: 650;
+}
+.childStatus {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.statusWaiting { color: #946319; background: #fff6e5; border: 1px solid #f1dfb8; }
+.statusReceived { color: #147449; background: #eaf8f0; border: 1px solid #c5e9d3; }
+.childMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px 14px;
+  margin-top: 3px;
+  color: var(--case-muted);
+  font-size: 11.5px;
+}
+/* Official electoral-district and province labels in the child cards. */
+.childLocation {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px 12px;
+  padding-top: 3px;
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: var(--case-muted);
+}
+.childLocation span + span { padding-inline-start: 10px; border-inline-start: 1px solid var(--case-line); }
+.investigatorList .childCard { background: linear-gradient(90deg, #f5f2ff, #fff 48%); }
+@media (max-width: 640px) {
+  .groupHint { display: none; }
+  .childCard { align-items: flex-start; padding: 8px; }
+  .childTitleRow { align-items: flex-start; flex-direction: column; gap: 3px; }
+  .childMeta { gap: 2px 9px; }
+}
+
+/* Single-line focus treatment in the referral dialog. */
+.modal :where(input, textarea, select):focus { outline: none; border-color: var(--case-primary); box-shadow: none; }
+.modal .dateBox :where(input, button):focus-visible { outline: none; box-shadow: none; }
+
+/* Research V2 worksheet editor below an investigator assignment */
+.investigatorCard{flex-wrap:wrap}
+.worksheetHolder{width:100%;flex:0 0 100%;min-width:0}
+
+/* Matching entry point for provincial staff: open the same read-only evidence viewer. */
+.dossierViewButton { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:37px;
+  margin-inline-start:auto; flex:0 0 auto; border:1px solid #b9c9ed; border-radius:10px; padding:7px 13px;
+  font:inherit; font-size:12px; font-weight:650; color:#274f96;
+  background:linear-gradient(110deg,#eef4ff,#fafdff); cursor:pointer; }
+.dossierViewButton:hover { background:#e5eeff; border-color:#8fa9e7; }
+.dossierViewButton:focus-visible { outline:2px solid #6a69d9; outline-offset:2px; }
+@media(max-width:720px){.dossierViewButton{width:100%;}}

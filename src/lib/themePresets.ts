@@ -63,9 +63,17 @@ function makeTheme(seed: ThemeSeed): ThemePreset {
 
 export const themePresets: ThemePreset[] = [
   makeTheme({
+    id: "bazargani-default",
+    name: "بازرگانی (پیش‌فرض)",
+    description: "سرمه‌ای و نیلی؛ فونت و کارت‌بندی مطابق سامانه بازرگانی.",
+    colors: ["#202443", "#30365F", "#5B50DC"],
+    dark: "#171A36", soft: "#EEEFFF", accent: "#E6E5FF",
+    shadow: "rgba(48,50,95,.16)",
+  }),
+  makeTheme({
     id: "petrol-teal",
-    name: "آبی نفتی",
-    description: "رسمی، آرام و مناسب برای فضای سازمانی.",
+    name: "پیش‌فرض مرآت",
+    description: "تم اصلی مرآت با ترکیب سبزآبی و آبی نفتی سازمانی.",
     colors: ["#245F68", "#2E7C83", "#214F5A"],
     dark: "#193F48",
     soft: "#EDF7F8",
@@ -204,7 +212,7 @@ export const themePresets: ThemePreset[] = [
   }),
 ];
 
-export const defaultThemeId = "petrol-teal";
+export const defaultThemeId = "bazargani-default";
 
 export function getThemePreset(id?: string | null): ThemePreset {
   return themePresets.find((item) => item.id === id) ?? themePresets[0];

@@ -1,0 +1,54 @@
+/* Profile V2 — consistent with Merat's Peyda headings, Shabnam forms and theme. */
+.wrapper{--profile-accent:var(--app-primary,#5d52e4);max-width:1280px;margin:0 auto;padding:14px clamp(8px,2vw,24px) 48px;font-family:var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);color:var(--ui-text,#273754);}
+.wrapper *{box-sizing:border-box;}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:22px 25px;margin-bottom:18px;border-radius:22px;position:relative;overflow:hidden;border:1px solid color-mix(in srgb,var(--profile-accent) 24%,var(--ui-line,#e0e6f0));background:linear-gradient(110deg,color-mix(in srgb,var(--profile-accent) 10%,var(--ui-surface,#fff)),var(--ui-surface,#fff) 77%);}
+.hero::before{content:"";position:absolute;inset-inline-end:-85px;bottom:-120px;width:240px;height:240px;border:1px solid color-mix(in srgb,var(--profile-accent) 17%,transparent);border-radius:50%;pointer-events:none;}
+.heroIdentity{display:flex;align-items:center;gap:20px;position:relative;z-index:1;min-width:0;}
+.avatar{width:92px;height:92px;flex:none;position:relative;display:grid;place-items:center;border-radius:24px;background:var(--ui-surface,#fff);border:3px solid var(--ui-surface,#fff);box-shadow:0 9px 26px #213c641c;color:var(--profile-accent);font:800 36px var(--merat-font-heading,"PeydaApp",sans-serif);}
+.avatar>img{width:100%;height:100%;display:block;object-fit:cover;border-radius:20px;}
+.avatarEdit{position:absolute;left:-7px;bottom:-6px;border:2px solid var(--ui-surface,#fff);border-radius:10px;width:32px;height:32px;color:white;background:var(--profile-accent);cursor:pointer;font:700 18px/1 Arial,sans-serif;}
+.avatarEdit:disabled{opacity:.6;cursor:wait;}
+.heroCopy{min-width:0;}.eyebrow{font-size:12px;color:var(--profile-accent);font-weight:800;}
+.heroCopy h1{font:800 clamp(23px,2.4vw,30px)/1.6 var(--merat-font-heading,"PeydaApp",sans-serif);margin:0;color:var(--ui-text,#273754);}
+.heroCopy p{font-size:13px;color:var(--ui-muted,#6c7c92);margin:3px 0 10px;line-height:1.8;}
+.heroLinks{display:flex;flex-wrap:wrap;gap:8px;}.heroLinks a{text-decoration:none;border:1px solid color-mix(in srgb,var(--profile-accent) 27%,var(--ui-line,#dae4f1));background:var(--ui-surface,#fff);color:var(--profile-accent);padding:6px 12px;border-radius:10px;font-size:12px;}
+.heroLinks a:hover{background:color-mix(in srgb,var(--profile-accent) 9%,var(--ui-surface,#fff));}
+.heroCaption{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:128px;position:relative;z-index:1;border-right:1px solid var(--ui-line,#d9e5f0);padding-right:22px;}
+.heroCaption span{font:800 28px/1.3 var(--merat-font-heading,"PeydaApp",sans-serif);color:var(--profile-accent);}.heroCaption small{color:var(--ui-muted,#738199);font-size:12px;}
+.primaryGrid{display:grid;grid-template-columns:minmax(0,0.95fr) minmax(0,1.35fr);gap:16px;align-items:stretch;}
+.panel{border:1px solid var(--ui-line,#dfe6f1);border-radius:18px;background:var(--ui-surface,#fff);padding:20px;margin-bottom:16px;box-shadow:0 4px 18px #1a31540a;min-width:0;scroll-margin-top:20px;}
+.sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--ui-line,#e2e9f2);padding-bottom:13px;margin-bottom:17px;}
+.titleGroup{display:flex;align-items:center;gap:11px;min-width:0;}
+.titleIcon{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;background:color-mix(in srgb,var(--profile-accent) 10%,var(--ui-surface,#fff));color:var(--profile-accent);border-radius:12px;font-size:23px;}
+.sectionTitle h2{font:750 17px/1.55 var(--merat-font-heading,"PeydaApp",sans-serif);margin:0 0 3px;}
+.sectionTitle p{font:400 12px/1.65 var(--merat-font-body,"ShabnamApp",sans-serif);color:var(--ui-muted,#78859a);margin:0;}
+.readonlyTag{border:1px solid var(--ui-line,#dfe5ef);border-radius:9px;background:var(--ui-soft,#f5f8fd);color:var(--ui-muted,#68768a);padding:5px 12px;font-size:12px;white-space:nowrap;}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.field{min-width:0;min-height:83px;border-radius:13px;border:1px solid var(--ui-line,#e0e7f1);background:var(--ui-soft,#f7f9fc);display:flex;flex-direction:column;justify-content:center;gap:7px;padding:12px 14px;}
+.field span{font-size:12px;color:var(--ui-muted,#728198);}.field strong{color:var(--ui-text,#27415f);font-size:14px;font-weight:600;overflow-wrap:anywhere;text-align:right;}
+.photoBody{display:flex;align-items:flex-start;gap:16px;}.photoInfo{min-width:0;width:100%;padding:16px;border-radius:14px;background:var(--ui-soft,#f7f9fc);border:1px solid var(--ui-line,#e1e8f2);}.photoInfo strong{font:700 15px/1.6 var(--merat-font-heading,"PeydaApp",sans-serif);}
+.photoInfo p{font-size:12.5px;line-height:2;color:var(--ui-muted,#738199);margin:6px 0 15px;}
+.passwordForm{display:flex;flex-direction:column;gap:8px;}.passwordForm label{font-size:12.5px;color:var(--ui-text,#334155);font-weight:600;}
+.passwordForm>input,.passwordColumns input{width:100%;height:41px;border:1px solid var(--ui-line,#ccd8e9);border-radius:10px;background:var(--ui-surface,#fff);color:var(--ui-text,#263d54);font:400 13px var(--merat-font-body,"ShabnamApp",sans-serif);padding:0 13px;outline:0;direction:ltr;text-align:left;}
+.passwordForm input:focus{border-color:var(--profile-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--profile-accent) 13%,transparent);}
+.passwordColumns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:5px;}.passwordColumns>div{display:flex;flex-direction:column;gap:7px;min-width:0;}
+.passwordFooter{display:flex;justify-content:space-between;gap:9px;align-items:center;margin-top:8px;flex-wrap:wrap;}
+.showPassword{display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:400!important;color:var(--ui-muted,#60748a)!important;}.showPassword input{accent-color:var(--profile-accent);}
+.passwordHint{font-size:11.5px;line-height:1.85;color:var(--ui-muted,#718096);}
+.primary,.secondary{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 16px;border-radius:10px;font:600 13px var(--merat-font-body,"ShabnamApp",sans-serif);cursor:pointer;transition:filter .18s,transform .18s;}
+.primary{color:white;background:var(--profile-accent);border:1px solid var(--profile-accent);box-shadow:0 6px 14px color-mix(in srgb,var(--profile-accent) 16%,transparent);}
+.secondary{color:var(--ui-text,#29476b);border:1px solid var(--ui-line,#cbd6e5);background:var(--ui-surface,#fff);}
+.primary:hover:not(:disabled),.secondary:hover:not(:disabled){filter:brightness(.96);transform:translateY(-1px);}
+.primary:disabled,.secondary:disabled{opacity:.55;cursor:not-allowed;}
+.hint{font-size:13px;line-height:2;color:var(--ui-muted,#75849a);margin:0 0 14px;}
+.stored{display:flex;gap:15px;align-items:center;flex-wrap:wrap;padding:13px;margin-bottom:15px;border-radius:12px;background:var(--ui-soft,#f6f8fb);border:1px solid var(--ui-line,#e2e7ee);}
+.storedHeading{font:700 14px var(--merat-font-heading,"PeydaApp",sans-serif);color:var(--profile-accent);}
+.stored img{max-width:min(100%,380px);max-height:115px;object-fit:contain;background:white;border:1px solid #e1e5ed;border-radius:8px;}.stored small{font-size:12px;color:var(--ui-muted,#64748b);}
+.signatureEditor{border:1px solid var(--ui-line,#e1e8f2);background:var(--ui-soft,#f8faff);padding:15px;border-radius:14px;}
+.signatureEditor>label{display:block;font-size:13px;font-weight:600;margin-bottom:10px;}.canvas{display:block;width:min(100%,960px);aspect-ratio:3/1;height:auto;border-radius:11px;border:2px dashed color-mix(in srgb,var(--profile-accent) 38%,#ccd5e4);background:white;touch-action:none;cursor:crosshair;}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:13px;}.hiddenInput{display:none;}
+.message,.error,.success{padding:10px 13px;border-radius:10px;font-size:12.5px;line-height:1.9;margin:10px 0;border:1px solid var(--ui-line,#dde6ee);}.message{background:var(--ui-soft,#f6f8fc);}.error{background:#fff3f1;color:#a43333;border-color:#ffd8d3;}.success{background:#eefaf2;color:#166534;border-color:#bfdfca;}
+@media(max-width:950px){.primaryGrid{grid-template-columns:1fr;}.photoBody{min-height:0;}.heroCaption{display:none;}}
+@media(max-width:720px){.fields{grid-template-columns:repeat(2,minmax(0,1fr));}.hero{padding:17px;}.avatar{width:76px;height:76px;border-radius:19px;}.avatar>img{border-radius:16px;}.heroIdentity{gap:14px;}}
+@media(max-width:560px){.wrapper{padding:8px 7px 25px;}.fields{grid-template-columns:1fr;}.passwordColumns{grid-template-columns:1fr;}.photoBody{flex-direction:column;align-items:flex-start;gap:11px;}.panel{padding:14px;border-radius:14px;}.heroLinks a{font-size:11px;padding:5px 8px;}.heroCopy h1{font-size:20px;}.heroCopy p{font-size:11px;}.hero{align-items:flex-start;}.titleIcon{width:36px;height:36px;flex-basis:36px;}.readonlyTag{font-size:10px;}}
+@media(prefers-reduced-motion:reduce){.primary,.secondary{transition:none;}}

@@ -326,8 +326,11 @@ body.merat-drawer-open .research-page-shell{padding-right:292px}
 .z-\[9999\]{z-index:9999}
 .z-\[999\]{z-index:999}
 .space-y-1>*+*{margin-top:.25rem}.space-y-4>*+*{margin-top:1rem}
-.bnaznin,.shabnam,.Roya,.titr{font-family:"ShabnamApp",Tahoma,Arial,sans-serif!important}.titr{font-weight:500}
-input,textarea,select,button{font-family:"ShabnamApp",Tahoma,Arial,sans-serif}input,textarea,select{font-size:max(13px,1em)}
+/* Dashboard text uses Shabnam; printable legacy forms are excluded. */
+:is(.bnaznin,.shabnam,.Roya,.titr):not(.merat-legacy-print-form :is(.bnaznin,.shabnam,.Roya,.titr)){font-family:"ShabnamApp",Tahoma,Arial,sans-serif!important}
+.titr:not(.merat-legacy-print-form .titr){font-weight:500}
+input:not(.merat-legacy-print-form input),textarea:not(.merat-legacy-print-form textarea),select:not(.merat-legacy-print-form select),button:not(.merat-legacy-print-form button){font-family:"ShabnamApp",Tahoma,Arial,sans-serif}
+input:not(.merat-legacy-print-form input),textarea:not(.merat-legacy-print-form textarea),select:not(.merat-legacy-print-form select){font-size:max(13px,1em)}
 /* ===== Research case detail - modern theme-aware redesign ===== */
 .research-detail-breadcrumb-wrap{
   margin:0 4px 8px!important;
@@ -938,3 +941,156 @@ input,textarea,select,button{font-family:"ShabnamApp",Tahoma,Arial,sans-serif}in
 .research-manage-sidebar,.research-manage-content{direction:rtl}
 .research-manage-sidebar{border-right:0;border-left:1px solid color-mix(in srgb,var(--research-primary) 11%,#e2e8f0)}
 @media(max-width:760px){.research-manage-sidebar{border-left:0}}
+
+
+/* ========================================================================
+   Merat 1405/08/07 - Research dialogs: layering, vertical centering & scroll.
+   AppTopbar has a sticky z-index of 80; legacy dialogs used z-index 50 and
+   were consequently rendered UNDER the navigation/header. This scope applies
+   to research dialogs only; drawer, notifications and other pages are intact.
+   ======================================================================== */
+.research-page-content .fixed.inset-0.z-50 {
+  z-index: 2000 !important;
+}
+
+/* Old summary / referral dialogs moved the whole fixed backdrop down by
+   40px/80px using margin-top. Keep the backdrop viewport-sized instead. */
+.research-page-content .fixed.inset-0.mt-20,
+.research-page-content .fixed.inset-0.mt-10 {
+  margin-top: 0 !important;
+  padding: 16px !important;
+  align-items: safe center !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.research-page-content .fixed.inset-0.mt-20 > .bg-white,
+.research-page-content .fixed.inset-0.mt-10 > .bg-white {
+  flex: 0 1 auto;
+  width: min(640px, 100%) !important;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Smaller legacy dialogs were fixed at top:20px (even on short screens).
+   Place these above the topbar and in the actual viewport center. */
+.research-page-content .fixed.inset-0.z-50 > .bg-white.absolute.top-5 {
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: min(560px, calc(100vw - 32px)) !important;
+  max-height: calc(100vh - 32px) !important;
+  max-height: calc(100dvh - 32px) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+}
+
+/* Wider summary viewers are also kept inside the visible viewport. */
+.research-page-content .fixed.inset-0.z-50 > .bg-white.absolute.top-8 {
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 640px) {
+  .research-page-content .fixed.inset-0.mt-20,
+  .research-page-content .fixed.inset-0.mt-10 {
+    padding: 10px !important;
+  }
+  .research-page-content .fixed.inset-0.mt-20 > .bg-white,
+  .research-page-content .fixed.inset-0.mt-10 > .bg-white,
+  .research-page-content .fixed.inset-0.z-50 > .bg-white.absolute.top-5,
+  .research-page-content .fixed.inset-0.z-50 > .bg-white.absolute.top-8 {
+    max-height: calc(100vh - 20px) !important;
+    max-height: calc(100dvh - 20px) !important;
+  }
+  .research-page-content .fixed.inset-0.z-50 > .bg-white.absolute.top-8 {
+    width: calc(100vw - 20px) !important;
+  }
+}
+
+/* Modal polish v6: shared research dialogs, referrals, summaries, attachments.
+   Apply AFTER the prior z-index/viewport fixes; no change to image lightboxes. */
+.research-modal-root {z-index:2147483400;padding:14px;isolation:isolate;}
+.research-modal-backdrop {background:rgba(24,32,57,.43);backdrop-filter:blur(3px);}
+.research-modal-card {
+  width:min(530px,calc(100vw - 28px));
+  max-height:calc(100dvh - 28px);border:1px solid #dce4ef;border-radius:18px;
+  box-shadow:var(--merat-dialog-shadow,0 24px 72px rgba(27,37,74,.2));
+  overflow:hidden;display:flex;flex-direction:column;background:#fff;
+  font-family:"ShabnamApp",Tahoma,sans-serif;
+}
+.research-modal-header {
+  flex-shrink:0;display:flex;align-items:center;min-height:54px;padding:11px 20px;
+  color:var(--merat-dialog-ink,#263756);background:var(--merat-dialog-head,#f5f5fe);
+  border-bottom:1px solid var(--merat-dialog-border,#dce4ef);
+  border-right:3px solid var(--app-primary,#5d52eb);
+  font:700 16px/1.65 "PeydaApp","ShabnamApp",Tahoma,sans-serif;
+}
+.research-modal-body{min-height:0;overflow-y:auto;padding:20px;line-height:1.9;font-size:14px;color:#364563;}
+.research-modal-actions{margin-top:22px;display:flex;gap:9px;align-items:center;justify-content:flex-start;flex-wrap:wrap;}
+.research-modal-actions .research-button {min-height:38px;padding:0 19px;border-radius:10px;font-size:13.5px;font-weight:500;}
+.research-modal-actions .research-button.primary{background:var(--app-primary,#5d52eb);color:#fff;border:1px solid transparent;box-shadow:0 5px 13px color-mix(in srgb,var(--app-primary,#5d52eb) 18%,transparent);}
+.research-modal-actions .research-button.secondary{color:#54627e;background:#f7f8fc;border:1px solid #dce3ee;box-shadow:none;}
+/* Legacy research utility dialogs: correct giant banners and narrow controls. */
+.research-page-content .fixed.inset-0:has(> .bg-white){z-index:2147481000!important;}
+.research-page-content .fixed.inset-0:has(> .bg-white) > .bg-white{max-height:calc(100dvh - 28px)!important;}
+.research-page-content .fixed.inset-0:has(> .bg-white) > .bg-white :is(label, p){line-height:1.85;}
+.research-page-content .fixed.inset-0:has(> .bg-white) > .bg-white :is(h1,h2,h3){font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif;font-size:16px;font-weight:700;color:#253856;}
+.research-page-content .fixed.inset-0:has(> .bg-white) > .bg-white :is(button:not([class*="absolute"])){min-height:34px;border-radius:9px;font-family:"ShabnamApp",Tahoma,sans-serif;font-size:13.5px;}
+/* Fallback when modal is portaled to body: only a pale bar, never a giant gradient. */
+body .fixed.inset-0 .bg-gray-200.-mx-6,
+body .fixed.inset-0 .bg-sky-600.-mx-6,
+body .fixed.inset-0 .bg-blue-600.-mx-6,
+body .fixed.inset-0 .bg-purple-600.-mx-6{
+  background:var(--merat-dialog-head,#f5f5fe)!important;
+  color:var(--merat-dialog-ink,#263756)!important;
+  padding:12px 17px!important;
+  border-bottom:1px solid #dce4ef!important;
+  border-radius:14px 14px 0 0!important;
+}
+body .fixed.inset-0 :is(.bg-gray-200,.bg-sky-600,.bg-blue-600,.bg-purple-600).-mx-6 h2{color:#263756!important;font:700 16px/1.6 "PeydaApp","ShabnamApp",Tahoma,sans-serif!important;}
+@media(max-width:640px){.research-modal-root{padding:10px}.research-modal-card{max-height:calc(100dvh - 20px)}.research-modal-body{padding:16px}.research-modal-header{padding:10px 15px}}
+
+
+/* Modal title alignment — shared root modal system, route-level priority.
+   Keep this after historic .bg-gray-200 / modal-header utility overrides. */
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy {
+  box-sizing:border-box;
+  min-height:54px;
+  margin:0 -24px 14px!important;
+  padding:11px 20px!important;
+  background:var(--merat-modal-title-surface)!important;
+  color:var(--merat-modal-title-color)!important;
+  border:0!important;
+  border-bottom:1px solid var(--merat-modal-title-border)!important;
+  border-right:3px solid var(--app-primary,#5b50dc)!important;
+  border-radius:16px 16px 0 0!important;
+  position:relative;
+  top:auto;
+}
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy :is(h1,h2,h3,strong,span,label) {
+  margin:0;
+  color:var(--merat-modal-title-color)!important;
+  font:600 16px/1.65 "PeydaApp","ShabnamApp",Tahoma,sans-serif!important;
+}
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy+hr {display:none!important;}
+@media(max-width:640px){body .fixed.inset-0 .bg-white .merat-modal-header--legacy {min-height:50px;padding:9px 15px!important;margin-bottom:12px!important;}}
+
+
+/* Semantic modal tones: overrides old research route fallback title colors. */
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy:is(.merat-modal-tone--return,.merat-modal-tone--confirm,.merat-modal-tone--notice,.merat-modal-tone--neutral){
+  background:var(--merat-modal-title-surface)!important;
+  color:var(--merat-modal-title-color)!important;
+  border-bottom:1px solid var(--merat-modal-title-border)!important;
+  border-right:3px solid var(--merat-modal-title-accent)!important;
+}
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy:is(.merat-modal-tone--return,.merat-modal-tone--confirm,.merat-modal-tone--notice,.merat-modal-tone--neutral) :is(h1,h2,h3,strong){
+  color:var(--merat-modal-title-color)!important;
+}

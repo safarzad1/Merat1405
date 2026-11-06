@@ -205,3 +205,99 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* Per-instance compact searchable menu: tighter top edge, aligned search box,
+   denser options. Other dropdown menus retain their existing dimensions. */
+.menuCompact{padding:3px;border-radius:9px;box-shadow:0 10px 25px rgba(23,34,51,.14)}
+.menuCompact .searchWrap{padding:0 0 3px}
+.menuCompact .searchInput{height:33px;border-radius:7px;font-size:12.8px}
+.menuCompact .option{min-height:34px;padding:4px 8px;border-radius:7px;line-height:1.6;font-size:12.8px}
+.menuCompact .optionText strong{font-size:12.8px}
+
+/* SearchableDropdown: searchable portal menu (above dialog overlays). */
+.searchMenu {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 5px;
+  border: 1px solid color-mix(in srgb, var(--app-primary, #6354df) 22%, #d7deed);
+  border-radius: 11px;
+  background: #fff;
+  color: #29364a;
+  box-shadow: 0 15px 36px rgba(26, 37, 70, .2);
+  font-family: "ShabnamApp", "Shabnam", Tahoma, Arial, sans-serif;
+  box-sizing: border-box;
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+.searchMenu *, .searchMenu *::before, .searchMenu *::after { box-sizing: border-box; }
+.searchBox {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 41px;
+  padding: 0 9px;
+  margin-bottom: 4px;
+  border: 1px solid #d9dfed;
+  border-radius: 8px;
+  background: #f9fbff;
+  color: #6b7692;
+}
+.searchBox:focus-within {
+  border-color: var(--app-primary, #6354df);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--app-primary, #6354df) 12%, transparent);
+}
+.searchBox input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 38px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #29364a;
+  font: inherit;
+  font-size: 13px;
+  text-align: right;
+  direction: rtl;
+}
+.searchBox input::placeholder { color: #8995a9; }
+.clearButton {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #6b7692;
+  cursor: pointer;
+}
+.clearButton:hover { background: #e9edfa; }
+.optionList {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1 1 auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #b9c2d4 transparent;
+}
+.searchMenu .option {
+  min-height: 38px;
+  font-size: var(--dropdown-item-font-size, 13px);
+}
+.searchMenu .optionText strong { font-size: var(--dropdown-item-font-size, 13px); }
+.searchMenu .option:focus-visible { outline: 2px solid var(--app-primary, #6354df); outline-offset: -2px; }
+
+/* Keep the investigator selector compact inside workflow dialogs. */
+.searchMenuCompact { padding: 4px; border-radius: 9px; box-shadow: 0 9px 23px rgba(26,37,70,.17); }
+.searchMenuCompact .searchBox { min-height: 34px; margin-bottom: 2px; padding: 0 7px; }
+.searchMenuCompact .searchBox input { height: 32px; font-size: 12.5px; }
+.searchMenuCompact .option { min-height: 32px; padding: 4px 8px; line-height: 1.5; gap: 5px; }
+.searchMenuCompact .optionText { gap: 0; }
+.searchMenuCompact .optionText strong { font-size: 12.5px; }
+.searchMenuCompact .optionText small { font-size: 11px; }

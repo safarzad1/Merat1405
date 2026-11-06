@@ -1,0 +1,26 @@
+.root{margin-top:20px;padding:16px;border:1px solid var(--border-color,#e1e3eb);border-radius:13px;background:var(--card-bg,#fff)}
+.header{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.header h2{margin:0 0 5px;font-size:16px;font-weight:750}
+.header p{margin:0;color:var(--text-secondary,#697081);font-size:12px}
+.header button{border:0;border-radius:9px;padding:10px 14px;background:#6252d8;color:white;cursor:pointer;white-space:nowrap;font:inherit;font-size:12px}
+.header button:disabled{opacity:.65;cursor:wait}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:16px}
+.metrics>div{border:1px solid var(--border-color,#e1e3eb);border-radius:9px;padding:10px;display:flex;gap:5px;flex-direction:column}
+.metrics span{font-size:12px;color:var(--text-secondary,#697081)}
+.metrics strong{font-size:20px;font-variant-numeric:tabular-nums}
+.error{color:#b91c1c;font-size:13px;margin:14px 0 0}
+.success{font-size:13px;color:#16794b;margin:12px 0 0}
+.info{font-size:12px;color:var(--text-secondary,#697081);margin:12px 0}
+.tableWrap{overflow-x:auto;max-height:420px;overflow-y:auto;border:1px solid var(--border-color,#e1e3eb);border-radius:9px;margin-top:12px}
+.tableWrap table{width:100%;border-collapse:collapse;text-align:right;min-width:650px;font-size:12px}
+.tableWrap th,.tableWrap td{padding:9px 11px;border-bottom:1px solid var(--border-color,#e1e3eb);vertical-align:top}
+.tableWrap th{background:var(--card-bg,#f8f9fc);position:sticky;top:0}
+.tableWrap code{font-size:11px;direction:ltr}
+@media(max-width:640px){.root{padding:11px}.metrics{gap:5px}.metrics>div{padding:8px}.metrics strong{font-size:17px}}
+
+.coverage{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+.coverage>div{border:1px solid var(--border-color,#e1e3eb);background:var(--card-bg,#fff);border-radius:9px;padding:9px;display:flex;flex-direction:column;gap:4px}
+.coverage span{font-size:12px;color:var(--text-secondary,#697081)}
+.coverage strong{font-size:12px}
+.coverage small{font-size:11px;color:var(--text-secondary,#697081)}
+@media(max-width:640px){.coverage{grid-template-columns:repeat(2,minmax(0,1fr))}}

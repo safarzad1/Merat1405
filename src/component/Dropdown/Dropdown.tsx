@@ -4,10 +4,14 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import styles from "./Dropdown.module.css";
 import type { CommonDropdownProps, DropdownValue } from "./types";
-import { createDropdownMenuStyle, getDropdownPosition, type DropdownPosition } from "./dropdownUtils";
+import { createDropdownMenuStyle, getDropdownPosition, normalizeDropdownSearch, type DropdownPosition } from "./dropdownUtils";
 
 export type DropdownProps<T extends DropdownValue = string> = CommonDropdownProps<T> & {
   menuWidth?: number;
+  /** Optional per-instance cap for a compact scrollable dropdown menu. */
+  maxMenuHeight?: number;
+  /** Close the visual gap above the search box for compact, searchable menus. */
+  compactMenu?: boolean;
 };
 
 function ChevronIcon({ open }: { open: boolean }) {
@@ -46,8 +50,10 @@ export default function Dropdown<T extends DropdownValue = string>({
   className = "",
   ariaLabel = "انتخاب گزینه",
   leadingIcon,
-  dropdownZIndex = 2147483000,
+  dropdownZIndex = 2147483600,
   menuWidth,
+  maxMenuHeight,
+  compactMenu = false,
   error = false,
   searchable = false,
   searchPlaceholder = "جستجو...",
@@ -74,11 +80,10 @@ export default function Dropdown<T extends DropdownValue = string>({
   }, [options]);
 
   const filteredOptions = useMemo(() => {
-    const query = searchText.trim().toLocaleLowerCase();
+    const query = normalizeDropdownSearch(searchText);
     if (!searchable || !query) return normalizedOptions;
     return normalizedOptions.filter((option) =>
-      String(option.label || "").toLocaleLowerCase().includes(query) ||
-      String(option.description || "").toLocaleLowerCase().includes(query),
+      normalizeDropdownSearch(`${option.label ?? ""} ${option.description ?? ""} ${option.searchText ?? ""}`).includes(query),
     );
   }, [normalizedOptions, searchable, searchText]);
 
@@ -88,7 +93,17 @@ export default function Dropdown<T extends DropdownValue = string>({
   );
 
   function updatePosition() {
-    setPosition(getDropdownPosition(rootRef, menuWidth));
+    // A compact list should prefer opening below its field. The previous
+    // positioning logic assumed a 180px+ popup even for a single option,
+    // making the «نقطه خبرخیز» menu unnecessarily appear above the field.
+    const optionCount = filteredOptions.length;
+    const estimatedMenuHeight = Math.min(
+      maxMenuHeight ?? 300,
+      10 + (optionCount ? optionCount * (compactMenu ? 34 : 39) : 45) + (searchable ? 50 : 0),
+    );
+    setPosition(getDropdownPosition(
+      rootRef, menuWidth, maxMenuHeight, compactMenu ? 2 : 5, estimatedMenuHeight,
+    ));
   }
 
   useEffect(() => setMounted(true), []);
@@ -120,7 +135,7 @@ export default function Dropdown<T extends DropdownValue = string>({
       window.removeEventListener("resize", handleViewportChange);
       window.removeEventListener("scroll", handleViewportChange, true);
     };
-  }, [open, menuWidth]);
+  }, [open, menuWidth, maxMenuHeight, compactMenu]);
 
   useEffect(() => {
     if (disabled || loading) setOpen(false);
@@ -141,7 +156,7 @@ export default function Dropdown<T extends DropdownValue = string>({
         <div
           ref={menuRef}
           id={listId}
-          className={styles.menu}
+          className={`${styles.menu} ${compactMenu ? styles.menuCompact : ""}`}
           role="listbox"
           aria-label={ariaLabel}
           style={createDropdownMenuStyle(position, dropdownZIndex)}

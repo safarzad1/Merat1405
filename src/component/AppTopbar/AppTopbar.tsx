@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import SocketStatus from "@/component/SocketStatus";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./AppTopbar.module.css";
-import { defaultThemeId, getThemePreset } from "@/lib/themePresets";
 import legacyCouncilTitle from "./assets/legacy-council-title.png";
 import legacyMeratMark from "./assets/legacy-merat-mark.png";
 
@@ -18,19 +18,24 @@ type StoredUser = {
   Mahal?: string | number | null;
   DateNow?: string | null;
   FullName?: string | null;
+  OnvanPost?: string | null;
   OnvanSemat?: string | null;
+  NameMahal?: string | null;
 };
 
 type MenuEntry = {
   label: string;
   href?: string;
-  icon: "dashboard" | "news" | "research" | "people" | "election" | "users" | "mail" | "theme";
+  icon: "dashboard" | "tasks" | "news" | "research" | "people" | "election" | "users" | "mail" | "theme" | "settings";
   children?: Array<{ label: string; href: string }>;
 };
 
 function Icon({ name }: { name: MenuEntry["icon"] | "logout" | "chevron" | "menu" | "close" | "user" }) {
   if (name === "dashboard") {
     return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="14" width="6.5" height="6.5" rx="1.5"/></svg>;
+  }
+  if (name === "tasks") {
+    return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="m7 9 2 2 3-4M14 9h3M7 16h10"/></svg>;
   }
   if (name === "news") {
     return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11v16H5z"/><path d="M16 8h3v10a2 2 0 0 1-2 2M8 8h5M8 12h5M8 16h3"/></svg>;
@@ -53,6 +58,9 @@ function Icon({ name }: { name: MenuEntry["icon"] | "logout" | "chevron" | "menu
   if (name === "theme") {
     return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.9 0 3.5-1.3 3.5-3 0-.7-.2-1.3-.6-1.8-.3-.4-.4-.8-.4-1.3 0-1.3 1-2.4 2.3-2.4h1.1a3.6 3.6 0 0 0 3.6-3.6A8.9 8.9 0 0 0 12 3.5Z"/><circle cx="7.7" cy="11.5" r="1"/><circle cx="10.2" cy="8" r="1"/><circle cx="14" cy="8.3" r="1"/><circle cx="16.4" cy="12" r="1"/></svg>;
   }
+  if (name === "settings") {
+    return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.09A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.09A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.09A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.15.37.36.7.6 1 .3.3.7.4 1.1.4H21v4h-.09a1.7 1.7 0 0 0-1.51.6Z"/></svg>;
+  }
   if (name === "logout") {
     return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M18 12H9"/></svg>;
   }
@@ -74,16 +82,25 @@ function pathActive(pathname: string, href?: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export default function AppTopbar({ fullName, postId = 0 }: AppTopbarProps) {
+export default function AppTopbar({ fullName = "", postId = 0 }: AppTopbarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const headerRef = useRef<HTMLElement>(null);
+  const settingsRef = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(true);
   const [loggingOut, setLoggingOut] = useState(false);
-  const [storedUser, setStoredUser] = useState<StoredUser>({});
   const [avatarError, setAvatarError] = useState(false);
-  const [themeId, setThemeId] = useState(defaultThemeId);
+  const [avatarVersion, setAvatarVersion] = useState(0);
+  useEffect(() => {
+    const refresh = () => { setAvatarError(false); setAvatarVersion(Date.now()); };
+    window.addEventListener("merat-profile-photo-updated", refresh);
+    return () => window.removeEventListener("merat-profile-photo-updated", refresh);
+  }, []);
+  const [storedUser, setStoredUser] = useState<StoredUser>({});
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [positionTitle, setPositionTitle] = useState("");
 
   useEffect(() => {
     try {
@@ -93,14 +110,37 @@ export default function AppTopbar({ fullName, postId = 0 }: AppTopbarProps) {
       setStoredUser({});
     }
 
-    try {
-      const savedTheme = localStorage.getItem("merat-theme");
-      if (savedTheme) setThemeId(getThemePreset(savedTheme).id);
-    } catch {}
   }, []);
 
   useEffect(() => {
+    let active = true;
+    fetch("/Api/Users/CurrentPosition", { credentials: "same-origin", cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("POSITION_UNAVAILABLE");
+        const data = await response.json() as { positionTitle?: string };
+        return String(data.positionTitle ?? "").trim();
+      })
+      .then((title) => { if (active) setPositionTitle(title); })
+      .catch(() => { /* Existing login data is used as a fallback. */ });
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const refresh = () => {
+      fetch("/Api/Users/AdminAccess", { credentials: "same-origin", cache: "no-store" })
+        .then(async (response) => response.ok ? (await response.json()).isAdmin === true : false)
+        .then((allowed) => { if (active) setIsAdmin(allowed); })
+        .catch(() => { if (active) setIsAdmin(false); });
+    };
+    refresh();
+    window.addEventListener("merat-admin-updated", refresh);
+    return () => { active = false; window.removeEventListener("merat-admin-updated", refresh); };
+  }, [pathname]);
+
+  useEffect(() => {
     setOpenMenu(null);
+    setSettingsOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -114,36 +154,41 @@ export default function AppTopbar({ fullName, postId = 0 }: AppTopbarProps) {
   }, []);
 
   useEffect(() => {
+    if (!settingsOpen) return;
+    const closeWhenOutside = (event: PointerEvent) => {
+      if (!settingsRef.current?.contains(event.target as Node)) setSettingsOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSettingsOpen(false);
+        settingsRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", closeWhenOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeWhenOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [settingsOpen]);
+
+  useEffect(() => {
     document.body.classList.toggle("merat-drawer-open", mobileOpen);
     return () => document.body.classList.remove("merat-drawer-open");
   }, [mobileOpen]);
-
-  useEffect(() => {
-    function handleThemeEvent(event: Event) {
-      const next = (event as CustomEvent<string>).detail;
-      if (typeof next === "string") setThemeId(getThemePreset(next).id);
-    }
-
-    function handleStorage(event: StorageEvent) {
-      if (event.key === "merat-theme") setThemeId(getThemePreset(event.newValue).id);
-    }
-
-    window.addEventListener("merat-theme-change", handleThemeEvent as EventListener);
-    window.addEventListener("storage", handleStorage);
-
-    return () => {
-      window.removeEventListener("merat-theme-change", handleThemeEvent as EventListener);
-      window.removeEventListener("storage", handleStorage);
-    };
-  }, []);
 
   const mahalLength = String(storedUser.Mahal ?? "").length || 99;
 
   const menuItems = useMemo<MenuEntry[]>(() => {
     const base: MenuEntry[] = [
       { label: "داشبورد", href: "/Dashboard", icon: "dashboard" },
-      { label: "تنظیم تم", href: "/Theme", icon: "theme" },
     ];
+
+    // Visibility is only a convenience; database-backed authorization is enforced
+    // independently in the new module page and TaskManagementV2 stored procedure.
+    if ((postId >= 1 && postId <= 5) || (postId >= 50 && postId <= 56)) {
+      base.push({ label: "برنامه‌ها و وظایف", href: "/TaskManagement", icon: "tasks" });
+    }
 
     if (postId === 54) {
       return [
@@ -202,11 +247,23 @@ export default function AppTopbar({ fullName, postId = 0 }: AppTopbarProps) {
       ],
     });
 
+    base.push({
+      label: "تعامل و تماس",
+      icon: "people",
+      children: [
+        { label: "تعامل", href: "/TaamolSazman/Jadid" },
+        { label: "تماس", href: "/TaamolSazman/Tamas" },
+      ],
+    });
+
     if (mahalLength <= 3) {
       base.push({
         label: "کاربران",
         icon: "users",
-        children: [{ label: "مدیریت کاربران", href: "/Users/FehrestUsers/Ostan" }],
+        children: [
+          ...(Number(storedUser.Mahal) === 1 ? [{ label: "کاربران ستاد", href: "/Users/FehrestUsers/Setad" }] : []),
+          { label: "کاربران استان و شهرستان", href: "/Users/FehrestUsers/Ostan" },
+        ],
       });
     }
 
@@ -220,13 +277,13 @@ export default function AppTopbar({ fullName, postId = 0 }: AppTopbarProps) {
     });
 
     return base;
-  }, [mahalLength, postId]);
+  }, [mahalLength, postId, storedUser.Mahal]);
 
   async function logout() {
     if (loggingOut) return;
     setLoggingOut(true);
     try {
-      await fetch("/Api/Auth/Logout", { method: "POST", cache: "no-store" });
+      await fetch("/Logout", { method: "POST", cache: "no-store" });
     } finally {
       try { localStorage.removeItem("merat-user"); } catch {}
       router.replace("/Login");
@@ -234,28 +291,16 @@ export default function AppTopbar({ fullName, postId = 0 }: AppTopbarProps) {
     }
   }
 
-  const selectedTheme = getThemePreset(themeId);
-  const displayName = storedUser.FullName || fullName || "کاربر سامانه";
-
-  const themeStyle = {
-    ["--drawer-panel" as string]: selectedTheme.vars.drawerPanel,
-    ["--drawer-panel-solid" as string]: selectedTheme.vars.drawerPanelSolid,
-    ["--drawer-panel-dark" as string]: selectedTheme.vars.drawerPanelDark,
-    ["--drawer-accent" as string]: selectedTheme.vars.drawerAccent,
-    ["--drawer-accent-soft" as string]: selectedTheme.vars.drawerAccentSoft,
-    ["--drawer-item-hover" as string]: selectedTheme.vars.drawerItemHover,
-    ["--drawer-item-active-text" as string]: selectedTheme.vars.drawerItemActiveText,
-    ["--drawer-item-active-bg" as string]: selectedTheme.vars.drawerItemActiveBg,
-    ["--drawer-submenu-border" as string]: selectedTheme.vars.drawerSubmenuBorder,
-    ["--drawer-footer-bg" as string]: selectedTheme.vars.drawerFooterBg,
-    ["--drawer-logout-bg" as string]: selectedTheme.vars.drawerLogoutBg,
-    ["--drawer-logout-hover" as string]: selectedTheme.vars.drawerLogoutHover,
-    ["--banner-background" as string]: selectedTheme.vars.bannerBackground,
-    ["--banner-shadow" as string]: selectedTheme.vars.bannerShadow,
-  } as CSSProperties;
+  const storedPosition = String(storedUser.OnvanPost || storedUser.OnvanSemat || "").trim();
+  const mahalName = String(storedUser.NameMahal || "").trim();
+  const fallbackPosition = storedPosition && mahalName && !storedPosition.includes(mahalName)
+    ? `${storedPosition} ${mahalName}`
+    : storedPosition;
+  const userPosition = positionTitle || fallbackPosition;
+  const displayName = String(fullName || storedUser.FullName || "").trim() || "کاربر";
 
   return (
-    <header className={`${styles.header} ${mobileOpen ? styles.headerShifted : ""}`} style={themeStyle} ref={headerRef} dir="rtl">
+    <header className={`${styles.header} ${mobileOpen ? styles.headerShifted : ""}`} ref={headerRef} dir="rtl">
       <div className={styles.legacyBanner}>
         <Link href="/Dashboard" className={styles.legacyCouncil} aria-label="صفحه اصلی مرآت">
           <Image
@@ -279,6 +324,44 @@ export default function AppTopbar({ fullName, postId = 0 }: AppTopbarProps) {
           />
         </Link>
 
+        <div className={styles.legacyIdentity} dir="ltr">
+          <SocketStatus />
+          <div className={styles.headerSettings} ref={settingsRef}>
+            <button
+              type="button"
+              className={`${styles.settingsTrigger} ${settingsOpen || pathname === "/Theme" || pathname === "/AdminSettings" ? styles.settingsTriggerActive : ""}`}
+              aria-label="تنظیمات"
+              title="تنظیمات"
+              aria-expanded={settingsOpen}
+              aria-haspopup="true"
+              aria-controls="merat-topbar-settings"
+              onClick={() => setSettingsOpen((value) => !value)}
+            >
+              <Icon name="settings" />
+            </button>
+            {settingsOpen ? (
+              <nav id="merat-topbar-settings" className={styles.settingsDropdown} dir="rtl" aria-label="منوی تنظیمات">
+                <Link href="/Profile" className={`${styles.settingsOption} ${pathActive(pathname, "/Profile") ? styles.settingsOptionActive : ""}`} onClick={() => setSettingsOpen(false)}>
+                  <Icon name="user" />
+                  <span>پروفایل من و امضا</span>
+                </Link>
+                <Link href="/Theme" className={`${styles.settingsOption} ${pathActive(pathname, "/Theme") ? styles.settingsOptionActive : ""}`} onClick={() => setSettingsOpen(false)}>
+                  <Icon name="theme" />
+                  <span>تم و ظاهر سامانه</span>
+                </Link>
+                {isAdmin ? (
+                  <Link href="/AdminSettings" className={`${styles.settingsOption} ${pathActive(pathname, "/AdminSettings") ? styles.settingsOptionActive : ""}`} onClick={() => setSettingsOpen(false)}>
+                    <Icon name="settings" />
+                    <span>تنظیمات مدیریت سامانه</span>
+                  </Link>
+                ) : null}
+              </nav>
+            ) : null}
+          </div>
+          {userPosition ? (
+            <span className={styles.positionTitle} dir="rtl" title={userPosition}>{userPosition}</span>
+          ) : null}
+        </div>
       </div>
 
       <button
@@ -376,11 +459,11 @@ export default function AppTopbar({ fullName, postId = 0 }: AppTopbarProps) {
         </div>
 
         <div className={styles.drawerFooter}>
-          <div className={styles.drawerUserCard}>
+          <Link href="/Profile" className={styles.drawerUserCard} title="پروفایل، تغییر تصویر، کلمه عبور و ثبت امضا">
             <span className={styles.drawerUserAvatar}>
               {!avatarError ? (
                 <Image
-                  src="/person.png"
+                  src={`/Api/Users/MyAvatar?v=${avatarVersion}`}
                   alt="تصویر کاربر"
                   width={38}
                   height={38}
@@ -393,11 +476,9 @@ export default function AppTopbar({ fullName, postId = 0 }: AppTopbarProps) {
               )}
             </span>
             <span className={styles.drawerUserInfo}>
-              <strong>{displayName}</strong>
-              <small>{storedUser.OnvanSemat || "کاربر سامانه"}</small>
+              <strong title={displayName}>{displayName}</strong>
             </span>
-          </div>
-
+          </Link>
           <button type="button" className={styles.drawerLogout} onClick={logout} disabled={loggingOut}>
             <span className={styles.drawerLogoutIcon}><Icon name="logout" /></span>
             <span>{loggingOut ? "در حال خروج..." : "خروج از حساب"}</span>

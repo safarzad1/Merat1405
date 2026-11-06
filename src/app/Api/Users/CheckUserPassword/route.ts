@@ -3,7 +3,7 @@ import sql from "mssql";
 import { getConnection } from "@/lib/db";
 import { generateToken } from "@/lib/auth";
 
-const MAX_AGE = 60 * 60 * 72;
+const MAX_AGE = 60 * 60 * 10;
 
 export async function POST(req: Request) {
   try {
@@ -55,6 +55,7 @@ export async function POST(req: Request) {
         PostId: user.PostId,
         FullName: user.FullName,
         NameMahal: user.NameMahal,
+        OnvanPost: user.OnvanPost,
         DateNow: user.DateNow,
         IsMarkazShahrestan: user.IsMarkazShahrestan,
       };

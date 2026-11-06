@@ -1,5 +1,9 @@
 "use client";
 
+import { meratAlert } from "@/component/MeratFeedback/feedback";
+
+import { isResearchMutationSuccessful, isResearchSessionExpired } from "@/lib/researchMutationResult";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMeratUser } from "@/lib/useMeratUser";
 import { useRouter } from "next/navigation";
@@ -112,14 +116,13 @@ const FehrestErjaParvandeh = ({ erjaParentId }: FehrestErjaParvandehProps) => {
 
 
   const ResultToHozeh = async (erjaid: number, stateparvandeh: number, tozihat: string) => {
-    const result = await Update_ErjaParvandehState(erjaid, stateparvandeh, tozihat, user.UserId);
-    if (result.state == 401) {
-      router.push("/Login");
-    }
-    else {
+    try {
+      const result = await Update_ErjaParvandehState(erjaid, stateparvandeh, tozihat, user.UserId);
+      if (isResearchSessionExpired(result)) { router.push("/Login"); return; }
+      if (!isResearchMutationSuccessful(result)) { meratAlert("تغییر وضعیت ارجاع انجام نشد."); return; }
       setModalTaidParvandeh(false);
       await loadData();
-    }
+    } catch (error) { console.error(error); meratAlert("خطا در تغییر وضعیت ارجاع."); }
   };
 
   useEffect(() => {
@@ -290,8 +293,12 @@ const FehrestErjaParvandeh = ({ erjaParentId }: FehrestErjaParvandehProps) => {
   }, [erjaParentId, router]);
 
   const DeleteErja = async (ID: number) => {
-    await DeleteErjabyId(ID, UserId);
-    loadData();
+    try {
+      const result = await DeleteErjabyId(ID, user.UserId);
+      if (isResearchSessionExpired(result)) { router.push("/Login"); return; }
+      if (!isResearchMutationSuccessful(result)) { meratAlert("حذف ارجاع انجام نشد."); return; }
+      await loadData();
+    } catch (error) { console.error(error); meratAlert("خطا در حذف ارجاع."); }
   };
 
   const loadJambandi = async (id: number) => {
@@ -782,7 +789,7 @@ const FehrestErjaParvandeh = ({ erjaParentId }: FehrestErjaParvandehProps) => {
 
           <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-[30%] max-h-[90vh] overflow-hidden absolute top-5 left-1/2 -translate-x-1/2">
 
-            <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+            <div className="merat-modal-header--legacy merat-modal-tone--return bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
               <h2 className="text-lg font-bold">برگشت پرونده به حوزه</h2>
             </div>
             <hr className="mb-3 text-blue-800" />
@@ -848,7 +855,7 @@ const FehrestErjaParvandeh = ({ erjaParentId }: FehrestErjaParvandehProps) => {
 
           <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-[30%] max-h-[90vh] overflow-hidden absolute top-5 left-1/2 -translate-x-1/2">
 
-            <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+            <div className="merat-modal-header--legacy merat-modal-tone--return bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
               <h2 className="text-lg font-bold">برگشت پرونده به حوزه</h2>
             </div>
             <hr className="mb-3 text-blue-800" />

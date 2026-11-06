@@ -1,0 +1,837 @@
+.evidence,.summary { direction:rtl; font: 13px/1.8 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif); color:var(--ui-text,#2e3d5a); min-width:0; border:1px solid #dfe5f3; border-radius:11px; margin-top:12px; padding:12px; background:#fcfdff; }
+.sectionTitle {display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:0 0 8px;border-bottom:1px solid #e9edf6;margin-bottom:9px;}
+.sectionTitle strong {font:700 14px/1.8 var(--merat-font-heading,"PeydaApp",Tahoma,sans-serif);color:#243655;}
+.sectionTitle small,.muted,.filename {font-size:11.5px;color:#7885a0;}
+.uploadBox {display:grid;gap:8px;padding:10px;background:#f7f9ff;border:1px solid #e3e8f4;border-radius:10px;margin-bottom:12px;}
+.uploadRow {display:flex;align-items:center;flex-wrap:wrap;gap:10px;}
+.fileInput {position:relative;cursor:pointer;display:inline-flex;align-items:center;min-height:36px;border:1px solid #cdd8ed;border-radius:8px;background:white;padding:6px 11px;font:inherit;}
+.fileInput input {position:absolute;opacity:0;width:100%;height:100%;inset:0;cursor:pointer;}
+.filename {overflow-wrap:anywhere;}
+.descriptionLabel {display:grid;gap:5px;font-size:12.5px;font-weight:500;}
+.descriptionLabel em {color:#c42d4f;font-style:normal;}
+.descriptionLabel textarea,.deleteDialog textarea {font:13px/1.8 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);resize:vertical;min-height:72px;border:1px solid #cbd7ec;border-radius:9px;background:white;color:#243655;padding:8px 10px;outline:0;box-shadow:none;}
+.descriptionLabel textarea:focus,.deleteDialog textarea:focus {border-color:var(--app-primary,#5b4cdb);outline:0;box-shadow:none;}
+.primary {width:fit-content;font:500 13px/1.8 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);border:1px solid var(--app-primary,#5b4cdb);color:#fff;background:var(--app-primary,#5b4cdb);border-radius:8px;padding:6px 16px;cursor:pointer;}
+.primary:disabled{opacity:.5;cursor:default;}
+.error {background:#fff1f2;border:1px solid #fec3c9;color:#b3263b;padding:7px 10px;border-radius:8px;font-size:12.5px;}
+.empty {text-align:center;color:#8591aa;border:1px dashed #d5def0;padding:25px 10px;border-radius:9px;}
+.timeline {display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;max-height:440px;overflow-y:auto;scrollbar-width:thin;}
+.tile {display:flex;flex-direction:column;gap:5px;min-width:0;border:1px solid #e0e7f5;background:#fff;border-radius:10px;overflow:hidden;}
+.thumbButton {border:0;background:#f1f5ff;padding:0;cursor:zoom-in;height:128px;position:relative;display:flex;justify-content:center;align-items:center;}
+.thumbButton img {display:block;width:100%;height:100%;object-fit:contain;}
+.sequence {position:absolute;right:7px;top:7px;background:#f4f5ff;color:#4f46cb;border-radius:99px;font-size:11px;min-width:22px;line-height:22px;}
+.pdfSymbol {display:grid;place-items:center;width:56px;height:60px;border:1px solid #dbe2f2;background:white;border-radius:8px;color:#9143aa;font-size:16px;font-weight:700;}
+.tileText {display:grid;gap:3px;padding:0 8px;min-width:0;}
+.tileText strong {font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tileText time,.tileText span {font-size:10.5px;color:#8390a8;}
+.tileText p {font-size:11.5px;line-height:1.8;word-break:break-word;margin:2px 0;color:#50617c;}
+.tileActions {display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:7px 8px 9px;margin-top:auto;}
+.tileActions button,.tileActions a,.viewerControls button,.viewerControls a,.dialogActions button {font:500 12px/1.8 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);background:#f6f7fc;border:1px solid #dbe2f0;border-radius:7px;padding:4px 9px;color:#485977;cursor:pointer;text-decoration:none;}
+.tileActions .remove,.dialogActions .remove {color:#ad3851;background:#fff3f5;border-color:#ffc6d0;}
+.viewerBackdrop {position:fixed;inset:0;z-index:13000;background:rgba(12,19,39,.77);display:flex;align-items:center;justify-content:center;padding:12px;font-family:var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);}
+.viewer {display:flex;flex-direction:column;width:min(1160px,100%);max-height:96dvh;min-height:0;overflow:hidden;border-radius:12px;background:#fff;box-shadow:0 28px 90px #0006;}
+.viewerHead {padding:8px 12px;background:#f5f7fd;border-bottom:1px solid #e1e7f5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.viewerHead>div:first-child {display:grid;min-width:0;gap:1px;}
+.viewerHead strong {font-size:13px;overflow-wrap:anywhere;}
+.viewerHead small {font-size:11px;color:#8490a4;}
+.viewerControls {display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.viewerControls span {font-size:12px;min-width:43px;text-align:center;}
+.viewerStage {position:relative;display:grid;place-items:center;min-height:180px;height:min(65dvh,730px);background:#202738;overflow:hidden;touch-action:none;user-select:none;}
+.previewImage {max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;transform-origin:center center;user-select:none;transition:transform 70ms linear;}
+.pdfPreview {border:0;width:100%;height:100%;background:white;}
+.sideButton {position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:35px;height:44px;border:0;border-radius:8px;background:#f7f8ffe8;color:#28365a;font-size:31px;cursor:pointer;}
+.prev {right:8px;}.next {left:8px;}
+.viewerBottom {padding:6px 12px;border-top:1px solid #dfe4ee;font-size:12px;color:#2c3e60;display:grid;gap:3px;overflow-wrap:anywhere;}
+.viewerBottom small {font-size:10.5px;color:#8995ad;}
+.miniTimeline {display:flex;justify-content:center;align-items:center;gap:6px;padding:6px 10px;overflow-x:auto;max-height:81px;}
+.miniTimeline button {height:55px;min-width:61px;max-width:61px;flex:0 0 61px;border:2px solid #dde4f1;border-radius:7px;background:#f0f2fb;cursor:pointer;overflow:hidden;}
+.miniTimeline .activeMini {border-color:var(--app-primary,#5b4cdb);}
+.miniTimeline img {width:100%;height:100%;object-fit:cover;}
+.miniTimeline span {font-size:11px;}
+.deleteDialog {width:min(430px,100%);background:#fff;border-radius:11px;padding:16px;display:grid;gap:9px;color:#27385b;font-size:13px;}
+.deleteDialog h3 {margin:0;font-size:16px;}.deleteDialog p {margin:0;}
+.deleteDialog label {display:grid;gap:5px;}.dialogActions{display:flex;gap:8px;justify-content:flex-start;}
+@media(max-width:620px){.viewerBackdrop{padding:5px}.viewer{max-height:99dvh}.viewerStage{height:60dvh}.timeline{grid-template-columns:repeat(2,minmax(0,1fr))}.viewerHead{padding:6px}.thumbButton{height:108px}}
+
+/* Phase 64: compact document strip + full-width, self-contained gallery modal. */
+.evidence {
+  padding: 0;
+  margin-top: 9px;
+  border: 1px solid #dce4f5;
+  background: #f9faff;
+  border-radius: 9px;
+}
+.compactBar {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 52px;
+  padding: 6px 10px;
+  min-width: 0;
+}
+.compactHeading { flex: 0 0 auto; display: grid; gap: 0; }
+.compactHeading strong { font-size: 12.5px; font-weight: 700; color: #253a61; }
+.compactHeading > span { font-size: 10.5px; color: #7b89a4; }
+.compactThumbnails {
+  display: flex; flex: 1 1 auto; min-width: 0; align-items: center;
+  gap: 6px; overflow: hidden;
+}
+.compactThumbnails button {
+  flex: 0 0 40px; display: grid; place-items: center;
+  border: 1px solid #d8e0f1; border-radius: 7px;
+  background: #fff; cursor: pointer; width: 40px; height: 37px;
+  overflow: hidden; padding: 1px; color: #5652bf; font: 700 10px/1.6 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);
+}
+.compactThumbnails img { max-width: 100%; max-height: 100%; width: 100%; height: 100%; object-fit: cover; }
+.compactThumbnails .noFiles { color: #8491ab; font-size: 11px; white-space: nowrap; }
+.moreFiles { font-size: 10.5px; font-weight: 700; color: #6454d6; }
+.galleryButton {
+  flex: 0 0 auto; min-height: 34px; border: 1px solid var(--app-primary,#5b4cdb);
+  border-radius: 8px; background: var(--app-primary,#5b4cdb);
+  color: #fff; cursor: pointer; padding: 4px 12px;
+  font: 600 12.5px/1.8 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);
+}
+.galleryButton:disabled { opacity: .55; cursor: default; }
+/* Never inflate the underlying form: the entire gallery is a body portal. */
+.viewerBackdrop { padding: 10px; background: rgba(14,22,43,.72); }
+.viewer {
+  width: min(1540px, calc(100vw - 20px));
+  height: min(94dvh, 960px);
+  max-height: min(94dvh, 960px);
+  min-height: 0;
+  border-radius: 13px;
+}
+.viewerHead { flex: 0 0 auto; padding: 8px 14px; }
+.viewerHead strong { font-size: 14px; }
+.viewerControls button,.viewerControls a {
+  font-size: 12px; font-weight: 500; line-height: 1.8;
+  white-space: nowrap;
+}
+.galleryUpload {
+  flex: 0 0 auto; display: flex; align-items: center; flex-wrap: wrap;
+  gap: 8px 13px; padding: 8px 14px;
+  background: #f9faff; border-bottom: 1px solid #e2e9f7;
+}
+.galleryUploadTop { flex: 0 1 auto; min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+.galleryUpload .fileInput { min-height: 34px; background: #fff; font-size: 12px; }
+.galleryUpload .filename { font-size: 10.5px; max-width: 205px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.galleryUpload .primary { min-height: 34px; padding: 4px 11px; font-size: 12px; }
+.galleryDescription { display: flex; flex: 1 1 320px; min-width: 150px; align-items: center; gap: 8px; font-size: 11.5px; }
+.galleryDescription span { white-space: nowrap; color: #536481; }
+.galleryDescription input {
+  flex: 1; min-width: 120px; min-height: 34px; padding: 5px 10px;
+  font: 12.5px/1.8 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);
+  border: 1px solid #cbd7ec; border-radius: 8px;
+  color: #263755; background: #fff; outline: 0; box-shadow: none;
+}
+.galleryDescription input:focus { border-color: var(--app-primary,#5b4cdb); outline: 0; box-shadow: none; }
+.ribbon {
+  display: flex; flex: 0 0 auto; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
+  gap: 9px; align-items: stretch;
+  padding: 9px 13px; min-height: 96px; max-height: 117px;
+  border-bottom: 1px solid #dfe6f3; background: #fff;
+  scrollbar-width: thin; overscroll-behavior-inline: contain;
+}
+.ribbon .muted { margin: auto; text-align: center; }
+.ribbonItem {
+  position: relative; display: grid; grid-template-rows: 64px 19px;
+  gap: 2px; flex: 0 0 116px; min-width: 0; padding: 3px;
+  border: 1px solid #dbe2ef; background: #f8faff; border-radius: 8px;
+}
+.ribbonSelected { border-color: var(--app-primary,#5b4cdb); box-shadow: 0 0 0 1px var(--app-primary,#5b4cdb); }
+.ribbonPreview {
+  position: relative; display: grid; place-items: center; overflow: hidden;
+  border: 0; border-radius: 5px; background: #eef2fa; padding: 0; cursor: pointer;
+}
+.ribbonPreview img { width: 100%; height: 100%; object-fit: contain; }
+.ribbonPreview .pdfSymbol { transform: scale(.7); border: 0; }
+.ribbonName { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-inline: 4px; font-size: 10.5px; color: #425374; text-align: center; }
+.ribbonDelete {
+  position: absolute; left: 4px; top: 4px;
+  width: 22px; height: 22px; border-radius: 6px;
+  border: 1px solid #f8cbd2; background: #fff5f5;
+  color: #b62f4b; cursor: pointer; line-height: 1; font-size: 17px;
+}
+.previewToolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex: 0 0 auto; gap: 12px; flex-wrap: wrap;
+  padding: 6px 13px; background: #f6f8fc;
+}
+.previewInfo { display: grid; gap: 0; min-width: 0; }
+.previewInfo strong { font-size: 12.5px; color: #253958; overflow-wrap: anywhere; }
+.previewInfo small { font-size: 10.5px; color: #7787a2; }
+.previewToolbar .viewerControls { justify-content: flex-end; }
+.previewToolbar .viewerControls .deleteAction { border-color: #f2c3ca; color: #aa3a4c; background: #fff2f3; }
+.viewerStage {
+  flex: 1 1 auto; min-height: 0; height: auto;
+  max-height: none; overflow: hidden; background: #20283b;
+}
+.stageEmpty { color: #ced5e8; font-size: 13px; text-align: center; padding: 12px; }
+.viewerBottom {
+  flex: 0 0 auto; padding: 7px 13px 8px;
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 5px 14px;
+  max-height: 85px; overflow-y: auto; font-size: 12px;
+}
+.viewerBottom > span { min-width: 0; overflow-wrap: anywhere; }
+.viewerBottom small { font-size: 10px; }
+.deleteBackdrop { z-index: 14000; }
+.descriptionLabel > span { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 3px; width: fit-content; }
+.descriptionLabel > span em { position: static; display: inline; line-height: inherit; font-size: inherit; }
+@media (max-width: 700px) {
+  .compactBar { flex-wrap: wrap; gap: 5px 8px; }
+  .compactThumbnails { order: 3; flex-basis: 100%; }
+  .viewerBackdrop { padding: 3px; }
+  .viewer { width: calc(100vw - 6px); height: 98dvh; max-height: 98dvh; }
+  .galleryUpload { padding: 7px; }
+  .galleryDescription { flex-basis: 100%; }
+  .galleryDescription span { display: none; }
+  .ribbon { min-height: 88px; gap: 6px; padding: 7px; }
+  .ribbonItem { flex-basis: 96px; grid-template-rows: 56px 17px; }
+  .previewToolbar { padding: 5px 8px; }
+  .viewerStage { height: auto; min-height: 0; }
+  .viewerBottom small { display: none; }
+}
+
+/* Phase 65: compact gallery by default; full-size document preview is a separate lightbox. */
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .viewer {
+  height: auto;
+  min-height: 0;
+  max-height: min(92dvh, 760px);
+  width: min(1440px, calc(100vw - 20px));
+}
+.galleryHint {
+  margin: 0;
+  padding: 9px 14px;
+  color: #61718c;
+  background: #f9faff;
+  font: 12px/1.8 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);
+}
+.previewBackdrop { z-index: 13500; }
+.previewDialog {
+  height: min(95dvh, 980px);
+  width: min(1540px, calc(100vw - 18px));
+}
+.previewClose {
+  font: 500 12px/1.8 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);
+  border: 1px solid #dbe2f0;
+  border-radius: 7px;
+  background: #fff;
+  padding: 5px 12px;
+  color: #435473;
+  cursor: pointer;
+}
+.previewBackdrop .viewerStage { flex: 1 1 auto; min-height: 0; }
+@media(max-width:700px) {
+  .viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .viewer { max-height: 95dvh; width: calc(100vw - 6px); }
+  .previewDialog { height: 98dvh; width: calc(100vw - 6px); }
+}
+
+/* Phase 72 — fullscreen document preview, fine border and unobtrusive controls.
+   The compact gallery retains its previous layout. */
+.previewBackdrop {
+  inset: 0;
+  padding: 5px;
+  z-index: 13500;
+  background: rgba(7, 11, 18, .97);
+}
+.previewBackdrop .previewDialog {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 9px;
+  background: #10141b;
+  box-shadow: none;
+}
+.previewBackdrop .previewToolbar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  left: 8px;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0;
+  background: transparent;
+  pointer-events: none;
+}
+.previewBackdrop .previewInfo {
+  min-width: 0;
+  max-width: min(40vw,440px);
+  display: grid;
+  gap: 1px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  background: rgba(10,13,20,.72);
+  color: #f9fbff;
+  pointer-events: auto;
+}
+.previewBackdrop .previewInfo strong {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  color: #f9fbff;
+}
+.previewBackdrop .previewInfo small {font-size:10px;color:#d2d9e6;}
+.previewBackdrop .viewerControls {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  pointer-events: auto;
+}
+.previewBackdrop .viewerControls button,
+.previewBackdrop .viewerControls a {
+  min-width: 31px;
+  height: 31px;
+  padding: 2px 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 7px;
+  background: rgba(12,17,26,.76);
+  color: #f5f7fa;
+  font-size: 14px;
+  text-decoration: none;
+}
+.previewBackdrop .viewerControls button:disabled { opacity: .45; cursor: default; }
+.previewBackdrop .viewerControls button:hover:not(:disabled),
+.previewBackdrop .viewerControls a:hover { background: rgba(65,78,100,.85); }
+.previewBackdrop .viewerControls > span {
+  min-width: 42px;
+  padding: 0 3px;
+  font-size: 11px;
+  color: #fff;
+  background: rgba(12,17,26,.7);
+  border-radius: 5px;
+}
+.previewBackdrop .viewerControls .deleteAction {background:rgba(75,23,35,.76);color:#ffe4e7;border-color:rgba(255,180,190,.22);font-size:11px;}
+.previewBackdrop .viewerControls .previewClose {font-size:21px;line-height:1;}
+.previewBackdrop .viewerStage {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  user-select: none;
+  background: #10141b;
+}
+.previewBackdrop .previewImage {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  transform-origin: center center;
+}
+.previewBackdrop .pdfPreview {width:100%;height:100%;border:0;display:block;background:#fff;}
+.previewBackdrop .sideButton { z-index: 2; }
+.previewCaption {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  max-width: min(58vw,560px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 6px;
+  padding: 4px 9px;
+  background: rgba(10,13,20,.68);
+  color: rgba(255,255,255,.8);
+  font-size: 11px;
+  pointer-events: none;
+}
+@media(max-width:650px) {
+  .previewBackdrop { padding: 3px; }
+  .previewBackdrop .previewDialog { border-radius: 6px; }
+  .previewBackdrop .previewToolbar { top: 6px; right: 6px; left: 6px; }
+  .previewBackdrop .previewInfo { max-width: 24vw; padding: 6px; }
+  .previewBackdrop .viewerControls {gap: 2px;}
+  .previewBackdrop .viewerControls button,.previewBackdrop .viewerControls a {min-width:28px;height:29px;padding:2px 5px;}
+  .previewBackdrop .viewerControls > span {min-width:34px;font-size:10px;}
+  .previewCaption {max-width: 75vw;}
+}
+
+/* Phase 73 — a single quiet file-picker icon; onChange submits automatically. */
+.viewerHead .quickUpload {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #d7def0;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--app-primary,#5b4cdb);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  overflow: hidden;
+}
+.viewerHead .quickUpload:hover { background: #f1f0ff; border-color: var(--app-primary,#5b4cdb); }
+.viewerHead .quickUpload:focus-within { outline: 2px solid var(--app-primary,#5b4cdb); outline-offset: 2px; }
+.viewerHead .quickUpload:has(input:disabled) { opacity: .5; cursor: default; }
+.viewerHead .quickUpload input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 0;
+}
+.viewerHead .quickUpload input:disabled { cursor: default; }
+.viewerHead .uploadStatus { font-size: 11px; color: #536481; white-space: nowrap; }
+
+/* Phase 74: near-edge, top-aligned two-row gallery. Seven columns fit 14 images. */
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) {
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3px;
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .viewer {
+  box-sizing: border-box;
+  width: calc(100vw - 6px);
+  max-width: none;
+  height: auto;
+  min-height: 0;
+  max-height: calc(100dvh - 6px);
+  border: 1px solid #e2e8f2;
+  border-radius: 6px;
+  box-shadow: 0 12px 42px rgba(0,0,0,.16);
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .viewerHead {
+  padding: 6px 9px;
+  gap: 5px;
+  background: #f8faff;
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .viewerHead small {font-size:10px;}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbon {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0,1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: max(132px, calc((100% - 54px) / 7));
+  gap: 9px;
+  width: 100%;
+  height: min(338px,calc(100dvh - 77px));
+  min-height: 190px;
+  max-height: calc(100dvh - 77px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px;
+  align-items: stretch;
+  overscroll-behavior-x: contain;
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbonItem {
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+  display: grid;
+  grid-template-rows: minmax(0,1fr) 20px;
+  gap: 3px;
+  padding: 4px;
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbonPreview {min-width:0;min-height:0;}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbonPreview img {width:100%;height:100%;object-fit:contain;}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbon .muted {
+  grid-row: 1 / -1;
+  grid-column: 1;
+  margin: auto;
+  text-align:center;
+}
+/* Immediate image upload is possible directly next to the summary text. */
+.compactActions {flex:0 0 auto;display:flex;align-items:center;gap:7px;}
+.quickUpload,
+.viewerHead .quickUpload {
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  width:34px;
+  height:34px;
+  border:1px solid #d7def0;
+  border-radius:8px;
+  background:#fff;
+  color:var(--app-primary,#5b4cdb);
+  font-size:24px;
+  line-height:1;
+  cursor:pointer;
+  overflow:hidden;
+}
+.quickUpload:hover {background:#f1f0ff;border-color:var(--app-primary,#5b4cdb);}
+.quickUpload:focus-within {outline:2px solid var(--app-primary,#5b4cdb);outline-offset:2px;}
+.quickUpload:has(input:disabled) {opacity:.5;cursor:default;}
+.quickUpload input,
+.viewerHead .quickUpload input {
+  position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0;
+}
+.quickUpload input:disabled {cursor:default;}
+.compactUpload {width:32px;height:34px;flex:0 0 32px;}
+.summaryLayout {display:grid;width:100%;min-width:0;grid-template-columns:minmax(0,2fr) minmax(270px,1fr);gap:12px;align-items:start;}
+.summaryEditorArea {display:grid;width:100%;min-width:0;justify-items:start;gap:10px;}
+.summaryEditorArea .descriptionLabel {width:100%;}
+.summaryEditorArea textarea {width:100%;box-sizing:border-box;min-height:180px;}
+.summaryAttachmentArea {width:100%;min-width:0;align-self:start;}
+.summaryAttachmentArea .evidence {margin-top:0;}
+.summaryAttachmentArea .compactBar {align-items:start;flex-wrap:wrap;gap:8px;}
+.summaryAttachmentArea .compactThumbnails {order:3;flex-basis:100%;}
+.summaryAttachmentArea .compactActions {margin-inline-start:auto;}
+.summarySaveHint {display:grid;gap:7px;border:1px dashed #cbd7e8;background:#f8faff;border-radius:9px;padding:12px;font-size:12px;font-weight:600;color:#3a4b6c;min-height:120px;align-content:center;}
+.summarySaveHint span {font-weight:400;font-size:11.5px;color:#7483a0;}
+@media(max-width:900px) {
+  .summaryLayout {grid-template-columns:1fr;}
+  .viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbon {grid-auto-columns:max(130px,calc((100% - 27px) / 4));}
+}
+@media(max-width:620px) {
+  .viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbon {grid-auto-columns:max(112px,calc((100% - 9px) / 2));gap:7px;padding:6px;}
+  .viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .viewer {width:calc(100vw - 4px);max-height:calc(100dvh - 4px);}
+  .viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) {padding:2px;}
+  .viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .viewerHead {padding:5px;}
+  .viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbon {height:min(290px,calc(100dvh - 64px));}
+  .summaryAttachmentArea .compactBar {gap:6px;}
+}
+
+/* Phase 75 - legacy-style investigator summary sheet and self-generated image */
+.summarySavedTitle { font-size:13px; font-weight:700; color:#293c60; margin-bottom:7px; }
+.summarySavedText { display:block; box-sizing:border-box; width:100%; min-width:0; white-space:pre-wrap; overflow-wrap:anywhere; min-height:150px; max-height:340px; overflow:auto; background:#fff; border:1px solid #e0e6f0; border-radius:8px; padding:11px; font-size:15px; line-height:2; margin-bottom:10px; }
+.summaryImageWarning {font-size:12px;color:#9c5621;margin:7px 0;}
+.reportCapture {position:fixed;left:-10000px;top:0;width:max-content;pointer-events:none;z-index:-1;}
+.summaryReportBackdrop {position:fixed;inset:0;z-index:16000;background:#101a2bd0;display:flex;align-items:center;justify-content:center;padding:5px;}
+.summaryReportDialog {display:flex;flex-direction:column;min-width:0;max-width:100%;width:100%;height:calc(100dvh - 10px);background:#f4f5f9;border:1px solid #d4ddeb;border-radius:7px;overflow:hidden;}
+.summaryReportToolbar {display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:7px 12px;background:white;border-bottom:1px solid #dce2ed;font:600 14px/1.7 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);}
+.summaryReportToolbar>div {display:flex;gap:8px;}
+.summaryReportToolbar button {border:1px solid #d2daea;border-radius:7px;padding:6px 13px;cursor:pointer;background:white;}
+.summaryReportToolbar button:disabled {opacity:.55;cursor:default;}
+.summaryReportToolbar .confirmClose {
+  color:#fff;
+  background:#168247;
+  border:1px solid #116c3a;
+  font-weight:700;
+  min-width:135px;
+  transition:background .15s,border-color .15s;
+}
+.summaryReportToolbar .confirmClose:hover:not(:disabled) { background:#116a39;border-color:#0c562e; }
+.summaryReportToolbar .confirmClose:focus-visible {outline:2px solid #16a34a;outline-offset:2px;}
+.summaryReportToolbar .confirmClose:disabled {background:#168247;opacity:.55;}
+
+.summaryReportScroll {flex:1;overflow:auto;padding:10px;display:grid;justify-items:center;align-content:start;gap:10px;}
+.summaryReportScroll>small {font-size:12px;color:#6f7994;}
+.summaryReportScroll>article {flex:none;box-shadow:0 3px 21px #16254420;}
+@media(max-width:1100px) {.summaryReportScroll {justify-items:start;} }
+
+/* Phase 81: summary takes the full available width; attachments sit below it
+   at the left edge (including their automatic image uploader). */
+.summaryLayout {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  gap: 9px;
+}
+.summaryEditorArea {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  gap: 3px;
+}
+.summarySavedTitle {margin: 0;line-height: 1.5;}
+.summarySavedText {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+.summaryBelow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  min-width: 0;
+  gap: 12px;
+}
+.summaryFormActions {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+}
+.summaryAttachmentArea {
+  box-sizing: border-box;
+  width: min(470px, 100%);
+  max-width: 100%;
+  min-width: 0;
+  flex: 0 1 470px;
+  margin-right: auto; /* physical left in RTL */
+  align-self: flex-start;
+}
+.summaryAttachmentArea .evidence {margin: 0;}
+@media (max-width: 650px) {
+  .summaryBelow {flex-wrap: wrap;}
+  .summaryAttachmentArea {flex: 1 1 100%;width:100%;}
+}
+
+/* A failed GET is not equivalent to an empty attachment list. */
+.errorRow {display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:#fff1f2;border:1px solid #fec3c9;color:#b3263b;padding:7px 10px;border-radius:8px;font-size:12.5px;}
+.errorRow > span {min-width:0;overflow-wrap:anywhere;}
+.errorRow > button {background:white;border:1px solid #f5a5b2;border-radius:7px;color:#a82036;padding:4px 10px;cursor:pointer;font:inherit;}
+.errorRow > button:disabled {opacity:.55;cursor:default;}
+
+/* Confirmation before replacing investigator summary documents. This modal is a
+   separate body portal, above the full-screen report and all dashboard layers. */
+.summaryReplaceBackdrop {position:fixed;inset:0;z-index:2147483500;display:flex;align-items:center;justify-content:center;padding:14px;background:#101a2b99;}
+.summaryReplaceDialog {box-sizing:border-box;width:min(530px,100%);display:flex;flex-direction:column;gap:0;border:1px solid #e3e8f3;border-radius:15px;background:#fff;box-shadow:0 22px 72px #111c3740;color:#263858;font:14px/2 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);overflow:hidden;}
+.summaryReplaceTitle {display:flex;align-items:center;gap:9px;padding:13px 19px;border-bottom:1px solid #e6eaf3;background:#fbfcff;font-size:16px;}
+.summaryReplaceTitle span {color:#b17b14;font-size:22px;line-height:1;}
+.summaryReplaceBody {padding:17px 19px 21px;line-height:2.2;}
+.summaryReplaceBody small {display:block;margin-top:10px;color:#71809a;font-size:12px;line-height:1.9;}
+.summaryReplaceActions {display:flex;flex-wrap:wrap;justify-content:flex-start;gap:9px;padding:12px 19px;border-top:1px solid #e6eaf3;background:#fbfcff;}
+.summaryReplaceActions button {cursor:pointer;border-radius:9px;border:1px solid #d4ddec;padding:7px 16px;background:#fff;color:#425375;font:600 13px/1.9 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);}
+.summaryReplaceActions button:disabled {opacity:.55;cursor:default;}
+.summaryReplaceActions .summaryReplaceConfirm {background:#5b4cdb;color:#fff;border-color:#5b4cdb;}
+.summaryReplaceActions .summaryReplaceConfirm:hover:not(:disabled) {background:#4938bb;}
+@media(max-width:500px){.summaryReplaceDialog{width:100%;}.summaryReplaceActions button{flex:1;}}
+
+/* Each worksheet gallery displays ordinary documents in two rows, without
+   expanding the case page; summary pages have their own section beneath. */
+.ribbon { display:grid;grid-auto-flow:column;grid-auto-columns:116px;
+  grid-template-rows:repeat(2,94px);align-content:start;align-items:stretch;
+  height:215px;min-height:215px;max-height:215px;overflow-x:auto;overflow-y:hidden; }
+.ribbonItem { min-height:0;grid-template-rows:64px 19px; }
+/* Shared A4-style worksheet-summary pages (province, constituency and county). */
+.viewer:has(.worksheetSummaryDocs) { overflow-y:auto; }
+.worksheetSummaryDocs {
+  flex:0 0 auto;
+  margin:0 13px 14px;
+  padding:18px 4px 14px;
+  border-top:2px solid #d1d9ea;
+  direction:rtl;
+}
+.worksheetSummaryHead {
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  gap:8px 14px;margin:0 10px 12px;color:#263e6b;
+}
+.worksheetSummaryHead strong {font-size:14px;}
+.worksheetSummaryHead small {color:#75839e;font-size:11px;}
+.worksheetSummarySlots {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,242px));
+  justify-content:center;align-items:start;gap:clamp(12px,3vw,32px);
+  padding:8px 12px 18px;
+}
+.worksheetSummarySlot {min-width:0;display:flex;flex-direction:column;gap:9px;}
+.worksheetSummarySlotTitle {display:flex;align-items:center;justify-content:space-between;gap:8px;color:#293d67;}
+.worksheetSummarySlotTitle b {font-size:13px;}
+.worksheetSummarySlotTitle span {font-size:10px;color:#8a96ad;background:#f3f5fc;border-radius:20px;padding:2px 8px;}
+.worksheetSummaryPaper {
+  width:100%;aspect-ratio:210 / 297;position:relative;overflow:hidden;
+  display:grid;place-items:center;
+  background:linear-gradient(142deg,#fff 0%,#fafbff 65%,#f5f7ff 100%);
+  border:2px dashed #becbea;
+  border-radius:12px;
+  box-shadow:0 7px 21px rgba(56,75,128,.09),inset 0 0 0 6px rgba(255,255,255,.9);
+  transition:border-color .16s ease,background .16s ease,box-shadow .16s ease;
+}
+.worksheetSummaryPaperDragging {border-color:#5f55df;background:#edf0ff;box-shadow:0 0 0 3px #665be02a;}
+.worksheetSummaryPaperBusy {opacity:.75;}
+.worksheetSummaryUploadArea {
+  position:absolute;inset:5px;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:9px;text-align:center;
+  padding:17px 14px;cursor:pointer;border-radius:8px;color:#515dba;
+}
+.worksheetSummaryUploadArea:hover,.worksheetSummaryUploadArea:focus-within {background:#f0f2ff9c;}
+.worksheetSummaryUploadArea:focus-within {outline:2px solid #6559e3;outline-offset:-4px;}
+.worksheetSummaryUploadSymbol {
+  display:grid;place-items:center;width:74px;height:74px;
+  border-radius:22px;color:#6356de;
+  background:linear-gradient(145deg,#f0edff,#e7edff);
+  border:1px solid #d8dcff;
+}
+.worksheetSummaryUploadArea strong {font-size:14px;color:#3e48a0;}
+.worksheetSummaryUploadArea small {color:#627496;font-size:11.5px;line-height:1.8;max-width:185px;}
+.worksheetSummaryUploadArea em {color:#98a5be;font-size:10.5px;font-style:normal;}
+.worksheetSummaryUploadArea input,
+.worksheetSummaryReplace input {position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip-path:inset(50%);}
+.worksheetSummaryPaperImage {display:block;width:100%;height:100%;object-fit:contain;background:white;}
+.worksheetSummaryPaperSaved {
+  position:absolute;bottom:12px;right:12px;display:flex;gap:5px;align-items:center;
+  background:#eaf9f0f2;color:#18714d;padding:4px 9px;border:1px solid #bfead3;
+  border-radius:20px;font-size:10px;font-weight:700;
+}
+.worksheetSummaryEmptyReadonly {display:grid;justify-items:center;gap:12px;padding:15px;text-align:center;color:#92a0b8;font-size:12px;}
+.worksheetSummaryEmptyReadonly svg {opacity:.55;}
+.worksheetSummaryPageActions {display:flex;justify-content:center;gap:7px;flex-wrap:wrap;}
+.worksheetSummaryPageActions a,
+.worksheetSummaryPageActions button,
+.worksheetSummaryPageActions label {
+  display:inline-flex;justify-content:center;align-items:center;
+  min-height:30px;min-width:65px;cursor:pointer;text-decoration:none;
+  font:500 11.5px/1.6 var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);
+  color:#4b55ac;border:1px solid #d2daf2;border-radius:8px;background:#f5f7ff;padding:5px 10px;
+}
+.worksheetSummaryPageActions label {position:relative;}
+.worksheetSummaryPageActions label:focus-within {outline:2px solid #6559e3;outline-offset:2px;}
+.worksheetSummaryPageActions .worksheetSummaryDelete {color:#a83d4d;border-color:#f5cbd0;background:#fff5f6;}
+.worksheetSummaryPageActions button:disabled {opacity:.55;cursor:default;}
+.worksheetSummaryUploading {text-align:center;color:#4f57ad;font-size:11px;}
+.worksheetSummaryAlert {display:flex;align-items:center;justify-content:space-between;gap:8px;
+  border:1px solid #facbd2;border-radius:9px;padding:7px 10px;
+  background:#fff5f6;color:#a33a4c;font-size:12px;margin:7px 10px;}
+.worksheetSummaryAlert button {border:1px solid #e7b8c0;background:white;border-radius:7px;padding:4px 8px;color:inherit;cursor:pointer;}
+@media(max-width:620px){
+  .worksheetSummarySlots{grid-template-columns:minmax(0,242px);gap:18px;}
+  .worksheetSummaryHead {margin:0 3px 12px;}
+  .ribbon{grid-auto-columns:100px;}
+}
+
+.worksheetSummaryConfirm {padding:10px 12px;border:1px solid #e7c8cb;background:#fff5f5;
+  border-radius:9px;display:grid;gap:5px;margin-top:9px;color:#7b3442;}
+.worksheetSummaryConfirm p {margin:0;font-size:12px;}
+.worksheetSummaryConfirm>div {display:flex;gap:7px;}
+.worksheetSummaryConfirm button {font:inherit;font-size:12px;padding:5px 11px;
+  border:1px solid #ddb5bf;border-radius:7px;background:white;cursor:pointer;}
+.worksheetSummaryConfirm button:disabled {opacity:.6;cursor:default;}
+
+/* A4-like bordered thumbnails throughout the worksheet gallery. The last
+   two cells belong to existing summary pages, only when those files exist. */
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbon {
+  height:min(402px,calc(100dvh - 77px));
+  grid-auto-columns:max(132px,calc((100% - 54px) / 7));
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbonItem {
+  border:1px solid #cbd5e5;
+  border-radius:8px;
+  background:#fff;
+  box-shadow:0 2px 7px rgba(38,57,92,.06);
+  padding:5px;
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbonPreview {
+  border:1px solid #dbe2ed;
+  border-radius:5px;
+  background:#f8faff;
+  overflow:hidden;
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbonPreview img {
+  object-fit:contain;
+  background:#fff;
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .summaryRibbonItem {
+  border-color:#8c9cd9;
+  background:#f3f5ff;
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .summaryRibbonItem .ribbonName {
+  color:#3e4f93;
+  font-weight:700;
+}
+
+/* Separate the complete ordinary-evidence ribbon from the summary pages.
+   Horizontal overflow keeps every document accessible; no preview is sliced. */
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbon {
+  display:flex;
+  flex-direction:row;
+  align-items:stretch;
+  gap:0;
+  overflow-x:auto;
+  overflow-y:hidden;
+  direction:rtl;
+  width:100%;
+  padding:8px;
+  height:min(430px,calc(100dvh - 77px));
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbonGroup {
+  display:grid;
+  grid-template-rows:repeat(2,minmax(0,1fr));
+  grid-auto-flow:column;
+  grid-auto-columns: minmax(145px, 160px);
+  gap:9px;
+  flex:0 0 auto;
+  min-height:0;
+  align-content:stretch;
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .summaryRibbonGroup {
+  grid-auto-columns: minmax(145px, 160px);
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbonSeparator {
+  flex:0 0 2px;
+  background:#a7b5d3;
+  border-radius:3px;
+  margin:2px 14px;
+  align-self:stretch;
+}
+.viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbonGroup .ribbonItem {
+  min-width:0;
+  min-height:0;
+  height:100%;
+}
+@media(max-width:600px){
+  .viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .ribbonGroup,
+  .viewerBackdrop:not(.previewBackdrop):not(.deleteBackdrop) .summaryRibbonGroup {grid-auto-columns: minmax(125px,145px);}
+}
+
+/* Main worksheet's slim document strip: all originals on the right,
+   summary scans after the divider on the left. Independent scrolling prevents clipping. */
+.compactThumbnails {
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:thin;
+  direction:rtl;
+  min-height:54px;
+  padding:3px 1px;
+}
+.compactMainDocs,.compactSummaryDocs {
+  display:flex;
+  flex:0 0 auto;
+  align-items:center;
+  gap:6px;
+}
+.compactDivider {
+  display:block;
+  flex:0 0 2px;
+  align-self:stretch;
+  min-height:45px;
+  border-radius:2px;
+  background:#9eadd1;
+  margin:0 8px;
+}
+.compactThumbnails .compactSummaryDoc {
+  border-color:#8e9cdf;
+  background:#f1f3ff;
+}
+.compactThumbnails button {
+  flex-basis:36px;
+  width:36px;
+  height:49px;
+  border-radius:5px;
+}
+.compactThumbnails img {object-fit:contain;background:#fff;}

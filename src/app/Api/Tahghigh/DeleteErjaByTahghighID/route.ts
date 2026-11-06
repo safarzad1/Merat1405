@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import sql from "mssql";
 
 import { getConnection } from "@/lib/db";
-import { verifyToken } from "@/lib/auth";
+import { requireResearchIdentity, researchAccessResponse, researchMutationResponse } from "@/lib/researchSecurity";
 
 export async function POST(req: NextRequest) {
     const token = req.cookies.get("token")?.value;
@@ -13,14 +13,23 @@ export async function POST(req: NextRequest) {
         );
     }
     const body = await req.json();
-    const { id,userId,sharh } = body;
+    const { id, userId, sharh } = body;
 
     try {
-        verifyToken(token);
-    } catch {
+        await requireResearchIdentity(token, userId);
+    } catch (error) {
+        return researchAccessResponse(error);
+    }
+
+    const normalizedId = Number(id);
+    const normalizedUserId = Number(userId);
+    const reason = typeof sharh === "string" ? sharh.trim() : "";
+    if (!Number.isSafeInteger(normalizedId) || normalizedId <= 0 ||
+        !Number.isSafeInteger(normalizedUserId) || normalizedUserId <= 0 ||
+        reason.length <= 10 || reason.length > 3000) {
         return NextResponse.json(
-            { status: 401, error: "Unauthorized: Invalid or expired token" },
-            { status: 401 }
+            { status: 400, error: "شناسه‌ها و دلیل حذف (۱۱ تا ۳۰۰۰ نویسه) الزامی هستند." },
+            { status: 400 }
         );
     }
 
@@ -28,19 +37,14 @@ export async function POST(req: NextRequest) {
         const pool = await getConnection();
         const result = await pool
             .request()
-            .input("Id", sql.Int, id)
-            .input("Sharh", sql.NVarChar(3000), sharh)
-            .input("UserId", sql.BigInt, userId)
+            .input("Id", sql.BigInt, normalizedId)
+            .input("Sharh", sql.NVarChar(sql.MAX), reason)
+            .input("UserId", sql.BigInt, normalizedUserId)
             .execute("Tahghighat.SP_DeleteErjaTahghighByID");
 
-        return NextResponse.json(
-            { status: 200, data: result.recordset }
-        );
+        return researchMutationResponse(result);
 
     } catch (err) {
-        return NextResponse.json(
-            { error: err instanceof Error ? err.message : "Unknown error" },
-            { status: 500 }
-        );
+        return researchAccessResponse(err);
     }
 }

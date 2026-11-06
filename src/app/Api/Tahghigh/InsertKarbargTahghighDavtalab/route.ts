@@ -1,9 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import sql from "mssql";
 import { getConnection } from "@/lib/db";
+import { requireResearchIdentity, researchAccessResponse, requireClaimedActor } from "@/lib/researchSecurity";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
+        const actor = await requireResearchIdentity(req.cookies.get("token")?.value);
         const form = await req.formData();
 
         const shomarehParvandeh = form.get("shomarehParvandeh");
@@ -23,6 +25,8 @@ export async function POST(req: Request) {
         const codeMohaghegh = form.get("codeMohaghegh");
         const tarikhTakmil = form.get("tarikhTakmil");
         const createUserId = form.get("createUserId");
+
+        requireClaimedActor(actor, createUserId);
 
         const file = form.get("file") as File | null;
 
@@ -75,12 +79,6 @@ export async function POST(req: Request) {
             { status: 200 }
         );
     } catch (err) {
-        return NextResponse.json(
-            {
-                status: 500,
-                message: err instanceof Error ? err.message : "خطای ناشناخته در سرور",
-            },
-            { status: 500 }
-        );
+        return researchAccessResponse(err);
     }
 }

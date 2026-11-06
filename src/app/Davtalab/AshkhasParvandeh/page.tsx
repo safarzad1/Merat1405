@@ -504,7 +504,7 @@ export default function Page() {
                 <div className="fixed inset-0 z-[30000] flex items-start justify-center mt-10">
                     <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalOpenKhabar(false)} />
                     <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-[800px] max-w-[95vw] relative">
-                        <div className="bg-gray-200 -mx-6 p-3 border-0 border-b-2 border-purple-500 flex items-center justify-between">
+                        <div className="merat-modal-header--legacy merat-modal-tone--notice bg-gray-200 -mx-6 p-3 border-0 border-b-2 border-purple-500 flex items-center justify-between">
                             <h2 className="text-lg font-bold">جزئیات خبر</h2>
                             <button
                                 className="p-1 rounded hover:bg-gray-300 transition"

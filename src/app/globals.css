@@ -2,7 +2,7 @@
   font-family: "ShabnamApp";
   src: url("../Styles/Fonts/Shabnam/Shabnam-Light-FD.woff2") format("woff2");
   font-style: normal;
-  font-weight: 300 500;
+  font-weight: 300;
   font-display: swap;
 }
 
@@ -21,11 +21,13 @@ body {
   background: #f4f6fa;
   color: #1f2937;
   font-family: "ShabnamApp", Tahoma, Arial, sans-serif;
-  font-size: 13.5px;
-  font-weight: 300;
+  font-size: max(14px, calc(14px * var(--ui-font-scale, 1)));
+  font-weight: 400;
+  line-height: 1.7;
+  font-synthesis: weight;
 }
 button, input, select, textarea { font-family: inherit; }
-button { font-weight: 300; }
+button { font-weight: 500; }
 a { color: inherit; }
 
 :root {
@@ -93,4 +95,1125 @@ a { color: inherit; }
 ).-mx-6 :is(h1, h2, h3, label) {
   color: #fff !important;
   font-weight: 400 !important;
+}
+
+/* =============================================================
+   Merat standard design tokens modeled on Bazargani 14050806.
+   CSS Modules remain in control of page-specific workflows.
+   ============================================================= */
+:root {
+  --app-primary: #4F46E5;
+  --app-primary-dark: #34349A;
+  --app-gradient: linear-gradient(135deg,#4F46E5 0%,#6D5DFC 100%);
+  --app-soft: #EEEFFF;
+  --app-accent: #E6E5FF;
+  --app-active-text: #4F46E5;
+  --app-active-bg: #FFFFFF;
+  --app-panel: linear-gradient(180deg,#1F2346 0%,#292951 100%);
+  --app-shadow: 0 9px 25px rgba(48,50,95,.16);
+  --ui-bg: #F5F6FB;
+  --ui-surface: #FFFFFF;
+  --ui-line: #E6E8F2;
+  --ui-text: #1E2440;
+  --ui-muted: #737A96;
+  --ui-card-shadow: 0 12px 34px rgba(34,39,82,.09);
+  --ui-font-scale: 1;
+  --ui-card-padding: 13px;
+  --ui-card-gap: 10px;
+  --ui-card-radius: 13px;
+}
+:root[data-merat-density="compact"] {
+  --ui-card-padding: 9px;
+  --ui-card-gap: 7px;
+  --ui-card-radius: 11px;
+}
+html,body { background: var(--ui-bg); color: var(--ui-text); }
+body { font-size: calc(14px * var(--ui-font-scale)); font-weight: 400; line-height: 1.65; }
+button,input,select,textarea,option { font-family: "ShabnamApp",Tahoma,Arial,sans-serif; }
+h1,h2,h3,h4,h5,h6 { font-family: "PeydaApp","ShabnamApp",Tahoma,sans-serif; }
+:where(button):focus-visible { outline: 1px solid var(--app-primary); outline-offset: 2px; }
+.meratThemeBox {
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-card-radius);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-card-shadow);
+  padding: var(--ui-card-padding);
+}
+.meratThemeInput,.meratThemeSelect,.meratThemeTextarea {
+  min-height: 39px;
+  border: 1px solid var(--ui-line);
+  border-radius: 10px;
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  font-size: max(12.5px,calc(13px * var(--ui-font-scale)));
+}
+.meratThemePrimaryButton {
+  min-height: 36px;
+  border-radius: 10px;
+  padding: 0 13px;
+  font-size: max(12.5px,calc(13px * var(--ui-font-scale)));
+  background: var(--app-gradient);
+}
+/* Restyle outer application surfaces while leaving data-workflow structure intact. */
+[class*="PanelPage_page__"] { color: var(--ui-text); background: var(--ui-bg); }
+[class*="PanelPage_contentSurface__"] {
+  background: var(--ui-surface);
+  border-color: var(--ui-line);
+  border-radius: var(--ui-card-radius);
+  box-shadow: var(--ui-card-shadow);
+}
+[class*="PanelPage_contentSurface__"] :is(h1,h2,h3,h4,h5,h6) { font-family: "PeydaApp","ShabnamApp",sans-serif; }
+[class*="PanelPage_contentSurface__"] :where(input:not([type="checkbox"]):not([type="radio"]),select,textarea) {
+  min-height: 36px;
+  font-size: max(12.5px,calc(13px * var(--ui-font-scale)));
+}
+/* Match Bazargani's compact 42px headings / 49px table rows where possible. */
+[class*="PanelPage_contentSurface__"] table th {
+  font-family: "PeydaApp","ShabnamApp",sans-serif;
+  font-size: max(12.5px,calc(12.5px * var(--ui-font-scale)));
+}
+[class*="PanelPage_contentSurface__"] table td {
+  font-size: max(12.5px,calc(13px * var(--ui-font-scale)));
+}
+/* Only recognized CSS-module cards/panels are normalized; not modal overlays or buttons. */
+[class*="PanelPage_contentSurface__"] :where([class*="_statCard__"],[class*="_stat-card__"],[class*="_dashboardCard__"]) {
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-card-radius);
+  padding: var(--ui-card-padding);
+  box-shadow: var(--ui-card-shadow);
+}
+:root[data-merat-density="compact"] [class*="PanelPage_contentSurface__"] :where([class*="_card__"],[class*="_Card__"],[class*="_panel__"]) {
+  padding: var(--ui-card-padding);
+}
+@media(max-width:767px){
+  [class*="PanelPage_contentSurface__"] { border-radius: 12px; }
+  :root{ --ui-card-padding: 10px; --ui-card-gap: 9px; }
+}
+
+/* Card spacing and sizes borrowed from Bazargani's 13px-radius dashboard blocks. */
+[class*="PanelPage_contentSurface__"] :is([class*="_chartCard__"],[class*="_sectionCard__"],[class*="_infoCard__"],[class*="_gridCard__"],[class*="_tableCard__"],[class*="_formCard__"],[class*="_cityCard__"]) {
+  border-radius: var(--ui-card-radius);
+  box-shadow: 0 7px 22px rgba(34,39,82,.065);
+}
+[class*="PanelPage_contentSurface__"] :is([class*="_sectionCard__"],[class*="_infoCard__"],[class*="_formCard__"]) {
+  padding: var(--ui-card-padding);
+}
+[class*="PanelPage_contentSurface__"] :is(small, label) {
+  font-size: max(12.5px,calc(12.5px * var(--ui-font-scale)));
+}
+
+/* ======================================================================
+   Bazargani reference / balanced UI v2 (1405-08): white masthead,
+   matte sidebar, softly divided cards, consistent typography and tables.
+   Personal preferences are still owned by ThemeRuntime and SQL Server.
+   ====================================================================== */
+:root {
+  --app-primary: #5B50DC;
+  --app-primary-dark: #433CA9;
+  --app-gradient: linear-gradient(135deg, #5B50DC, #6B61E6);
+  --app-soft: #F1F0FF;
+  --app-panel: linear-gradient(180deg, #202443, #1E2443);
+  --app-shadow: 0 6px 20px rgba(32,36,70,.075);
+  --ui-bg: #F4F6FB;
+  --ui-surface: #FFFFFF;
+  --ui-line: #DFE5F0;
+  --ui-text: #263553;
+  --ui-muted: #71809C;
+  --ui-card-shadow: 0 3px 14px rgba(35,46,85,.035);
+  --ui-font-scale: 1;
+  --ui-card-padding: 13px;
+  --ui-card-gap: 11px;
+  --ui-card-radius: 13px;
+}
+html, body {background:var(--ui-bg); color:var(--ui-text);}
+body {font-size:calc(14px * var(--ui-font-scale));line-height:1.7;font-weight:400;}
+button,input,select,textarea,option {font-family:"ShabnamApp",Tahoma,Arial,sans-serif;}
+:where(h1,h2,h3,h4,h5,h6) {font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif;letter-spacing:0;}
+:where(button,input,select,textarea) {font-size:max(12.5px,calc(13px * var(--ui-font-scale)));}
+:where(input,select,textarea):focus,:where(input,select,textarea):focus-visible {outline:none !important;box-shadow:none !important;border-color:var(--app-primary) !important;}
+/* Keep the new card-size preference effective on common panels. */
+.meratThemeBox {border:1px solid var(--ui-line);border-radius:var(--ui-card-radius);background:var(--ui-surface);box-shadow:var(--ui-card-shadow);padding:var(--ui-card-padding);}
+.meratThemePrimaryButton {background:var(--app-gradient);box-shadow:0 4px 12px color-mix(in srgb,var(--app-primary) 12%,transparent);}
+[class*="PanelPage_page__"] {background:var(--ui-bg);color:var(--ui-text);}
+[class*="PanelPage_contentSurface__"] {
+  background:var(--ui-surface);
+  color:var(--ui-text);
+  border:1px solid var(--ui-line);
+  box-shadow:var(--ui-card-shadow);
+  border-radius:var(--ui-card-radius);
+}
+/* Typographic scale mirrors Bazargani: title 17, card title 15,
+   table cells 13, table headings 13, labels 12.5+ (accessible floor). */
+[class*="PanelPage_contentSurface__"] :is(h1,[class*="_pageTitle__"],[class*="_headingTitle__"]) {
+  font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif;
+  font-size:max(17px,calc(17px * var(--ui-font-scale)));
+  font-weight:650;
+  line-height:1.6;
+}
+[class*="PanelPage_contentSurface__"] :is(h2,h3,[class*="_cardTitle__"],[class*="_sectionTitle__"],[class*="_sectionHeader__"] h2) {
+  font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif;
+  font-size:max(15px,calc(15px * var(--ui-font-scale)));
+  font-weight:600;
+  line-height:1.65;
+}
+[class*="PanelPage_contentSurface__"] :is(p,span,label,small) {font-size:max(12.5px,calc(12.5px * var(--ui-font-scale)));}
+/* Header rows: replace page-local deep blue/green headers with light
+   grey-indigo headers. Tables remain horizontally scrollable as before. */
+[class*="PanelPage_contentSurface__"] table :is(thead th,thead td) {
+  font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif !important;
+  font-size:max(13px,calc(13px * var(--ui-font-scale))) !important;
+  font-weight:600 !important;
+  color:#2E4168 !important;
+  background:#EAF0F8 !important;
+  border-color:var(--ui-line) !important;
+  line-height:1.6;
+  padding:9px 11px !important;
+  height:auto;
+}
+[class*="PanelPage_contentSurface__"] table tbody :is(td,th) {
+  font-family:"ShabnamApp",Tahoma,Arial,sans-serif !important;
+  font-size:max(13px,calc(13px * var(--ui-font-scale))) !important;
+  font-weight:400;
+  line-height:1.65;
+  color:var(--ui-text);
+  padding:9px 11px;
+  border-color:#EBEFF6;
+}
+[class*="PanelPage_contentSurface__"] table tbody tr:nth-child(even) {background-color:#F9FAFD;}
+[class*="PanelPage_contentSurface__"] table tbody tr:hover {background-color:#F1F4FC;}
+/* Form controls and low-chroma secondary actions. */
+[class*="PanelPage_contentSurface__"] :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) {
+  color:var(--ui-text);
+  font-family:"ShabnamApp",Tahoma,Arial,sans-serif;
+  font-size:max(13px,calc(13px * var(--ui-font-scale)));
+  border-radius:9px;
+}
+[class*="PanelPage_contentSurface__"] :is(button,[role="button"]) {
+  font-family:"ShabnamApp",Tahoma,Arial,sans-serif;
+  font-size:max(12.5px,calc(13px * var(--ui-font-scale)));
+}
+/* Custom module cards: preserve their workflow geometry and only unify
+   visual weight, gap and readable text. */
+[class*="PanelPage_contentSurface__"] :is(
+ [class*="_statCard__"],[class*="_dashboardCard__"],
+ [class*="_sectionCard__"],[class*="_infoCard__"],
+ [class*="_gridCard__"],[class*="_tableCard__"],
+ [class*="_formCard__"],[class*="_cityCard__"]
+) {border-radius:var(--ui-card-radius);border-color:var(--ui-line);box-shadow:var(--ui-card-shadow);}
+/* Normalize common colored modal headers to Bazargani's pale lavender.
+   Restrict to modal-specific classnames; do not change status notifications. */
+:where([class*="_modalHeader__"],[class*="_modalHead__"]) {
+  background:#F2F2FE !important;
+  color:var(--ui-text) !important;
+  border-bottom:1px solid #E2E3FA;
+}
+:where([class*="_modalHeader__"],[class*="_modalHead__"]) :is(h1,h2,h3,strong,span) {
+  color:#263553 !important;
+  font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif;
+  font-size:max(15px,calc(15px * var(--ui-font-scale)));
+}
+:where([class*="_modalHeader__"],[class*="_modalHead__"]) button {
+  color:#505B85 !important;background:#FFFFFF !important;border:1px solid #E0E4F4 !important;
+}
+/* Prior modal rule made all legacy headings a saturated gradient.
+   Counter it with light background and dark titles. */
+.fixed.inset-0 :is(.bg-sky-300,.bg-sky-400,.bg-sky-500,.bg-sky-600,.bg-sky-700,.bg-blue-500,.bg-blue-600,.bg-blue-700,.bg-green-600,.bg-green-700,.bg-purple-600,.bg-purple-700,.bg-gray-200).-mx-6 {
+  background:#F2F2FE !important;color:var(--ui-text) !important;border-bottom:1px solid #E2E3FA !important;
+}
+.fixed.inset-0 :is(.bg-sky-300,.bg-sky-400,.bg-sky-500,.bg-sky-600,.bg-blue-500,.bg-blue-600,.bg-blue-700,.bg-green-600,.bg-green-700,.bg-purple-600,.bg-purple-700,.bg-gray-200).-mx-6 :is(h1,h2,h3,label) {
+  color:var(--ui-text) !important;font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif;font-weight:600 !important;
+}
+:root[data-merat-density="compact"] [class*="PanelPage_contentSurface__"] :is([class*="_statCard__"],[class*="_sectionCard__"],[class*="_infoCard__"],[class*="_formCard__"]) {padding:var(--ui-card-padding);}
+@media(max-width:767px) {
+  [class*="PanelPage_contentSurface__"] table :is(thead th,thead td) {padding:8px 9px !important;}
+  [class*="PanelPage_contentSurface__"] table tbody :is(td,th) {padding:8px 9px;}
+}
+
+
+/* Merat table typography alignment - Bazargani reference, 1405/08/07 v3.
+   Applies to real thead cells (including scoped CSS-module and research pages).
+   Does not change the layout, widths, column visibility or sticky positioning. */
+:root {
+  --merat-table-head-bg: #f5f7fc;
+  --merat-table-head-ink: #29395d;
+  --merat-table-head-line: #e1e7f2;
+}
+body table thead th,
+body table thead td {
+  font-family: "PeydaApp", "ShabnamApp", Tahoma, sans-serif !important;
+  font-size: max(13px, calc(13px * var(--ui-font-scale, 1))) !important;
+  font-weight: 700 !important;
+  line-height: 1.65 !important;
+  color: var(--merat-table-head-ink) !important;
+  background-color: var(--merat-table-head-bg) !important;
+  background-image: none !important;
+  border-bottom: 1px solid var(--merat-table-head-line) !important;
+  height: 42px;
+  min-height: 42px;
+  padding: 8px 11px !important;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+body table thead th :is(span, strong, b, label, button),
+body table thead td :is(span, strong, b, label, button) {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  color: inherit;
+  line-height: inherit;
+}
+/* Clear size differences in cells, while preserving badges and buttons. */
+body table tbody td {
+  font-family: "ShabnamApp", Tahoma, Arial, sans-serif;
+  font-size: max(13px, calc(13px * var(--ui-font-scale, 1)));
+  line-height: 1.7;
+}
+@media (max-width: 767px) {
+  body table thead th,
+  body table thead td {
+    height: 40px;
+    min-height: 40px;
+    padding: 7px 9px !important;
+  }
+}
+
+
+/* Merat v4: unify legibility without changing card/table geometry.
+   Shabnam Light/Peyda Regular are existing assets; no font files are added. */
+:root {
+  --merat-font-body: "ShabnamApp", Tahoma, Arial, sans-serif;
+  --merat-font-heading: "PeydaApp", "ShabnamApp", Tahoma, sans-serif;
+  --merat-text-strong: #263553;
+  --merat-text-muted: #63718d;
+}
+body {
+  font-family: var(--merat-font-body);
+  color: var(--ui-text, #263553);
+}
+body :is(button, input, select, textarea) { font-family: var(--merat-font-body); }
+/* Text weight correction is scoped to page content (not status pills, icons, or controls). */
+[class*="PanelPage_contentSurface__"] :is(p, label, small) {
+  font-family: var(--merat-font-body);
+  line-height: 1.75;
+}
+[class*="PanelPage_contentSurface__"] :is(h1, h2, h3) {
+  font-family: var(--merat-font-heading);
+  color: var(--merat-text-strong);
+  font-synthesis: weight;
+}
+
+/* Merat modal design system v6 — based on the supplied Bazargani modal reference.
+   Kept separate from page/card/table styling. Respect the user's theme accent. */
+:root {
+  --merat-dialog-head: color-mix(in srgb, var(--app-primary, #5d52eb) 5%, #f7f8fd);
+  --merat-dialog-border: #dde4f0;
+  --merat-dialog-ink: #263756;
+  --merat-dialog-muted: #65748d;
+  --merat-dialog-shadow: 0 24px 72px rgba(27,37,74,.19),0 5px 18px rgba(27,37,74,.06);
+}
+/* The legacy utility rules colored all modal title bars with an intense gradient. */
+body .fixed.inset-0 :is(.bg-sky-300,.bg-sky-400,.bg-sky-500,.bg-sky-600,.bg-sky-700,.bg-blue-500,.bg-blue-600,.bg-blue-700,.bg-green-600,.bg-green-700,.bg-purple-600,.bg-purple-700,.bg-gray-200).-mx-6 {
+  background:var(--merat-dialog-head)!important;
+  color:var(--merat-dialog-ink)!important;
+  border-bottom:1px solid var(--merat-dialog-border)!important;
+  border-radius:16px 16px 0 0!important;
+  position:sticky;top:0;z-index:2;
+  padding:12px 18px!important;
+  margin-bottom:14px!important;
+}
+body .fixed.inset-0 :is(.bg-sky-300,.bg-sky-400,.bg-sky-500,.bg-sky-600,.bg-sky-700,.bg-blue-500,.bg-blue-600,.bg-blue-700,.bg-green-600,.bg-green-700,.bg-purple-600,.bg-purple-700,.bg-gray-200).-mx-6 :is(h1,h2,h3,label,span,strong){
+  color:var(--merat-dialog-ink)!important;
+  font:700 16px/1.6 "PeydaApp","ShabnamApp",Tahoma,sans-serif!important;
+}
+/* CSS module modal headers are individually styled in their own files; this rule
+   provides a consistent fallback for other modal pages, not normal headers. */
+body :is([class*="_modalHeader__"],[class*="_modalHead__"],[class*="_dialogHeader__"]) {
+  background:var(--merat-dialog-head)!important;
+  color:var(--merat-dialog-ink)!important;
+  border-bottom:1px solid var(--merat-dialog-border)!important;
+}
+body :is([class*="_modalHeader__"],[class*="_modalHead__"],[class*="_dialogHeader__"]) :is(h1,h2,h3,strong){
+  color:var(--merat-dialog-ink)!important;
+  font:700 16px/1.65 "PeydaApp","ShabnamApp",Tahoma,sans-serif!important;
+}
+body :is([class*="_modalHeader__"],[class*="_modalHead__"],[class*="_dialogHeader__"]) :is(small,span,p){color:var(--merat-dialog-muted)!important;font-size:13px!important;}
+body :is([class*="_modalHeader__"],[class*="_modalHead__"],[class*="_dialogHeader__"]) >button,
+body :is([class*="_modalHeader__"],[class*="_modalHead__"],[class*="_dialogHeader__"]) button[aria-label="بستن"] {
+  color:#596684!important;background:#fff!important;border:1px solid var(--merat-dialog-border)!important;
+  border-radius:10px!important;min-width:32px;min-height:32px;
+}
+/* Direct fixed-overlay modals used in research and candidate screens.
+   :has(> .absolute.inset-0) ensures document/image viewers are not modified. */
+body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white) {
+  padding:16px!important;
+  margin-top:0!important;
+  align-items:safe center!important;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white) > .bg-white:not(.h-screen):not(.w-screen):not(.h-\[92vh\]) {
+  box-sizing:border-box;
+  max-width:calc(100vw - 32px);
+  max-height:calc(100dvh - 32px)!important;
+  border:1px solid var(--merat-dialog-border)!important;
+  border-radius:17px!important;
+  background:#fff!important;
+  box-shadow:var(--merat-dialog-shadow)!important;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+/* Control styling limited to actual modal cards. Keep emphasis on one primary action. */
+body .research-modal-card :is(input:not([type="checkbox"]),select,textarea),
+body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white) > .bg-white :is(input:not([type="checkbox"]),select,textarea) {
+  font:400 14px/1.8 "ShabnamApp",Tahoma,sans-serif;
+  border-radius:10px;
+  border-color:#d5deec;
+  background-color:#fbfcff;
+}
+body .research-modal-card :is(input,select,textarea):focus,
+body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white) > .bg-white :is(input,select,textarea):focus {
+  outline:0; border-color:var(--app-primary,#5d52eb)!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--app-primary,#5d52eb) 12%,transparent)!important;
+  background:#fff;
+}
+@media(max-width:640px){
+ body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white){padding:10px!important;}
+ body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white) > .bg-white:not(.h-screen):not(.w-screen){max-width:calc(100vw - 20px);max-height:calc(100dvh - 20px)!important;}
+}
+
+/* Global fallback for the shared React confirmation modal, on all layouts. */
+.research-modal-root{position:fixed;inset:0;z-index:2147483400;display:grid;place-items:center;padding:14px;isolation:isolate;}
+.research-modal-backdrop{position:absolute;inset:0;border:0;background:rgba(24,32,57,.43);backdrop-filter:blur(3px);}
+.research-modal-card{position:relative;z-index:1;width:min(530px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow:hidden;display:flex;flex-direction:column;border:1px solid #dce4ef;border-radius:18px;background:#fff;box-shadow:var(--merat-dialog-shadow);}
+.research-modal-header{flex:none;min-height:54px;display:flex;align-items:center;padding:11px 20px;background:var(--merat-dialog-head);color:var(--merat-dialog-ink);border-bottom:1px solid var(--merat-dialog-border);border-right:3px solid var(--app-primary,#5d52eb);font:700 16px/1.65 "PeydaApp","ShabnamApp",Tahoma,sans-serif;}
+.research-modal-body{min-height:0;overflow:auto;padding:20px;font:400 14px/1.95 "ShabnamApp",Tahoma,sans-serif;color:#364563;}
+.research-modal-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:20px;}
+.research-modal-actions .research-button{min-height:38px;border-radius:10px;padding:0 17px;font:500 13.5px "ShabnamApp",Tahoma,sans-serif;cursor:pointer;}
+.research-modal-actions .research-button.primary{border:1px solid transparent;background:var(--app-primary,#5d52eb);color:white;box-shadow:0 5px 13px color-mix(in srgb,var(--app-primary,#5d52eb) 16%,transparent);}
+.research-modal-actions .research-button.secondary{border:1px solid #dce3ee;background:#f7f8fc;color:#53627f;box-shadow:none;}
+/* Legacy return/referral dialogs with absolute top positioning must open centrally. */
+body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white){z-index:2147481000!important;}
+body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white) > .bg-white.absolute.top-5,
+body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white) > .bg-white.absolute.top-8{
+ top:50%!important;left:50%!important;transform:translate(-50%,-50%)!important;
+ width:min(560px,calc(100vw - 32px))!important;overflow-y:auto!important;
+}
+body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white) > .bg-white > .bg-gray-200.-mx-6 + hr{display:none;}
+/* Remove the browser's black legacy border on the footer actions. */
+body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white) > .bg-white .flex.justify-end >button{
+ min-height:37px;padding:0 17px!important;font-size:13.5px;border-radius:10px!important;
+ border:1px solid #dce3ee;box-shadow:none;cursor:pointer;
+}
+body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white) > .bg-white .flex.justify-end >button.bg-gray-300{
+ background:#f5f6fc!important;color:#53627f!important;border:1px solid #dce3ee!important;
+}
+body .fixed.inset-0:has(> .absolute.inset-0):has(> .bg-white) > .bg-white .flex.justify-end >button:is(.bg-green-700,.bg-blue-600,.bg-purple-600){
+ background:var(--app-primary,#5d52eb)!important;color:white!important;border:1px solid transparent!important;
+ box-shadow:0 5px 13px color-mix(in srgb,var(--app-primary,#5d52eb) 16%,transparent)!important;
+}
+@media(max-width:640px){.research-modal-root{padding:9px}.research-modal-card{max-height:calc(100dvh - 18px)}.research-modal-body{padding:15px}}
+
+
+/* ========================================================================
+   MERAT | Unified modal header system (1405/08)
+   Modal-only: no changes to navigation bars, page titles or table headers.
+   The last legacy header update intentionally fixes the inset title strip
+   visible on return/referral dialogs that use px-6 / -mx-6 utility classes.
+   ======================================================================== */
+:root {
+  --merat-modal-title-surface: linear-gradient(90deg, #fff 0%, color-mix(in srgb, var(--app-primary, #5b50dc) 5%, #fff) 100%);
+  --merat-modal-title-border: color-mix(in srgb, var(--app-primary, #5b50dc) 12%, #dce4ef);
+  --merat-modal-title-color: var(--ui-text, #263553);
+  --merat-modal-title-muted: #65748d;
+}
+
+/* Shared confirmations and module-owned dialogs: form wizard, users,
+   collaborators, research and contact/relation screens. */
+body :is(
+  .research-modal-header,
+  [class*="_modalHeader__"], [class*="_modalHead__"],
+  [class*="_dialogHeader__"], [class*="_jobDialogHeader__"],
+  [class*="_evaluationDialogHeader__"], [class*="_caseModalHead__"]
+) {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+  min-height: 54px;
+  padding: 10px 18px;
+  background: var(--merat-modal-title-surface) !important;
+  color: var(--merat-modal-title-color) !important;
+  border-bottom: 1px solid var(--merat-modal-title-border) !important;
+  border-right: 3px solid var(--app-primary, #5b50dc) !important;
+  border-radius: 0 !important;
+  text-align: right;
+  direction: rtl;
+}
+body :is(
+  .research-modal-header,
+  [class*="_modalHeader__"], [class*="_modalHead__"],
+  [class*="_dialogHeader__"], [class*="_jobDialogHeader__"],
+  [class*="_evaluationDialogHeader__"], [class*="_caseModalHead__"]
+) :is(h1,h2,h3,h4,strong) {
+  margin-top: 0;
+  margin-bottom: 0;
+  color: var(--merat-modal-title-color) !important;
+  font-family: "PeydaApp", "ShabnamApp", Tahoma, sans-serif !important;
+  font-size: max(15px, calc(16px * var(--ui-font-scale, 1))) !important;
+  font-weight: 600 !important;
+  line-height: 1.65 !important;
+  letter-spacing: 0;
+}
+body :is(
+  [class*="_modalHeader__"], [class*="_modalHead__"],
+  [class*="_dialogHeader__"], [class*="_jobDialogHeader__"],
+  [class*="_evaluationDialogHeader__"], [class*="_caseModalHead__"]
+) :is(p, small, span:not(:has(svg))) {
+  color: var(--merat-modal-title-muted) !important;
+}
+/* The modal close button, not page-level buttons or toolbar actions. */
+body :is(
+  [class*="_modalHeader__"], [class*="_modalHead__"],
+  [class*="_dialogHeader__"], [class*="_jobDialogHeader__"],
+  [class*="_evaluationDialogHeader__"], [class*="_caseModalHead__"]
+) > button:last-child {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--merat-modal-title-border) !important;
+  border-radius: 9px !important;
+  background: #fff !important;
+  color: #53617d !important;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+body :is(
+  [class*="_modalHeader__"], [class*="_modalHead__"],
+  [class*="_dialogHeader__"], [class*="_jobDialogHeader__"],
+  [class*="_evaluationDialogHeader__"], [class*="_caseModalHead__"]
+) > button:last-child:hover {
+  background: color-mix(in srgb, var(--app-primary, #5b50dc) 6%, #fff) !important;
+  color: var(--app-primary, #5b50dc) !important;
+}
+
+/* 26 marked legacy research/candidate modal title strips.
+   Force the full-bleed header: -mx-6 was being overridden or omitted,
+   leaving a pale rectangular title floating inside the white modal card. */
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy {
+  box-sizing: border-box;
+  width: auto !important;
+  min-height: 54px;
+  margin: 0 -24px 14px !important;
+  padding: 11px 20px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--merat-modal-title-color) !important;
+  background: var(--merat-modal-title-surface) !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--merat-modal-title-border) !important;
+  border-right: 3px solid var(--app-primary, #5b50dc) !important;
+  border-radius: 16px 16px 0 0 !important;
+  position: relative;
+  top: auto;
+  z-index: 2;
+  text-align: right;
+  direction: rtl;
+}
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy :is(h1,h2,h3,strong,span,label) {
+  margin: 0;
+  color: var(--merat-modal-title-color) !important;
+  font-family: "PeydaApp", "ShabnamApp", Tahoma, sans-serif !important;
+  font-size: max(15px, calc(16px * var(--ui-font-scale, 1))) !important;
+  font-weight: 600 !important;
+  line-height: 1.65 !important;
+}
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy + hr {
+  display: none !important; /* avoids the second divider beneath the new header */
+}
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy > button:last-child {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--merat-modal-title-border) !important;
+  border-radius: 9px !important;
+  background: #fff !important;
+  color: #53617d !important;
+}
+/* The older AlertDialogHeader was rendering both title and description as
+   an unstructured modal body; give that header its own restrained treatment. */
+body .research-modal-dialog-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--merat-modal-title-border);
+  border-right: 3px solid var(--app-primary, #5b50dc);
+  background: var(--merat-modal-title-surface);
+  direction: rtl;
+  text-align: right;
+}
+body .research-modal-dialog-intro h3 {
+  margin: 0;
+  font: 600 16px/1.65 "PeydaApp", "ShabnamApp", Tahoma, sans-serif;
+  color: var(--merat-modal-title-color);
+}
+body .research-modal-dialog-intro p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.85;
+  color: var(--merat-modal-title-muted);
+}
+body .research-modal-card > .research-modal-actions.research-modal-body {
+  margin: 0;
+  padding: 12px 20px 16px;
+}
+@media (max-width: 640px) {
+  body :is(
+    .research-modal-header, [class*="_modalHeader__"], [class*="_modalHead__"],
+    [class*="_dialogHeader__"], [class*="_jobDialogHeader__"],
+    [class*="_evaluationDialogHeader__"], [class*="_caseModalHead__"]
+  ) { min-height: 50px; padding: 9px 14px; gap: 9px; }
+  body .fixed.inset-0 .bg-white .merat-modal-header--legacy {
+    min-height: 50px; padding: 9px 15px !important; margin-bottom: 12px !important;
+  }
+  body .research-modal-dialog-intro { padding: 12px 15px; }
+}
+
+
+/* ===========================================================================
+   MERAT · Semantic modal-header tones
+   برگشت = زرد، تأیید = تم، اطلاع/توجه = سفید؛ all RTL, modal-scoped.
+   Intentionally override legacy !important styles without altering page bars.
+   =========================================================================== */
+:root {
+  --merat-modal-title-surface: #ffffff;
+  --merat-modal-title-border: #e4e9f2;
+  --merat-modal-title-color: #263553;
+  --merat-modal-title-muted: #65748d;
+  --merat-modal-title-accent: #cbd6e8;
+}
+/* The variants work by setting tokens ON the header; older CSS reads these
+   inherited custom properties for the text color and border. */
+body .merat-modal-tone--neutral,
+body .merat-modal-tone--notice {
+  --merat-modal-title-surface: #ffffff;
+  --merat-modal-title-border: #e4e9f2;
+  --merat-modal-title-color: #263553;
+  --merat-modal-title-muted: #69788f;
+  --merat-modal-title-accent: #c6d1e2;
+}
+body .merat-modal-tone--return {
+  --merat-modal-title-surface: linear-gradient(92deg,#fffdf5 0%,#fff3c8 100%);
+  --merat-modal-title-border: #ead79b;
+  --merat-modal-title-color: #604713;
+  --merat-modal-title-muted: #86682c;
+  --merat-modal-title-accent: #dba52f;
+}
+body .merat-modal-tone--confirm {
+  --merat-modal-title-surface: var(--app-gradient,var(--app-primary,#5d52eb));
+  --merat-modal-title-border: color-mix(in srgb, var(--app-primary,#5d52eb) 70%, #ffffff);
+  --merat-modal-title-color: #ffffff;
+  --merat-modal-title-muted: #f1edff;
+  --merat-modal-title-accent: color-mix(in srgb, var(--app-primary,#5d52eb) 60%, #ffffff);
+}
+/* The last legacy title-strip selector has high specificity. Keep the extra
+   class in this selector so semantic tones win in all research workflows. */
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy:is(.merat-modal-tone--neutral,.merat-modal-tone--notice,.merat-modal-tone--return,.merat-modal-tone--confirm),
+body .research-modal-root .research-modal-header:is(.merat-modal-tone--notice,.merat-modal-tone--return,.merat-modal-tone--confirm),
+body :is([class*="_modalHeader__"],[class*="_modalHead__"],[class*="_jobDialogHeader__"],[class*="_evaluationDialogHeader__"],[class*="_caseModalHead__"]).merat-modal-tone--neutral,
+body :is([class*="_modalHeader__"],[class*="_modalHead__"],[class*="_jobDialogHeader__"],[class*="_evaluationDialogHeader__"],[class*="_caseModalHead__"]).merat-modal-tone--notice,
+body :is([class*="_modalHeader__"],[class*="_modalHead__"],[class*="_jobDialogHeader__"],[class*="_evaluationDialogHeader__"],[class*="_caseModalHead__"]).merat-modal-tone--return,
+body :is([class*="_modalHeader__"],[class*="_modalHead__"],[class*="_jobDialogHeader__"],[class*="_evaluationDialogHeader__"],[class*="_caseModalHead__"]).merat-modal-tone--confirm {
+  background: var(--merat-modal-title-surface) !important;
+  color: var(--merat-modal-title-color) !important;
+  border-bottom: 1px solid var(--merat-modal-title-border) !important;
+  border-right: 3px solid var(--merat-modal-title-accent) !important;
+  box-shadow: none !important;
+  direction: rtl;
+  text-align: right;
+}
+/* Legacy route headings, and the css-module headings, may themselves have an
+   explicit text color; match their specificity and inherit the token. */
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy:is(.merat-modal-tone--return,.merat-modal-tone--confirm,.merat-modal-tone--neutral,.merat-modal-tone--notice) :is(h1,h2,h3,h4,strong),
+body .research-modal-root .research-modal-header:is(.merat-modal-tone--return,.merat-modal-tone--confirm,.merat-modal-tone--notice) :is(h1,h2,h3,h4,strong),
+body :is([class*="_modalHeader__"],[class*="_modalHead__"],[class*="_jobDialogHeader__"],[class*="_evaluationDialogHeader__"],[class*="_caseModalHead__"]).merat-modal-tone--confirm :is(h1,h2,h3,h4,strong,span),
+body :is([class*="_modalHeader__"],[class*="_modalHead__"],[class*="_jobDialogHeader__"],[class*="_evaluationDialogHeader__"],[class*="_caseModalHead__"]).merat-modal-tone--return :is(h1,h2,h3,h4,strong) {
+  color: var(--merat-modal-title-color) !important;
+}
+body :is([class*="_modalHeader__"],[class*="_modalHead__"],[class*="_jobDialogHeader__"],[class*="_evaluationDialogHeader__"],[class*="_caseModalHead__"]).merat-modal-tone--confirm :is(p,small,span:not(:has(svg))) {
+  color: var(--merat-modal-title-muted) !important;
+}
+/* A white notification header still has a small visible affordance, without
+   making warnings look destructive. The icon is decorative, not interactive. */
+body .research-modal-header.merat-modal-tone--notice::before,
+body .research-modal-dialog-intro.merat-modal-tone--notice::before {
+  content:"!";display:inline-grid;place-items:center;flex:0 0 auto;
+  width:27px;height:27px;border-radius:9px;
+  background:#f5f7fc;border:1px solid #e1e7f1;
+  color:#657592;font:700 16px/1 Tahoma,sans-serif;
+  margin-left:10px;
+}
+body .research-modal-dialog-intro.merat-modal-tone--notice {
+  position:relative;
+  background:#ffffff !important;
+  border-bottom:1px solid #e4e9f2!important;
+  border-right:3px solid #c6d1e2!important;
+  padding-right:56px!important;
+  box-shadow:none!important;
+}
+body .research-modal-dialog-intro.merat-modal-tone--notice::before {
+  position:absolute;right:17px;top:16px;margin:0;
+}
+body .research-modal-dialog-intro.merat-modal-tone--notice :is(h3,p){color:#263553;}
+body .research-modal-dialog-intro.merat-modal-tone--notice p{color:#69788f;}
+/* Do not convert the confirmation header's colored background to white when
+   styling the optional close button or inline helper text. */
+body .merat-modal-tone--confirm > button:last-child {
+  color:#fff!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1px solid rgba(255,255,255,.35)!important;
+}
+body .merat-modal-tone--confirm > button:last-child:hover {
+  color:#fff!important;background:rgba(255,255,255,.27)!important;
+}
+@media(max-width:640px){
+  body .research-modal-dialog-intro.merat-modal-tone--notice {padding-right:51px!important;}
+  body .research-modal-dialog-intro.merat-modal-tone--notice::before {right:13px;top:12px;}
+}
+
+
+/* ========================================================================
+   MERAT 1405/08 | Research referral dialogs and real Jalali date selection
+   Scope: only referral form cards; other modals keep their original geometry.
+   ======================================================================== */
+body .fixed.inset-0 > .merat-referral-dialog {
+  width: min(520px, calc(100vw - 28px)) !important;
+  min-height: min(470px, calc(100dvh - 28px));
+  max-height: calc(100dvh - 28px) !important;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 22px;
+  border-radius: 17px !important;
+}
+body .merat-referral-dialog > textarea[placeholder*="توضیحات ارجاع پرونده"] {
+  height: 156px !important;
+  min-height: 156px !important;
+  flex: 0 0 auto;
+  resize: vertical;
+  line-height: 2;
+}
+body .merat-referral-dialog > .flex.justify-end {
+  margin-top: auto !important;
+  padding-top: 20px;
+  flex: 0 0 auto;
+}
+body .merat-referral-dialog .merat-modal-header--legacy {
+  flex: 0 0 auto;
+}
+@media (max-width: 640px) {
+  body .fixed.inset-0 > .merat-referral-dialog {
+    width: calc(100vw - 24px) !important;
+    min-height: 0;
+    max-height: calc(100dvh - 24px) !important;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  body .merat-referral-dialog > .merat-modal-header--legacy {
+    margin-right: -16px !important;
+    margin-left: -16px !important;
+  }
+  body .merat-referral-dialog > textarea[placeholder*="توضیحات ارجاع پرونده"] {
+    height: 140px !important;
+    min-height: 140px !important;
+  }
+}
+
+/* The date picker is portaled to document.body so it is never clipped by
+   a scrollable modal. Keep its appearance compatible with the Merat theme. */
+.merat-jalali-field .merat-jalali-input { width: 100%; }
+.merat-jalali-trigger {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-direction: row; gap: 9px; width: 100%; min-height: 42px;
+  padding: 8px 11px; border: 1px solid #d5deec; border-radius: 10px;
+  background: #fbfcff; color: #263553; font-size: 13.5px;
+  cursor: pointer; text-align: right; transition: border-color .15s, box-shadow .15s;
+}
+.merat-jalali-trigger > svg:first-child { flex-shrink: 0; color: var(--app-primary, #5d52eb); }
+.merat-jalali-trigger > span { margin-inline-end: auto; text-align: left; }
+.merat-jalali-trigger-arrow { color: #8895ab; }
+.merat-jalali-trigger:hover,.merat-jalali-trigger:focus-visible {
+  border-color: var(--app-primary, #5d52eb); outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb,var(--app-primary,#5d52eb) 11%,transparent);
+}
+.merat-jalali-input.research-control-error .merat-jalali-trigger { border-color: #ef4444; }
+.merat-jalali-popup {
+  box-sizing: border-box; max-height: calc(100dvh - 16px); overflow-y: auto;
+  padding: 12px; border-radius: 16px; border: 1px solid #dce3ef;
+  background: #fff; color: #263553;
+  box-shadow: 0 18px 55px rgba(23,34,69,.22), 0 4px 12px rgba(23,34,69,.06);
+  font-family: var(--merat-font-body,"ShabnamApp",Tahoma,sans-serif);
+}
+.merat-jalali-nav { display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:12px; }
+.merat-jalali-nav > button {
+  display:grid;place-items:center;flex-shrink:0;width:31px;height:31px;
+  border:1px solid #e3e8f2;border-radius:9px;background:#f7f8fc;color:#53627f;cursor:pointer;
+}
+.merat-jalali-nav > select {
+  min-width:0;flex:1;height:32px;padding:3px 5px;border:1px solid #e3e8f2;
+  border-radius:9px;background:#fff;color:#34415c;text-align:center;font-size:13px;
+}
+.merat-jalali-grid { display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;text-align:center; }
+.merat-jalali-grid > strong { padding:4px 0;color:#718098;font-size:12px;font-weight:600; }
+.merat-jalali-grid > button {
+  display:grid;place-items:center;min-height:34px;border-radius:9px;border:1px solid transparent;
+  background:transparent;color:#293850;font-size:13px;cursor:pointer;
+}
+.merat-jalali-grid > button:hover:not(:disabled) { background:#f0efff;color:var(--app-primary,#5d52eb); }
+.merat-jalali-grid > button.is-selected { background:var(--app-primary,#5d52eb);color:#fff !important; }
+.merat-jalali-grid > button.is-today:not(.is-selected) { border-color:color-mix(in srgb,var(--app-primary,#5d52eb) 48%,#fff);color:var(--app-primary,#5d52eb);font-weight:700; }
+.merat-jalali-grid > button:disabled { color:#bdc5d2;cursor:not-allowed;background:#f9fafc; }
+.merat-jalali-footer { display:flex;align-items:center;gap:9px;margin-top:10px;padding:9px 2px 0;border-top:1px solid #edf0f6; }
+.merat-jalali-footer > button { padding:5px 10px;border-radius:8px;color:var(--app-primary,#5d52eb);background:#f5f4ff;font-size:12px;cursor:pointer; }
+.merat-jalali-footer > .merat-jalali-close { margin-right:auto;display:grid;place-items:center;padding:6px;color:#718098;background:#f3f5f9; }
+@media (max-width: 400px) {.merat-jalali-popup { padding:9px; }.merat-jalali-grid > button { min-height:31px; }}
+
+
+/* ========================================================================
+   MERAT | Original 1404/legacy print templates - isolated typography/layout
+   Reference: SRC_Merat_NewOld.zip / Styles/globals.css.
+   Keep app dashboard Shabnam/Peyda unchanged. These selectors are limited to
+   print/report surfaces, using existing fonts at Styles/Fonts.
+   ======================================================================== */
+@font-face {
+  font-family: "bnaznin";
+  src: url("../Styles/Fonts/BNaznin/BNAZANIN.TTF") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "lotus";
+  src: url("../Styles/Fonts/Lotus/lotus.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "titr";
+  src: url("../Styles/Fonts/Titr/titr.ttf") format("truetype");
+  font-display: swap;
+}
+/* Old printable TSX uses the literal family name B Titr in inline styles. */
+@font-face {
+  font-family: "B Titr";
+  src: url("../Styles/Fonts/Titr/titr.ttf") format("truetype");
+  font-display: swap;
+}
+
+/* A report must NOT inherit the dashboard's forced Shabnam .bnaznin styles. */
+body .merat-legacy-print-form {
+  font-family: "bnaznin", "B Nazanin", Tahoma, serif !important;
+  direction: rtl;
+  color: #111;
+  font-synthesis: none;
+}
+body .merat-legacy-print-form .bnaznin,
+body .merat-legacy-print-form .Roya {
+  font-family: "bnaznin", "B Nazanin", Tahoma, serif !important;
+}
+body .merat-legacy-print-form .lotus {
+  font-family: "lotus", "B Lotus", "bnaznin", serif !important;
+}
+body .merat-legacy-print-form .titr {
+  font-family: "titr", "B Titr", Tahoma, serif !important;
+  font-weight: normal !important;
+}
+body .merat-legacy-print-form .shabnam {
+  font-family: "ShabnamApp", Tahoma, sans-serif !important;
+}
+/* Respect sizes (18/20/22/23px) explicitly defined by the old forms. */
+
+/* The old 130px rows were designed with the narrower B Nazanin glyphs.
+   Expand vertically for long names/constituencies instead of overlapping
+   the following report border; never compress the horizontal 330mm canvas. */
+body .merat-legacy-print-form > div[style*="height: 130px"],
+body .merat-legacy-print-form > div[style*="height: 140px"] {
+  height: auto !important;
+  min-height: 130px;
+  flex-shrink: 0;
+}
+body .merat-legacy-print-form > div[style*="height: 140px"] { min-height: 140px; }
+body .merat-legacy-print-form > div[style*="height: 130px"] > .flex-col.h-full {
+  height: auto !important;
+  min-height: 130px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+body .merat-legacy-print-form > div[style*="height: 130px"] .flex-wrap {
+  row-gap: 7px;
+  line-height: 1.48;
+}
+body .merat-legacy-print-form > div[style*="height: 130px"] .inline-flex {
+  vertical-align: middle;
+}
+body .merat-legacy-print-form [contenteditable="true"] {
+  font-family: inherit;
+  overflow-wrap: anywhere;
+}
+
+/* Restore original report list's Titr header and B Nazanin data rows.
+   More specific than the global dashboard table typography reset. */
+body #print-area.merat-legacy-print-form .report-table thead th,
+body #print-area.merat-legacy-print-form .report-table thead td {
+  font-family: "titr", "B Titr", Tahoma, serif !important;
+  font-size: 14px !important;
+  font-weight: normal !important;
+  line-height: 1.5 !important;
+  background: #f1f1f1 !important;
+  border: 1px solid #333 !important;
+  height: auto;
+  min-height: 0;
+  white-space: normal;
+}
+body #print-area.merat-legacy-print-form .report-table tbody td {
+  font-family: "bnaznin", "B Nazanin", Tahoma, serif !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+}
+body #print-area.merat-legacy-print-form :is(.print-title,.print-subtitle) {
+  font-family: "titr", "B Titr", Tahoma, serif !important;
+}
+/* No dashboard navigation, buttons or controls are changed by this patch. */
+@media print {
+  body .merat-legacy-print-form { box-shadow: none !important; }
+  body #print-area.merat-legacy-print-form .report-table tr { break-inside: avoid; }
+}
+
+
+/* ==========================================================================
+   MERAT | Province case summary radio choices, using the legacy paper fonts.
+   SVG selected marks survive dom-to-image/PNG as well as normal printing.
+   This is SCOPED to report canvas; dashboard UI is unaffected.
+   ========================================================================== */
+body .merat-legacy-print-form .merat-report-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 25px;
+  line-height: 1.25 !important;
+  padding: 5px 8px 7px 2px;
+  direction: rtl;
+  font-family: "bnaznin", "B Nazanin", Tahoma, serif !important;
+  font-size: 23px;
+}
+body .merat-legacy-print-form .merat-report-option {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  cursor: pointer;
+  line-height: 1.25 !important;
+  white-space: nowrap;
+  color: #101010;
+  font: inherit;
+}
+body .merat-legacy-print-form .merat-report-option-text {
+  font: inherit;
+  line-height: inherit;
+}
+body .merat-legacy-print-form .merat-report-option-mark {
+  width: 20px;
+  height: 20px;
+  display: block;
+  flex: 0 0 20px;
+  overflow: visible;
+}
+body .merat-legacy-print-form .merat-report-option-native {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+}
+body .merat-legacy-print-form .merat-report-option-native:focus-visible ~ .merat-report-option-mark {
+  outline: 2px solid #6255d9;
+  outline-offset: 3px;
+  border-radius: 50%;
+}
+/* Do not print a focus ring (only the chosen, filled dot). */
+@media print {
+  body .merat-legacy-print-form .merat-report-option-native:focus-visible ~ .merat-report-option-mark {
+    outline: 0;
+  }
+}
+
+
+/* MERAT Research phase 4: only paper documents, NOT dashboard controls. */
+body .merat-legacy-print-form {
+  font-family: "bnaznin", "B Nazanin", Tahoma, serif !important;
+  font-size: 20px;
+  line-height: 1.9;
+  font-variant-numeric: normal;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+body .merat-legacy-print-form :is(input, textarea, select, button) {
+  font-family: inherit !important;
+}
+body .merat-legacy-print-form :is(.lotus, .lotus *) {
+  font-family: "lotus", "B Lotus", "bnaznin", serif !important;
+}
+body .merat-legacy-print-form :is(.titr, .titr *) {
+  font-family: "titr", "B Titr", serif !important;
+  font-weight: normal !important;
+}
+body .merat-legacy-print-form :is(p, label, span, h1, h2, h3) {
+  overflow-wrap: break-word;
+}
+body .merat-legacy-print-form [contenteditable] {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+@media print {
+  @page { size: A4 portrait; margin: 10mm; }
+  body .merat-legacy-print-form {
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body .merat-legacy-print-form .merat-report-options { break-inside: avoid; }
+}
+
+
+/* ========================================================================
+   MERAT UI TYPOGRAPHY | Global hierarchy – 1405/08/15
+
+   Heading: Peyda (existing app font), body/input: Shabnam (existing app font).
+   All sizes follow the existing Theme font-size preference. Screen only:
+   legacy research/official printing keeps B Nazanin, B Titr and B Lotus.
+   No font binaries are packaged in the SRC patch.
+   ======================================================================== */
+@media screen {
+  :root {
+    --merat-font-heading: "PeydaApp", "Peyda", "ShabnamApp", Tahoma, sans-serif;
+    --merat-font-body: "ShabnamApp", "Shabnam", Tahoma, Arial, sans-serif;
+    --merat-type-caption: max(12px, calc(12px * var(--ui-font-scale, 1)));
+    --merat-type-label: max(12.5px, calc(12.5px * var(--ui-font-scale, 1)));
+    --merat-type-body: max(14px, calc(14px * var(--ui-font-scale, 1)));
+    --merat-type-value: max(14.5px, calc(14.5px * var(--ui-font-scale, 1)));
+    --merat-type-card-title: max(15.5px, calc(15.5px * var(--ui-font-scale, 1)));
+    --merat-type-section-title: max(16px, calc(16px * var(--ui-font-scale, 1)));
+    --merat-type-page-title: max(18px, calc(18px * var(--ui-font-scale, 1)));
+  }
+
+  body {
+    font-family: var(--merat-font-body);
+    line-height: 1.85;
+  }
+  body :is(button, input, select, textarea, option, label, legend) {
+    font-family: var(--merat-font-body);
+  }
+  body :is(input, select, textarea) {
+    font-size: var(--merat-type-body);
+    line-height: 1.85;
+  }
+  body :is(label, legend) {
+    font-size: var(--merat-type-label);
+    line-height: 1.8;
+  }
+  body :is(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--merat-font-heading);
+    line-height: 1.65;
+    letter-spacing: 0;
+  }
+  body h1 { font-size: var(--merat-type-page-title); font-weight: 700; }
+  body h2 { font-size: var(--merat-type-section-title); font-weight: 650; }
+  body h3 { font-size: var(--merat-type-card-title); font-weight: 600; }
+  body :is(h4, h5, h6) { font-size: var(--merat-type-value); font-weight: 600; }
+
+  /* CSS-module headings used in dashboard, news, users, research and forms. */
+  body :is(
+    [class*="_pageTitle__"], [class*="_headerTitle__"],
+    [class*="_headingTitle__"], [class*="_workspaceTitle__"]
+  ) {
+    font-family: var(--merat-font-heading) !important;
+    font-size: var(--merat-type-page-title);
+    font-weight: 700;
+    line-height: 1.65;
+  }
+  body :is(
+    [class*="_sectionTitle__"] h1,
+    [class*="_sectionTitle__"] h2,
+    [class*="_sectionTitle__"] h3,
+    [class*="_sectionTitle__"] > strong,
+    [class*="_sectionHeader__"] h2,
+    [class*="_sectionHeader__"] h3,
+    [class*="_sectionHeader__"] > strong,
+    [class*="_cardTitle__"], [class*="_panelTitle__"],
+    [class*="_dialogTitle__"]
+  ) {
+    font-family: var(--merat-font-heading) !important;
+    font-size: var(--merat-type-section-title);
+    font-weight: 650;
+    line-height: 1.65;
+  }
+  body :is(
+    [class*="_modalHeader__"], [class*="_modalHead__"],
+    [class*="_dialogHeader__"]
+  ) :is(h1, h2, h3, strong) {
+    font-family: var(--merat-font-heading) !important;
+    font-size: var(--merat-type-section-title) !important;
+    font-weight: 700 !important;
+    line-height: 1.65 !important;
+  }
+  body :is(
+    [class*="_fieldLabel__"], [class*="_formLabel__"],
+    [class*="_inputLabel__"], [class*="_metaLabel__"]
+  ) {
+    font-family: var(--merat-font-body) !important;
+    font-size: var(--merat-type-label);
+    font-weight: 400;
+    line-height: 1.8;
+  }
+  body :is(
+    [class*="_statValue__"], [class*="_metricValue__"],
+    [class*="_cardValue__"]
+  ) {
+    font-family: var(--merat-font-heading) !important;
+    font-size: var(--merat-type-value);
+    font-weight: 600;
+    line-height: 1.75;
+  }
+  body table :is(thead th, thead td) {
+    font-family: var(--merat-font-heading) !important;
+    font-size: var(--merat-type-label) !important;
+    font-weight: 650 !important;
+  }
+  body table tbody :is(td, th) {
+    font-family: var(--merat-font-body);
+    font-size: max(13px, calc(13px * var(--ui-font-scale, 1)));
+  }
+  body button:not([aria-label]) { line-height: 1.7; }
+
+  /* Formal print canvases retain their historical font and paper sizing. */
+  body .merat-legacy-print-form {
+    font-family: "bnaznin", "B Nazanin", Tahoma, serif !important;
+  }
+  body .merat-legacy-print-form :is(h1, h2, h3, h4, h5, h6, label, legend, input, textarea, select, button) {
+    font-family: inherit;
+  }
 }

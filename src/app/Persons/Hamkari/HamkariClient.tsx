@@ -1,4 +1,5 @@
 "use client";
+import CaseStatusPanel from "./CaseStatusPanel";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
@@ -12,6 +13,7 @@ import {
   FolderOpen,
   Link2,
   MapPin,
+  Menu,
   Pencil,
   Plus,
   Search,
@@ -30,11 +32,22 @@ import {
   DeletePersonHamkari,
   GetPersonHamkari,
   GetPersonHamkariKholaseh,
+  GetPersonByUserID,
+  GetPersonSentNews,
+  GetPersonResearchHistory,
 } from "@/services/ApiServiseHamkari";
 import { CityTree, GetUserPic, UploadUserPic } from "@/services/ApiServiceUsers";
 import { IranNationalCode, IranTelHamrahCode } from "@/services/ApiService";
 import { UploadNameh } from "@/services/ApiServiceNameha";
 import styles from "./Hamkari.module.css";
+import EvaluationPanel from "./EvaluationPanel";
+import JobHistoryPanel from "./JobHistoryPanel";
+import EducationHistoryPanel from "./EducationHistoryPanel";
+import ResidenceHistoryPanel from "./ResidenceHistoryPanel";
+import FinancialHistoryPanel from "./FinancialHistoryPanel";
+import TrainingHistoryPanel from "./TrainingHistoryPanel";
+import ExperienceHistoryPanel from "./ExperienceHistoryPanel";
+import SupplementaryPanel from "./SupplementaryPanel";
 
 type FlatCity = {
   ID: number;
@@ -51,6 +64,25 @@ type CityOption = { CityId: number; FullName: string };
 type RoleFilter = { key: string; value: number; label: string };
 type ConfirmState = { open: boolean; title: string; message: string; onConfirm?: () => void | Promise<void> };
 type Notice = { type: "success" | "error" | "info"; text: string } | null;
+
+const PROFILE_SECTIONS = [
+  { key: "personal", label: "مشخصات فردی" },
+  { key: "cooperation", label: "سوابق همکاری" },
+  { key: "news", label: "سوابق اخبار ارسالی" },
+  { key: "research", label: "سوابق تحقیق" },
+  { key: "evaluation", label: "ارزیابی" },
+  { key: "employment", label: "سوابق شغلی" },
+  { key: "education", label: "سوابق تحصیلی" },
+  { key: "residence", label: "سوابق سکونت" },
+  { key: "finance", label: "سوابق مالی" },
+  { key: "training", label: "سوابق آموزشی" },
+  { key: "experience", label: "سوابق تجربیات مرتبط" },
+  { key: "activities", label: "فعالیت و عضویت" },
+  { key: "attachments", label: "مدارک و پیوست‌ها" },
+  { key: "caseStatus", label: "وضعیت پرونده" },
+  { key: "supplementary", label: "اطلاعات تکمیلی" },
+] as const;
+type ProfileSection = typeof PROFILE_SECTIONS[number]["key"];
 
 type PersonForm = {
   HamkariId: number;
@@ -397,22 +429,43 @@ function ModalShell({
   onClose,
   wide = false,
   extraWide = false,
+  fullScreen = false,
+  inline = false,
+  displayMode,
+  onDisplayModeChange,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
   extraWide?: boolean;
+  fullScreen?: boolean;
+  inline?: boolean;
+  displayMode?: "modal" | "page";
+  onDisplayModeChange?: (mode: "modal" | "page") => void;
 }) {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <div className={styles.modalLayer} role="dialog" aria-modal="true">
-      <button type="button" className={styles.modalBackdrop} onClick={onClose} aria-label="بستن" />
-      <section className={`${styles.modalCard} ${wide ? styles.modalWide : ""} ${extraWide ? styles.modalExtraWide : ""}`}>
-        <header className={styles.modalHeader}>
+    <div className={`${styles.modalLayer} ${fullScreen ? styles.fullModalLayer : ""} ${inline ? styles.inlineProfileLayer : ""}`} role={inline ? undefined : "dialog"} aria-modal={inline ? undefined : true}>
+      {!inline ? <button type="button" className={styles.modalBackdrop} onClick={onClose} aria-label="بستن" /> : null}
+      <section className={`${styles.modalCard} ${wide ? styles.modalWide : ""} ${extraWide ? styles.modalExtraWide : ""} ${fullScreen ? styles.fullModalCard : ""}`}>
+        <header className={`${styles.modalHeader} merat-modal-tone--neutral`}>
           <h2>{title}</h2>
-          <button type="button" onClick={onClose} aria-label="بستن">
-            <X size={19} />
-          </button>
+          <div className={styles.profileHeaderControls}>
+            {displayMode && onDisplayModeChange ? (
+              <div className={styles.profileDisplayMenuWrap}>
+                <button type="button" className={styles.profileHeaderAction} onClick={() => setMenuOpen((v) => !v)} aria-label="تنظیمات نمایش پرونده" aria-expanded={menuOpen} title="منوی نمایش پرونده"><Menu size={19} /></button>
+                {menuOpen ? (
+                  <div className={styles.profileDisplayMenu}>
+                    <strong>نحوه نمایش پرونده</strong>
+                    <label><input type="radio" name="profile-display" checked={displayMode === "modal"} onChange={() => { onDisplayModeChange("modal"); setMenuOpen(false); }} /> مودال تمام‌صفحه</label>
+                    <label><input type="radio" name="profile-display" checked={displayMode === "page"} onChange={() => { onDisplayModeChange("page"); setMenuOpen(false); }} /> باز کردن در صفحه جدید</label>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+            <button type="button" className={styles.profileHeaderAction} onClick={onClose} aria-label="بستن" title="بستن پرونده"><X size={19} /></button>
+          </div>
         </header>
         {children}
       </section>
@@ -456,8 +509,9 @@ function InputField({
   );
 }
 
-export default function HamkariClient() {
+export default function HamkariClient({ profilePersonId = 0 }: { profilePersonId?: number }) {
   const router = useRouter();
+  const standalone = profilePersonId > 0;
   const user = useMeratUser();
   const searchSeq = useRef(0);
 
@@ -479,6 +533,21 @@ export default function HamkariClient() {
   const [sortDirection, setSortDirection] = useState(1);
 
   const [detailOpen, setDetailOpen] = useState(false);
+  const [displayMode, setDisplayMode] = useState<"modal" | "page">("modal");
+  const [profileSearch, setProfileSearch] = useState("");
+  const [profileMatches, setProfileMatches] = useState<PersonRow[]>([]);
+  const [profileSearchBusy, setProfileSearchBusy] = useState(false);
+  const [profileSection, setProfileSection] = useState<ProfileSection>("personal");
+  const [sentNews, setSentNews] = useState<PersonRow[]>([]);
+  const [newsPage, setNewsPage] = useState(1);
+  const [newsTotal, setNewsTotal] = useState(0);
+  const [newsLoading, setNewsLoading] = useState(false);
+  const [newsError, setNewsError] = useState("");
+  const [researchRows, setResearchRows] = useState<PersonRow[]>([]);
+  const [researchPage, setResearchPage] = useState(1);
+  const [researchTotal, setResearchTotal] = useState(0);
+  const [researchLoading, setResearchLoading] = useState(false);
+  const [researchError, setResearchError] = useState("");
   const [personFormOpen, setPersonFormOpen] = useState(false);
   const [coopOpen, setCoopOpen] = useState(false);
   const [letterOpen, setLetterOpen] = useState(false);
@@ -611,14 +680,112 @@ export default function HamkariClient() {
     };
   }, [form.CodeMelli, detailOpen, personFormOpen]);
 
-  const openPerson = async (row: PersonRow) => {
+  const showPerson = async (row: PersonRow) => {
     const next = personFromRow(row);
     setSelectedRow(row);
     setForm(next);
     setFormErrors({});
+    setProfileSection("personal");
+    setNewsPage(1);
+    setSentNews([]);
+    setNewsTotal(0);
+    setNewsError("");
+    setResearchPage(1);
+    setResearchRows([]);
+    setResearchTotal(0);
+    setResearchError("");
     setDetailOpen(true);
     await loadCooperations(next.PersonId);
   };
+
+  const openPerson = async (row: PersonRow) => {
+    const id = toNumber(row?.PersonId);
+    if (!id) return;
+    if (displayMode === "page" || standalone) {
+      router.push(`/Persons/Hamkari/Profile/${id}`);
+      return;
+    }
+    await showPerson(row);
+  };
+
+  const changeDisplayMode = (mode: "modal" | "page") => {
+    setDisplayMode(mode);
+    window.localStorage.setItem("merat-hamkari-profile-display", mode);
+    if (mode === "page" && !standalone && form.PersonId) router.push(`/Persons/Hamkari/Profile/${form.PersonId}`);
+    if (mode === "modal" && standalone && form.PersonId) router.push(`/Persons/Hamkari?personId=${form.PersonId}`);
+  };
+
+  useEffect(() => {
+    const mode = window.localStorage.getItem("merat-hamkari-profile-display");
+    if (mode === "modal" || mode === "page") setDisplayMode(mode);
+  }, []);
+
+  useEffect(() => {
+    if (!user.UserId) return;
+    const id = standalone ? profilePersonId : Number(new URLSearchParams(window.location.search).get("personId") || 0);
+    if (!Number.isSafeInteger(id) || id <= 0) return;
+    let alive = true;
+    GetPersonByUserID(id, user.UserId)
+      .then((result: any) => {
+        if (!alive) return;
+        const row = getRows(result)?.[0];
+        if (row) void showPerson(row);
+        else showNotice("error", "اطلاعات شخص یافت نشد.");
+      })
+      .catch(() => { if (alive) showNotice("error", "خطا در دریافت مشخصات شخص"); });
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profilePersonId, standalone, user.UserId]);
+
+  useEffect(() => {
+    if (!standalone || profileSearch.trim().length < 2 || !user.Mahal) { setProfileMatches([]); return; }
+    let alive = true;
+    const timer = window.setTimeout(async () => {
+      setProfileSearchBusy(true);
+      try {
+        const result = await GetPersonHamkari(user.Mahal, 1, 15, 1, 1, profileSearch.trim(), 0);
+        if (alive) setProfileMatches(getRows(result));
+      } catch { if (alive) setProfileMatches([]); }
+      finally { if (alive) setProfileSearchBusy(false); }
+    }, 2000);
+    return () => { alive = false; window.clearTimeout(timer); };
+  }, [standalone, profileSearch, user.Mahal]);
+
+  useEffect(() => {
+    if (!detailOpen || profileSection !== "news" || !form.PersonId) return;
+    let alive = true;
+    setNewsLoading(true);
+    setNewsError("");
+    GetPersonSentNews(form.PersonId, newsPage)
+      .then((result: any) => {
+        if (!alive) return;
+        if (result?.status === 401) { router.replace("/Login"); return; }
+        const list = getRows(result);
+        setSentNews(list);
+        setNewsTotal(toNumber(list?.[0]?.TotalCount, 0));
+      })
+      .catch((error: any) => { if (alive) { setNewsError(error?.message || "خطا در دریافت اخبار"); setSentNews([]); } })
+      .finally(() => { if (alive) setNewsLoading(false); });
+    return () => { alive = false; };
+  }, [detailOpen, profileSection, form.PersonId, newsPage, router]);
+
+  useEffect(() => {
+    if (!detailOpen || profileSection !== "research" || !form.PersonId) return;
+    let alive = true;
+    setResearchLoading(true);
+    setResearchError("");
+    GetPersonResearchHistory(form.PersonId, researchPage)
+      .then((result: any) => {
+        if (!alive) return;
+        if (result?.status === 401) { router.replace("/Login"); return; }
+        const list = getRows(result);
+        setResearchRows(list);
+        setResearchTotal(toNumber(list?.[0]?.TotalCount, 0));
+      })
+      .catch((error: any) => { if (alive) { setResearchError(error?.message || "خطا در دریافت سوابق تحقیق"); setResearchRows([]); } })
+      .finally(() => { if (alive) setResearchLoading(false); });
+    return () => { alive = false; };
+  }, [detailOpen, profileSection, form.PersonId, researchPage, router]);
 
   const openCreate = async () => {
     setSelectedRow(null);
@@ -841,7 +1008,7 @@ export default function HamkariClient() {
     <div className={styles.page} dir="rtl">
       {notice ? <div className={`${styles.notice} ${styles[`notice_${notice.type}`]}`}>{notice.text}</div> : null}
 
-      <div className={styles.layout}>
+      {!standalone ? <div className={styles.layout}>
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
             <div>
@@ -951,7 +1118,7 @@ export default function HamkariClient() {
                   </thead>
                   <tbody>
                     {rows.length ? rows.map((row, index) => (
-                      <tr key={`${toNumber(row?.PersonId)}-${toNumber(row?.HamkariId)}-${index}`} onDoubleClick={() => openPerson(row)}>
+                      <tr key={`${toNumber(row?.PersonId)}-${toNumber(row?.HamkariId)}-${index}`} className={styles.personTableRow} tabIndex={0} onClick={() => openPerson(row)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openPerson(row); } }}>
                         <td>{toText(row?.Rdf) || (page - 1) * 10 + index + 1}</td>
                         <td>{toText(row?.ShomarehParvandeh) || "—"}</td>
                         <td>{toText(row?.CodeMelli) || "—"}</td>
@@ -961,7 +1128,7 @@ export default function HamkariClient() {
                         <td>{toText(row?.TarikhTavalod) || "—"}</td>
                         <td>{toText(row?.TelHamrah) || "—"}</td>
                         <td>
-                          <button type="button" className={styles.iconButton} title="مشاهده / ویرایش" onClick={() => openPerson(row)}>
+                          <button type="button" className={styles.iconButton} title="مشاهده / ویرایش" onClick={(e) => { e.stopPropagation(); openPerson(row); }}>
                             <Eye size={16} />
                           </button>
                         </td>
@@ -983,12 +1150,34 @@ export default function HamkariClient() {
             ) : null}
           </section>
         </main>
-      </div>
+      </div> : null}
+
+      {standalone && !detailOpen ? <div className={styles.profilePageLoading}><span className={styles.spinner} /> در حال دریافت پرونده شخص...</div> : null}
 
       {detailOpen ? (
-        <ModalShell title="اطلاعات فرد" onClose={() => setDetailOpen(false)} wide>
-          <div className={styles.detailBody}>
-            <div className={styles.avatarWrap}>
+        <ModalShell title={`پرونده شخصی | ${form.FirstName} ${form.LastName}`} onClose={() => standalone ? router.push("/Persons/Hamkari") : setDetailOpen(false)} fullScreen inline={standalone} displayMode={standalone ? "page" : displayMode} onDisplayModeChange={changeDisplayMode}>
+          <div className={styles.profileWorkspace}>
+            {standalone ? (
+              <div className={styles.profilePageSearch}>
+                <div className={styles.profilePageSearchInput}>
+                  <Search size={18} />
+                  <input value={profileSearch} onChange={(e) => setProfileSearch(e.target.value)} placeholder="جستجوی شخص دیگر بر اساس نام، نام خانوادگی یا شماره ملی..." aria-label="جستجوی شخص دیگر" />
+                  {profileSearch ? <button type="button" onClick={() => { setProfileSearch(""); setProfileMatches([]); }} aria-label="پاک کردن جستجو"><X size={16} /></button> : null}
+                </div>
+                {profileSearch.trim().length >= 2 ? (
+                  <div className={styles.profileSearchResults}>
+                    {profileSearchBusy ? <span>در حال جستجو...</span> : profileMatches.length ? profileMatches.map((person, index) => (
+                      <button type="button" key={`${toNumber(person.PersonId)}-${index}`} onClick={() => { setProfileSearch(""); setProfileMatches([]); router.push(`/Persons/Hamkari/Profile/${toNumber(person.PersonId)}`); }}>
+                        <UserRound size={17} /> <strong>{toText(person.FirstName)} {toText(person.LastName)}</strong>
+                        <small>{toText(person.CodeMelli) || "بدون شماره ملی"} · پرونده {toText(person.ShomarehParvandeh) || "—"}</small>
+                      </button>
+                    )) : <span>موردی یافت نشد.</span>}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+            <section className={styles.profileOverview} aria-label="خلاصه مشخصات فردی">
+            <div className={styles.profilePortrait}>
               <img
                 src={profileUrl || "/person.png"}
                 alt="پروفایل"
@@ -998,22 +1187,154 @@ export default function HamkariClient() {
                   if (!target.src.endsWith("/person.png")) target.src = "/person.png";
                 }}
               />
+              <label className={styles.profilePhotoAction} title="تغییر تصویر شخص">
+                <Upload size={14} /> {uploadingPic ? "در حال ارسال" : "تغییر عکس"}
+                <input type="file" accept="image/*" disabled={uploadingPic} onChange={(e) => uploadProfile(e.target.files?.[0])} />
+              </label>
             </div>
-            <div className={styles.detailGrid}>
+            <div className={styles.profileIdentity}>
+              <div className={styles.profileName}>{form.FirstName} {form.LastName}</div>
+              <div className={styles.profileSummaryGrid}>
               {[
-                ["نام", form.FirstName], ["نام خانوادگی", form.LastName], ["نام پدر", form.FatherName],
-                ["شماره پرونده", toText(selectedRow?.ShomarehParvandeh)], ["شماره ملی", form.CodeMelli], ["تلفن همراه", form.TelHamrah],
-                ["تاریخ تولد", form.TarikhTavalod], ["محل تولد", form.MahalTavalod], ["محل صدور", form.MahalSodor],
-              ].map(([label, value]) => <div className={styles.detailField} key={label}><span>{label}</span><b>{value || "—"}</b></div>)}
+                ["شماره پرونده", toText(selectedRow?.ShomarehParvandeh)], ["شماره ملی", form.CodeMelli],
+                ["نام پدر", form.FatherName], ["تلفن همراه", form.TelHamrah],
+              ].map(([label, value]) => <div className={styles.profileSummaryField} key={label}><span>{label}</span><strong>{value || "—"}</strong></div>)}
+              </div>
             </div>
-
-            <div className={styles.modalActions}>
-              <button type="button" className={styles.secondaryButton} onClick={() => setDetailOpen(false)}>بستن</button>
-              <button type="button" className={styles.secondaryAccentButton} onClick={() => { setLetterTemplateOk(true); setLetterOpen(true); }}><FileText size={16} /> تولید معرفی‌نامه</button>
-              <button type="button" className={styles.primaryButton} onClick={openFullEdit}><Pencil size={16} /> اطلاعات بیشتر</button>
+            <div className={styles.profileTopActions}>
+              <button type="button" className={styles.secondaryAccentButton} onClick={() => { setLetterTemplateOk(true); setLetterOpen(true); }}><FileText size={16} /> معرفی‌نامه</button>
+              <button type="button" className={styles.primaryButton} disabled={savingPerson} onClick={savePerson}><Pencil size={16} /> {savingPerson ? "در حال ثبت..." : "ذخیره مشخصات"}</button>
             </div>
+            </section>
 
-            <CooperationHistory rows={cooperations} loading={coopLoading} onAdd={openCooperation} onDelete={askDeleteCooperation} />
+            <div className={styles.profileLower}>
+              <main className={styles.profileMain}>
+                <div className={styles.profileSectionHeader}>
+                  <h3>{PROFILE_SECTIONS.find((section) => section.key === profileSection)?.label}</h3>
+                  <span>پرونده شخصی / {PROFILE_SECTIONS.find((section) => section.key === profileSection)?.label}</span>
+                </div>
+                {profileSection === "personal" ? (
+                  <div className={styles.profileEditSection}>
+                    <div className={styles.profileFormIntro}>اطلاعات هویتی و تماس فرد را در همین بخش مشاهده و ویرایش کنید. فیلدهای ستاره‌دار الزامی هستند.</div>
+                    <div className={styles.profilePersonalGrid}>
+                      <InputField label="نام" required value={form.FirstName} onChange={(v) => changeForm("FirstName", v)} error={formErrors.FirstName} maxLength={50} />
+                      <InputField label="نام خانوادگی" required value={form.LastName} onChange={(v) => changeForm("LastName", v)} error={formErrors.LastName} maxLength={100} />
+                      <InputField label="نام پدر" value={form.FatherName} onChange={(v) => changeForm("FatherName", v)} maxLength={100} />
+                      <div className={styles.field}><label>شماره پرونده</label><input className={`${styles.input} ${styles.profileReadOnly}`} value={toText(selectedRow?.ShomarehParvandeh)} readOnly aria-readonly="true" /></div>
+                      <InputField label="شماره ملی" value={form.CodeMelli} onChange={(v) => changeForm("CodeMelli", v)} error={formErrors.CodeMelli} numeric maxLength={10} />
+                      <InputField label="تلفن همراه" value={form.TelHamrah} onChange={(v) => changeForm("TelHamrah", v)} error={formErrors.TelHamrah} numeric maxLength={11} />
+                      <InputField label="تلفن ثابت" value={form.PhoneNumber} onChange={(v) => changeForm("PhoneNumber", v)} error={formErrors.PhoneNumber} numeric maxLength={30} />
+                      <InputField label="تاریخ تولد" value={form.TarikhTavalod} onChange={(v) => changeForm("TarikhTavalod", v)} placeholder="1405/07/01" maxLength={10} />
+                      <InputField label="شماره شناسنامه" value={form.ShomareShenasnameh} onChange={(v) => changeForm("ShomareShenasnameh", v)} numeric maxLength={10} />
+                      <InputField label="سریال شناسنامه" value={form.SerialShenasnameh} onChange={(v) => changeForm("SerialShenasnameh", v)} />
+                      <InputField label="محل تولد" value={form.MahalTavalod} onChange={(v) => changeForm("MahalTavalod", v)} />
+                      <InputField label="محل صدور" value={form.MahalSodor} onChange={(v) => changeForm("MahalSodor", v)} />
+                      <DfnSelect pid={10104} label="جنسیت" required value={form.Jensiyat} onChange={(v) => changeForm("Jensiyat", v)} error={formErrors.Jensiyat} />
+                      <DfnSelect pid={10103} label="وضعیت تأهل" required value={form.Taahol} onChange={(v) => changeForm("Taahol", v)} error={formErrors.Taahol} />
+                      <DfnSelect pid={10101} label="دین" required value={form.Din} onChange={(v) => { changeForm("Din", v); changeForm("Mazhab", 0); }} error={formErrors.Din} />
+                      <DfnSelect pid={form.Din ? Number(`101010${form.Din}`) : 0} label="مذهب" required value={form.Mazhab} onChange={(v) => changeForm("Mazhab", v)} error={formErrors.Mazhab} disabled={!form.Din} />
+                    </div>
+                    <div className={styles.profileFormActions}>
+                      <button type="button" className={styles.secondaryButton} onClick={() => setDetailOpen(false)}>بستن پرونده</button>
+                      <button type="button" className={styles.primaryButton} disabled={savingPerson} onClick={savePerson}>{savingPerson ? "در حال ذخیره..." : "ذخیره اطلاعات فردی"}</button>
+                    </div>
+                  </div>
+                ) : profileSection === "cooperation" ? (
+                  <CooperationHistory rows={cooperations} loading={coopLoading} onAdd={openCooperation} onDelete={askDeleteCooperation} />
+                ) : profileSection === "news" ? (
+                  <div className={styles.profileNewsSection}>
+                    <div className={styles.profileNewsSummary}>اخبار ثبت‌شده توسط این اطلاع‌رسان <span>{newsTotal.toLocaleString("fa-IR")} خبر</span></div>
+                    {newsLoading ? <div className={styles.stateText}>در حال دریافت سوابق اخبار...</div> : newsError ? <div className={styles.errorBox}>{newsError}</div> : (
+                      <div className={styles.profileNewsScroll}>
+                        <table className={styles.profileNewsTable}>
+                          <thead><tr><th>شماره</th><th>عنوان خبر</th><th>تاریخ تنظیم</th><th>تاریخ ارسال / انتشار</th><th>ثبت‌کننده</th><th>منبع خبر</th><th>استان</th><th>وضعیت خبر</th></tr></thead>
+                          <tbody>
+                            {sentNews.length ? sentNews.map((news) => (
+                              <tr key={toText(news.ShomareKhabar)}>
+                                <td>{toText(news.ShomareKhabar)}</td>
+                                <td className={styles.profileNewsTitle}>{toText(news.OnvanKhabar) || "—"}</td>
+                                <td>{toText(news.TarikhTanzim) || "—"}</td>
+                                <td>{toText(news.TarikhEnteshar) || "—"}</td>
+                                <td>{toText(news.SabtKonandeh) || "—"}</td>
+                                <td>{toText(news.ManbaKhabar) || "—"}</td>
+                                <td>{toText(news.Ostan) || "—"}</td>
+                                <td><span className={styles.profileNewsStatus}>{toText(news.VaziyatKhabar) || "—"}</span></td>
+                              </tr>
+                            )) : <tr><td colSpan={8} className={styles.profileNewsEmpty}>خبری با ثبت‌کنندگی این شخص یافت نشد.</td></tr>}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                    {newsTotal > 15 ? (
+                      <div className={styles.profileNewsPaging}>
+                        <button type="button" disabled={newsPage <= 1 || newsLoading} onClick={() => setNewsPage((n) => n - 1)}>قبلی</button>
+                        <span>صفحه {newsPage.toLocaleString("fa-IR")} از {Math.ceil(newsTotal / 15).toLocaleString("fa-IR")}</span>
+                        <button type="button" disabled={newsPage >= Math.ceil(newsTotal / 15) || newsLoading} onClick={() => setNewsPage((n) => n + 1)}>بعدی</button>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : profileSection === "evaluation" ? (
+                  <EvaluationPanel personId={form.PersonId} userId={user.UserId} />
+                ) : profileSection === "employment" ? (
+                  <JobHistoryPanel personId={form.PersonId} userId={user.UserId} rootMahal={user.Mahal} />
+                ) : profileSection === "education" ? (
+                  <EducationHistoryPanel personId={form.PersonId} userId={user.UserId} rootMahal={user.Mahal} />
+                ) : profileSection === "residence" ? (
+                  <ResidenceHistoryPanel personId={form.PersonId} userId={user.UserId} rootMahal={user.Mahal} />
+                ) : profileSection === "finance" ? (
+                  <FinancialHistoryPanel personId={form.PersonId} userId={user.UserId} />
+                ) : profileSection === "training" ? (
+                  <TrainingHistoryPanel personId={form.PersonId} userId={user.UserId} />
+                ) : profileSection === "experience" ? (
+                  <ExperienceHistoryPanel personId={form.PersonId} userId={user.UserId} />
+                ) : profileSection === "caseStatus" ? (
+                  <CaseStatusPanel personId={form.PersonId} userId={user.UserId} />
+                ) : profileSection === "supplementary" ? (
+                  <SupplementaryPanel personId={form.PersonId} userId={user.UserId} />
+                ) : profileSection === "research" ? (
+                  <div className={styles.profileNewsSection}>
+                    <div className={styles.profileNewsSummary}>تحقیقاتی که این شخص محقق آن‌ها بوده است <span>{researchTotal.toLocaleString("fa-IR")} تحقیق</span></div>
+                    {researchLoading ? <div className={styles.stateText}>در حال دریافت سوابق تحقیق...</div> : researchError ? <div className={styles.errorBox}>{researchError}</div> : (
+                      <div className={styles.profileNewsScroll}>
+                        <table className={styles.profileNewsTable}>
+                          <thead><tr><th>شماره ارجاع</th><th>نام داوطلب</th><th>شماره پرونده</th><th>تاریخ ارجاع</th><th>تعداد اقدام</th><th>وضعیت</th><th>توضیحات</th></tr></thead>
+                          <tbody>
+                            {researchRows.length ? researchRows.map((item) => (
+                              <tr key={toText(item.TahghighId)}>
+                                <td>{toText(item.ErjaId)}</td>
+                                <td className={styles.profileNewsTitle}>{toText(item.NameDavtalab) || "—"}</td>
+                                <td>{toText(item.DavtalabParvandeh) || "—"}</td>
+                                <td>{toText(item.TarikhErja) || "—"}</td>
+                                <td>{toText(item.TedadEghdam) || "۰"}</td>
+                                <td><span className={styles.profileNewsStatus}>{toText(item.Vaziyat)}</span></td>
+                                <td className={styles.profileResearchDescription}>{toText(item.Tozihat) || "—"}</td>
+                              </tr>
+                            )) : <tr><td colSpan={7} className={styles.profileNewsEmpty}>هیچ تحقیق فعالی با انتساب به این محقق یافت نشد.</td></tr>}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                    {researchTotal > 15 ? (
+                      <div className={styles.profileNewsPaging}>
+                        <button type="button" disabled={researchPage <= 1 || researchLoading} onClick={() => setResearchPage((n) => n - 1)}>قبلی</button>
+                        <span>صفحه {researchPage.toLocaleString("fa-IR")} از {Math.ceil(researchTotal / 15).toLocaleString("fa-IR")}</span>
+                        <button type="button" disabled={researchPage >= Math.ceil(researchTotal / 15) || researchLoading} onClick={() => setResearchPage((n) => n + 1)}>بعدی</button>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : (
+                  <div className={styles.profileComingSoon}><FileText size={30} /><strong>{PROFILE_SECTIONS.find((section) => section.key === profileSection)?.label}</strong><p>ساختار این بخش آماده است؛ اطلاعات و امکانات آن در مراحل بعدی اضافه می‌شود.</p></div>
+                )}
+              </main>
+              <nav className={styles.profileNav} aria-label="بخش‌های پرونده فرد">
+                <div className={styles.profileNavTitle}>بخش‌های پرونده</div>
+                {PROFILE_SECTIONS.map((section) => (
+                  <button type="button" key={section.key} className={`${styles.profileNavButton} ${profileSection === section.key ? styles.profileNavActive : ""}`} onClick={() => setProfileSection(section.key)} aria-current={profileSection === section.key ? "page" : undefined}>
+                    <span>{section.label}</span><ChevronLeft size={15} />
+                  </button>
+                ))}
+              </nav>
+            </div>
           </div>
         </ModalShell>
       ) : null}

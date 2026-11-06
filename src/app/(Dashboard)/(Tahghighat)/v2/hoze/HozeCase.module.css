@@ -1,0 +1,736 @@
+/* ParvandehOstan V2: old workflow UX, current Merat design tokens.
+   Scoped to this page; no changes to API or referral behavior. */
+.page {
+  --case-primary: var(--app-primary, #4f46e5);
+  --case-line: var(--ui-line, #e6e8f2);
+  --case-ink: var(--ui-text, #1e2440);
+  --case-muted: var(--ui-muted, #737a96);
+  --case-surface: var(--ui-surface, #fff);
+  direction: rtl;
+  min-height: 40vh;
+  padding: 3px 7px 16px;
+  color: var(--case-ink);
+  background: transparent;
+  font-family: "ShabnamApp", Tahoma, Arial, sans-serif;
+  font-size: max(12.5px, calc(13px * var(--ui-font-scale, 1)));
+  line-height: 1.7;
+}
+.page *, .page *::before, .page *::after { box-sizing: border-box; }
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 0 0 7px;
+  padding: 5px 9px;
+  min-height: 39px;
+  border: 1px solid var(--case-line);
+  border-radius: 11px;
+  /* A distinct soft-blue breadcrumb surface, not the white action/meta cards. */
+  background: linear-gradient(105deg,
+    color-mix(in srgb, #60a5fa 16%, var(--case-surface)),
+    color-mix(in srgb, #2dd4bf 8%, var(--case-surface)));
+  border-color: color-mix(in srgb, #4d9dda 30%, var(--case-line));
+  color: var(--case-ink);
+  font-size: 12.5px;
+}
+.breadcrumb button {
+  border: 1px solid color-mix(in srgb, #3b82b9 25%, var(--case-line));
+  border-radius: 8px;
+  padding: 3px 10px;
+  background: color-mix(in srgb, #e0f2fe 55%, var(--case-surface));
+  color: var(--case-ink);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+.crumbPerson {
+  flex: 1 1 220px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--case-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+.breadcrumb .backLink {
+  background: color-mix(in srgb, #bae6fd 43%, var(--case-surface));
+  color: var(--case-ink);
+  border-color: color-mix(in srgb, #0ea5e9 35%, var(--case-line));
+}
+.breadcrumb button:hover { background: color-mix(in srgb, #7dd3fc 30%, var(--case-surface)); }
+.metaBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 11px;
+  min-height: 44px;
+  padding: 7px 10px;
+  margin: 0 0 8px;
+  border: 1px solid var(--case-line);
+  border-radius: 11px;
+  background: var(--case-surface);
+  font-size: 12.5px;
+  color: var(--case-ink);
+}
+.metaBar b { color: var(--case-muted); margin-left: 4px; font-weight: 600; }
+.metaDescription { flex: 1 1 160px; min-width: 120px; max-height: 48px; overflow: auto; }
+.metaState {
+  padding: 3px 8px;
+  border-radius: 20px;
+  color: var(--case-primary);
+  background: var(--app-soft, #eeefff);
+  white-space: nowrap;
+  font-weight: 500;
+}
+.greenButton, .yellowButton, .addButton, .outlineButton, .primary, .secondary, .cancelButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 5px 11px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  font-family: "ShabnamApp", Tahoma, Arial, sans-serif;
+  font-size: max(12.5px, calc(13px * var(--ui-font-scale, 1)));
+  font-weight: 500;
+  line-height: 1.6;
+  text-align: center;
+  cursor: pointer;
+  white-space: normal;
+  transition: background .15s, border-color .15s;
+}
+.addButton, .primary {
+  background: var(--app-gradient, linear-gradient(135deg, #4f46e5, #6d5dfc));
+  color: #fff;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--case-primary) 14%, transparent);
+}
+.greenButton {
+  background: #eff9f3;
+  color: #137347;
+  border-color: #bde4ce;
+}
+.yellowButton {
+  background: #fff8e7;
+  color: #986613;
+  border-color: #f0ddb0;
+}
+.outlineButton, .secondary, .cancelButton {
+  background: #f7f8fc;
+  color: #56647e;
+  border-color: var(--case-line);
+  box-shadow: none;
+}
+.greenButton:hover:not(:disabled) { background: #e0f4e9; }
+.yellowButton:hover:not(:disabled) { background: #fff0c8; }
+.outlineButton:hover:not(:disabled), .secondary:hover:not(:disabled), .cancelButton:hover:not(:disabled) { background: #edeffc; }
+.greenButton:disabled, .yellowButton:disabled, .addButton:disabled, .outlineButton:disabled,
+.primary:disabled, .secondary:disabled, .cancelButton:disabled {
+  opacity: .51;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.referralPanel {
+  overflow: hidden;
+  margin: 7px 0;
+  border: 1px solid var(--case-line);
+  border-radius: 11px;
+  background: var(--case-surface);
+  box-shadow: 0 2px 8px rgba(31, 37, 86, .035);
+}
+.panelHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 46px;
+  padding: 7px 10px;
+  background: #fafbfe;
+}
+.panelTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  color: var(--case-ink);
+  font-family: "ShabnamApp", Tahoma, Arial, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.6;
+  cursor: pointer;
+  text-align: right;
+}
+.panelTitle strong {
+  font-family: "PeydaApp", "ShabnamApp", Tahoma, sans-serif;
+  font-size: max(13.5px, calc(14px * var(--ui-font-scale, 1)));
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--case-ink);
+}
+.chevron { color: var(--case-primary); font-size: 13px; }
+.countGray, .countGreen {
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  min-width: 23px;
+  height: 23px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #eef0f6;
+  border: 1px solid #dfe3ed;
+  color: #5d6a85;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+.countGreen { background: #eaf8ef; border-color: #caead8; color: #177d4a; }
+.panelBody { background: var(--case-surface); border-top: 1px solid var(--case-line); padding: 10px 12px; }
+.compactBox {
+  margin: 7px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--case-line);
+  border-radius: 11px;
+  background: var(--case-surface);
+}
+.hint { margin: 4px 0 9px; color: var(--case-muted); font-size: 12.5px; line-height: 1.8; }
+.label { display: block; margin: 7px 0 4px; color: #56647e; font-size: 13px; font-weight: 500; }
+.field {
+  display: block;
+  width: 100%;
+  margin: 4px 0 9px;
+  padding: 7px 10px;
+  border: 1px solid #d9dfed;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--case-ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.75;
+  outline: none;
+  resize: vertical;
+}
+.field:focus { border-color: var(--case-primary); box-shadow: none; outline: none; }
+.field:disabled { background: #f7f8fb; color: #8a92a6; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 8px; }
+.tableWrap { overflow: auto; border: 1px solid var(--case-line); border-radius: 8px; }
+.table { width: 100%; border-collapse: collapse; text-align: right; }
+.table th, .table td { padding: 8px 10px; border-bottom: 1px solid var(--case-line); font-size: 13px; }
+.table th { background: #f5f7fc; color: #3b4764; font-weight: 600; }
+.table tr:last-child td { border: 0; }
+.linkButton { border: 0; background: transparent; color: var(--case-primary); text-decoration: underline; cursor: pointer; font: inherit; }
+.error, .success, .warning { margin: 7px 0; padding: 9px 12px; border-radius: 9px; font-size: 13px; line-height: 1.8; }
+.error { background: #fff1f2; border: 1px solid #f3b9c1; color: #a72039; }
+.success { background: #e6fff2; border: 1px solid #b7e9cd; color: #13744c; }
+.warning { background: #fff7e6; border: 1px solid #f6d69a; color: #84541d; }
+.empty { padding: 24px; border: 1px dashed #d7dced; border-radius: 10px; background: #fff; text-align: center; color: var(--case-muted); }
+.rowHeading { display: flex; align-items: center; justify-content: space-between; gap: 9px; }
+.cancelBox { margin-top: 9px; padding: 10px; border: 1px solid #f7d2bd; border-radius: 9px; background: #fffaf6; }
+.attachments { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--case-line); }
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147482000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: rgba(29, 37, 71, .45);
+}
+.modal {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 460px);
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+  border: 1px solid var(--case-line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 20px 56px rgba(27, 37, 74, .18);
+}
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: none;
+  gap: 12px;
+  min-height: 46px;
+  padding: 8px 13px;
+  border: 0;
+  border-bottom: 1px solid var(--case-line);
+  border-radius: 13px 13px 0 0;
+  background: var(--merat-dialog-head, #f1f2fb);
+  color: var(--case-ink);
+}
+.modalHeader h2 {
+  margin: 0;
+  font-family: "PeydaApp", "ShabnamApp", Tahoma, sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--case-ink);
+}
+.modalHeader button {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--case-line);
+  border-radius: 9px;
+  background: #fff;
+  color: #67728b;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.modalBody {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 15px 13px;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.modalBody .label { margin: 5px 0 3px; font-size: 12.5px; }
+.modalBody .field { margin: 3px 0 7px; }
+.modalTextarea { min-height: 82px; max-height: 116px; resize: vertical; }
+.modalActions {
+  display: flex;
+  flex: none;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 9px 15px 11px;
+  border-top: 1px solid #edf0f6;
+  background: #fff;
+}
+.modalActions button { min-height: 34px; padding: 5px 13px; font-size: 12.5px; }
+.dateBox { position: relative; max-width: 100%; }
+.page :where(button):focus-visible { outline: none; }
+.modal :where(input, textarea, button):focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+@media (max-width: 800px) {
+  .page { padding: 3px 4px 12px; }
+  .breadcrumb { gap: 5px; padding: 6px 7px; }
+  .crumbPerson { flex-basis: 150px; }
+  .metaBar { gap: 6px; }
+  .panelHeading { flex-wrap: wrap; }
+  .panelTitle strong { font-size: 13.5px; }
+  .modalOverlay { padding: 10px; }
+  .modal { width: min(100%, 460px); }
+  .modalBody { padding: 9px 11px 11px; }
+}
+@media (max-height: 620px) {
+  .modalOverlay { align-items: flex-start; }
+  .modal { margin-block: auto; }
+  .modalTextarea { min-height: 62px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page button { transition: none; }
+}
+
+/* On-demand selector: loads only on direct open; stays visible as data arrives. */
+.picker { position: relative; z-index: auto; margin: 3px 0 8px; }
+.pickerTrigger {
+  width: 100%; min-height: 38px; display: flex; align-items: center;
+  justify-content: space-between; gap: 8px; padding: 6px 10px;
+  border: 1px solid #d9dfed; border-radius: 9px; color: var(--case-ink);
+  background: #fff; font: inherit; font-size: 12.8px; text-align: right; cursor: pointer;
+}
+.pickerTrigger:focus-visible { outline: none; border-color: var(--case-primary); box-shadow: none; }
+.pickerTrigger:disabled { color: #9ca3b6; background: #f7f8fb; cursor: not-allowed; }
+.pickerMenu {
+  position: absolute;
+  z-index: 60;
+  display: flex; flex-direction: column; gap: 5px;
+  max-height: 240px;
+  margin: 6px 0 0; padding: 7px;
+  border: 1px solid var(--case-line);
+  border-radius: 10px; background: #f9faff;
+  box-shadow: none;
+}
+.pickerSearch {
+  display: block; flex: none; width: 100%; min-height: 36px; margin: 0;
+  padding: 6px 9px; border: 1px solid #d9dfed; border-radius: 7px;
+  background: #fff; color: var(--case-ink); outline: none; box-shadow: none;
+  font: inherit; font-size: 12.5px;
+}
+.pickerSearch:focus { border-color: var(--case-primary); outline: none; box-shadow: none; }
+.pickerChoices { min-height: 0; max-height: 220px; overflow-y: auto; overscroll-behavior: contain; }
+.pickerOption {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  width: 100%; min-height: 37px; padding: 7px 9px; border: 0;
+  border-bottom: 1px solid #f0f2f7; border-radius: 6px;
+  background: #fff; color: var(--case-ink); text-align: right;
+  font: inherit; font-size: 12.8px; cursor: pointer;
+}
+.pickerOption:last-child { border-bottom: 0; }
+.pickerOption:hover:not(:disabled), .pickerOption[aria-selected="true"] { background: var(--app-soft, #eeefff); color: var(--case-primary); }
+.pickerOption:disabled { background: #fafbfe; color: #596681; cursor: not-allowed; }
+.pickerOptionName { min-width: 0; overflow-wrap: anywhere; font-weight: 500; }
+.pickerUnavailable {
+  flex: none; padding: 2px 6px; border: 1px solid #f1dfb6; border-radius: 999px;
+  background: #fff8e9; color: #8b651f; font-size: 10.5px; white-space: nowrap;
+}
+.pickerStatus { margin: 0; padding: 6px 8px; color: var(--case-muted); font-size: 11.5px; line-height: 1.7; }
+.pickerError { display: flex; flex-direction: column; gap: 6px; padding: 9px; color: #a72039; font-size: 12.5px; }
+.pickerError button { align-self: flex-start; border: 1px solid #f3b9c1; border-radius: 6px; padding: 4px 8px; background: #fff4f5; color: #a72039; font: inherit; cursor: pointer; }
+
+
+/* Parent / child referral hierarchy */
+.mainCaseBar {
+  border-inline-start: 4px solid var(--case-primary);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--case-primary) 5%, #fff), #fff 55%);
+}
+.mainCaseBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border: 1px solid color-mix(in srgb, var(--case-primary) 24%, #fff);
+  border-radius: 999px;
+  color: var(--case-primary);
+  background: color-mix(in srgb, var(--case-primary) 9%, #fff);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.hozePanel { --group-color: #0d9488; --group-soft: #effaf8; }
+.provincePanel { --group-color: #3478c8; --group-soft: #f0f6ff; }
+.investigatorPanel { --group-color: #7255d9; --group-soft: #f5f2ff; }
+.hozePanel .panelHeading,
+.provincePanel .panelHeading,
+.investigatorPanel .panelHeading {
+  border-inline-start: 4px solid var(--group-color);
+  background: linear-gradient(90deg, var(--group-soft), #fbfcff 72%);
+}
+.groupHint {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-start: 3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: var(--group-color, var(--case-muted));
+  background: var(--group-soft, #f2f4f8);
+  font-size: 10.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.childList { display: grid; gap: 7px; }
+.childCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 9px 11px;
+  border: 1px solid var(--case-line);
+  border-inline-start: 3px solid var(--group-color, #7255d9);
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--group-soft, #f7f5ff), #fff 42%);
+}
+.hozePanel .childCard { --group-color: #0d9488; --group-soft: #effaf8; }
+.provincePanel .childCard { --group-color: #3478c8; --group-soft: #f0f6ff; }
+.investigatorCard { --group-color: #7255d9; --group-soft: #f5f2ff; }
+.childWaiting { box-shadow: inset 0 0 0 1px rgba(205, 145, 35, .035); }
+.childReceived { border-inline-start-color: #16945e; }
+.childIndex {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 27px;
+  width: 27px;
+  height: 27px;
+  border-radius: 8px;
+  color: var(--group-color, var(--case-primary));
+  background: var(--group-soft, #f2f3ff);
+  border: 1px solid color-mix(in srgb, var(--group-color, var(--case-primary)) 20%, #fff);
+  font-size: 12px;
+  font-weight: 700;
+}
+.deleteReferralButton {
+  flex: 0 0 auto;
+  border: 1px solid #f1c3cc;
+  border-radius: 8px;
+  padding: 4px 10px;
+  min-height: 30px;
+  background: #fff5f6;
+  color: #b42339;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.deleteReferralButton:hover:not(:disabled) { background: #ffe7eb; border-color: #e6a8b5; }
+.deleteReferralButton:focus-visible { outline: 2px solid #b42339; outline-offset: 2px; }
+.deleteReferralButton:disabled { opacity: .55; cursor: not-allowed; }
+.childContent { flex: 1 1 auto; min-width: 0; }
+.childTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.childTitleRow strong {
+  overflow-wrap: anywhere;
+  color: var(--case-ink);
+  font-size: 13px;
+  font-weight: 650;
+}
+.childStatus {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.statusWaiting { color: #946319; background: #fff6e5; border: 1px solid #f1dfb8; }
+.statusReceived { color: #147449; background: #eaf8f0; border: 1px solid #c5e9d3; }
+.childMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px 14px;
+  margin-top: 3px;
+  color: var(--case-muted);
+  font-size: 11.5px;
+}
+/* Official electoral-district and province labels in the child cards. */
+.childLocation {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px 12px;
+  padding-top: 3px;
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: var(--case-muted);
+}
+.childLocation span + span { padding-inline-start: 10px; border-inline-start: 1px solid var(--case-line); }
+.investigatorList .childCard { background: linear-gradient(90deg, #f5f2ff, #fff 48%); }
+@media (max-width: 640px) {
+  .groupHint { display: none; }
+  .childCard { align-items: flex-start; padding: 8px; }
+  .childTitleRow { align-items: flex-start; flex-direction: column; gap: 3px; }
+  .childMeta { gap: 2px 9px; }
+}
+
+/* Single-line focus treatment in the referral dialog. */
+.modal :where(input, textarea, select):focus { outline: none; border-color: var(--case-primary); box-shadow: none; }
+.modal .dateBox :where(input, button):focus-visible { outline: none; box-shadow: none; }
+
+/* Research V2 worksheet editor below an investigator assignment */
+.investigatorCard{flex-wrap:wrap}
+.worksheetHolder{width:100%;flex:0 0 100%;min-width:0}
+
+/* Hoze V2: the same visual language and accordion/modals as ProvinceCase V2. */
+.hozePage{padding-bottom:22px}
+.summaryExcerpt{margin:8px 0 0;max-width:100%;white-space:pre-wrap;color:#50607c;font-size:12px;line-height:1.9}
+.checkList{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0}
+.checkList span{padding:6px 10px;background:#f4f7fd;border:1px solid var(--case-line);border-radius:8px;font-size:12px}
+.worksheetRow{border:1px solid var(--case-line);background:#fbfcff;white-space:pre-wrap;margin-top:5px;padding:10px;border-radius:8px}
+.modalChoices{display:flex;flex-direction:column;gap:5px;max-height:min(30vh,240px);overflow:auto;border:1px solid var(--case-line);border-radius:9px;padding:5px;margin:5px 0 12px}
+.choice{text-align:right;background:#fff;border:1px solid transparent;border-radius:8px;padding:8px 11px;display:flex;justify-content:space-between;gap:10px;font:inherit;cursor:pointer;color:var(--case-ink)}
+.choice:hover:not(:disabled),.choiceSelected{background:#eef4ff;border-color:#c5d5f9}
+.choice:disabled{opacity:.55;cursor:not-allowed}
+.choice small{color:var(--case-muted);font-size:11px}
+.selectedRow td{background:#eff5ff}
+.panelBody[hidden]{display:none}
+@media(max-width:720px){.modalChoices{max-height:220px}.checkList{display:grid;grid-template-columns:1fr}.choice{flex-wrap:wrap}}
+
+.modalClose:focus-visible,.choice:focus-visible{outline:2px solid var(--case-primary);outline-offset:2px}
+
+/* Phase 90: allow referral even if a subordinate county has no active representative. */
+.choice small.choiceWarning {
+  display: block;
+  color: #a26413;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: normal;
+}
+.countyPendingNotice {
+  margin: 8px 0;
+  padding: 8px 10px;
+  border: 1px solid #f0d8a5;
+  border-radius: 9px;
+  background: #fff9ec;
+  color: #8a5812;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+/* Phase 91: subordinate counties use one compact native dropdown instead of an always-open list. */
+.countySelectWrap {
+  position: relative;
+  width: 100%;
+  margin-bottom: 9px;
+}
+.countySelectWrap::after {
+  content: "⌄";
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-55%);
+  color: #64748b;
+  font-size: 19px;
+  pointer-events: none;
+}
+.modalBody .countySelect {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 45px;
+  margin: 3px 0 0;
+  padding-inline: 12px 34px;
+  background: #fff;
+  color: var(--case-ink);
+  cursor: pointer;
+  text-align: right;
+  direction: rtl;
+}
+.modalBody .countySelect:disabled { cursor: not-allowed; }
+.modalBody .countySelect:focus-visible {
+  border-color: var(--case-primary);
+  outline: 2px solid color-mix(in srgb, var(--case-primary) 25%, transparent);
+  outline-offset: 1px;
+}
+
+/* Phase 96: compact searchable investigator selector inside referral modal. */
+.investigatorSearchWrap { width: 100%; min-width: 0; margin: 3px 0 9px; }
+.investigatorSearchWrap :global(button[aria-haspopup="listbox"]) { min-height: 45px; border-radius: 9px; font-size: 13px; }
+.investigatorSearchWrap :global(button[aria-haspopup="listbox"]:focus-visible) {
+  outline: 2px solid color-mix(in srgb, var(--case-primary) 28%, transparent);
+  outline-offset: 1px;
+}
+
+/* Investigator state is already a color-coded StateChip: no nested badge. */
+.investigatorStatus { display: inline-flex; align-items: center; flex: 0 0 auto; min-width: 0; }
+.investigatorStatus > span { margin: 0; font-size: 11px; line-height: 1.65; padding: 3px 10px; }
+@media (max-width: 640px) { .investigatorStatus { align-self: flex-start; } }
+
+/* Phase 97 — investigator worksheet action, like the province worksheet toolbar. */
+.addWorksheetButton { border: 1px solid #c9bafc; background: #f5f0ff; color: #5635b7; font: inherit; font-weight: 700; font-size: 12px; border-radius: 9px; padding: 5px 11px; cursor: pointer; }
+.addWorksheetButton:hover:not(:disabled) { background: #e9e0ff; }
+.addWorksheetButton:disabled { opacity: .5; cursor: not-allowed; }
+
+.worksheetTextarea { min-height: 180px; max-height: min(50vh, 360px); resize: vertical; }
+
+/* Summary is opened from the header; the original panel below the referrals is hidden. */
+.summaryDialogOverlay[hidden] { display: none !important; }
+.summaryModal { width: min(100%, 1050px); max-height: calc(100dvh - 28px); }
+.summaryModal .modalBody { overflow-y: auto; padding: 14px; }
+@media (max-width: 640px) {
+  .summaryModal { max-height: calc(100dvh - 12px); }
+  .summaryModal .modalBody { padding: 7px; }
+}
+
+/* Phase 104 — province-like, visible work actions per investigator. */
+.investigatorActions { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin-top:9px; }
+.investigatorActions button { min-height:32px; }
+.summaryActionButton { border:1px solid #bde4ce; color:#126b43; background:#eff9f3; font:inherit; font-weight:700; font-size:12px; border-radius:9px; padding:5px 11px; cursor:pointer; }
+.summaryActionButton:hover:not(:disabled) { background:#def1e6; }
+.summaryActionButton:disabled { opacity:.55; cursor:not-allowed; }
+.permissionHint { font-size:11px; color:var(--case-muted); margin:5px 0 0; }
+.summarySaved, .summaryPending { font-size:10px; padding:2px 7px; border-radius:999px; margin-inline-start:6px; font-weight:600; }
+.summarySaved { background:#d9f6e4; color:#126b43; }
+.summaryPending { background:#fff4d6; color:#936019; }
+
+.worksheetTitle { font-weight:700; color:var(--case-ink); margin-bottom:5px; }
+.worksheetReport { margin:4px 0 12px; white-space:pre-wrap; }
+
+/* County V2: editable per-investigator summaries in the final reply modal */
+.countyReplyModal { width:min(960px,calc(100vw - 30px)); max-height:calc(100dvh - 34px); }
+.replyHeaderHint { font-size:11px;color:#6b7795;margin:4px 0 0;line-height:1.7; }
+.replyInvestigatorCard { border:1px solid #dce4f6; background:#fbfcff; padding:12px 14px; border-radius:12px; margin-bottom:13px; }
+.replyInvestigatorHeader {display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:9px;color:#1c365b;font-size:13px;}
+.replyReady,.replyNotReady {font-size:10.5px;padding:3px 8px;border-radius:999px;}
+.replyReady {background:#e8f8ef;color:#17734b;border:1px solid #bfe6ce;}
+.replyNotReady {background:#fff2e5;color:#9f4d12;border:1px solid #f0dbbe;}
+.replyTextarea {width:100%;min-height:145px;max-height:320px;resize:vertical;line-height:2.1;white-space:pre-wrap;}
+.replyMeta {display:flex;justify-content:space-between;gap:8px;color:#8291aa;font-size:10.5px;}
+.replySuccess {color:#146343;background:#eaf8f0;border:1px solid #bce6cc;border-radius:9px;padding:9px 11px;margin-bottom:10px;}
+@media (max-width:600px) {.countyReplyModal {width:calc(100vw - 12px);max-height:calc(100dvh - 12px);} .replyInvestigatorCard {padding:10px 8px;} .replyTextarea {min-height:180px;}}
+
+/* Phase 143: compact unified-report modal; long text scrolls inside the field. */
+.replyReportTextarea {
+  display:block; box-sizing:border-box; width:100%;
+  height:clamp(205px,37dvh,310px) !important;
+  min-height:205px !important; max-height:310px !important;
+  resize:none; overflow-y:auto;
+  line-height:2.05; font-size:14px; padding:12px 17px;
+  text-align:right; direction:rtl; white-space:pre-wrap;
+  font-family:inherit; background:#fff; border:1px solid #d7e1ee;
+}
+@media(max-width:600px){.replyReportTextarea{height:clamp(165px,31dvh,240px) !important;min-height:165px !important;max-height:240px !important;padding:11px;}}
+.countyReplyModal .modalBody { padding-block:9px; }
+.countyReplyModal .replyInvestigatorCard { margin-bottom:4px; padding:9px 12px; }
+
+
+/* Phase 144: secured, read-only county dossier within the owning hoze case. */
+.countyReadonlyModal {width:min(1060px,calc(100vw - 24px));max-height:calc(100dvh - 28px);}
+.countyReadonlyBody {overflow-y:auto;min-height:0;display:flex;flex-direction:column;gap:12px;}
+.countyReadonlyStats {display:flex;flex-wrap:wrap;gap:8px;}
+.countyReadonlyStats span {padding:5px 10px;border-radius:8px;background:#eff3fc;border:1px solid #dbe4f4;color:#24395b;}
+.countyReadonlySection {display:flex;flex-direction:column;gap:10px;padding:12px;border:1px solid #dbe4f1;background:#fff;border-radius:11px;}
+.countyReadonlyText {white-space:pre-wrap;overflow-wrap:anywhere;line-height:2.05;min-height:54px;padding:10px 12px;border:1px solid #e3e9f4;border-radius:8px;background:#fafcff;color:#263957;user-select:text;}
+.countyReadonlyInvestigator {border:1px solid #d8e1f4;border-radius:10px;overflow:hidden;background:#fbfcff;}
+.countyReadonlyInvestigatorHeader {width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;cursor:pointer;text-align:right;font:inherit;color:#19355d;background:#eef3fd;padding:11px 13px;border:0;}
+.countyReadonlyInvestigatorHeader:hover {background:#e5ecfd;}
+.countyReadonlyInvestigatorHeader span:last-child {font-size:12px;color:#687797;}
+.countyReadonlyInvestigatorBody {padding:12px;display:flex;flex-direction:column;gap:10px;}
+.countyReadonlySubtext {white-space:pre-wrap;overflow-wrap:anywhere;color:#65728d;margin:0;}
+.countyReadonlyWorksheet {display:flex;flex-direction:column;gap:8px;border:1px solid #e2e8f3;border-radius:9px;padding:10px;background:#fff;}
+.countyReadonlyWorksheetHead {display:flex;align-items:center;justify-content:space-between;gap:12px;color:#1c365b;}
+.countyFiles {display:flex;flex-wrap:wrap;gap:10px;}
+.countyFile {display:flex;flex-direction:column;align-items:center;gap:5px;width:125px;max-width:100%;border:1px solid #dce3f0;border-radius:9px;padding:6px;color:#244a86;text-decoration:none;font-size:11px;overflow-wrap:anywhere;background:white;}
+.countyFile:hover {border-color:#818cf8;background:#f5f7ff;}
+.countyFile img {width:100%;height:143px;object-fit:contain;background:#f6f8fc;border-radius:5px;}
+.countyFile small {color:#6c7b99;}
+
+/* Phase 145 — compact constituent case reply modal */
+.hozeProvinceSendModal { width:min(960px,calc(100vw - 24px)); max-height:calc(100dvh - 24px); }
+.hozeProvinceSendModal .modalBody { padding:13px 17px; overflow-y:auto; }
+.hozeProvinceSendModal .replyReportTextarea { height:clamp(210px,38dvh,325px) !important; }
+.hozeProvinceSendModal .modalActions {display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;}
+@media(max-width:650px) {.hozeProvinceSendModal {width:calc(100vw - 10px);}.hozeProvinceSendModal .modalBody{padding:10px;}}
+/* Phase 145 — read-only evidence with zoom and touch/pointer panning */
+.countyReadonlyModal {width:min(1180px,calc(100vw - 18px));}
+.countyReadonlyBody {background:#f5f7fc;padding:14px;}
+.countyReadonlyStats span {font-weight:500;border-radius:10px;padding:8px 13px;}
+.countyReadonlySection {box-shadow:0 3px 11px rgba(31,47,87,.04);gap:12px;padding:15px;}
+.countyReadonlyText {font-size:14px;line-height:2.25;padding:14px 16px;}
+.countyReadonlyInvestigator {background:white;border-color:#d3ddf1;}
+.countyReadonlyInvestigatorHeader {padding:14px 16px;background:linear-gradient(100deg,#eef3ff,#f8fbff);}
+.countyReadonlyInvestigatorBody {gap:14px;padding:15px;}
+.countyFile {width:142px;min-height:185px;border-radius:12px;cursor:zoom-in;}
+.countyFile img {height:163px;}
+.countyImageOverlay {position:fixed;z-index:2147483000;inset:0;background:rgba(8,15,33,.94);display:flex;flex-direction:column;color:#fff;direction:rtl;}
+.countyImageToolbar {display:flex;align-items:center;gap:9px;padding:9px 14px;background:rgba(23,34,56,.93);min-height:50px;}
+.countyImageToolbar strong {flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;}
+.countyImageToolbar button {background:#253957;border:1px solid #71809d;color:white;border-radius:9px;cursor:pointer;min-width:36px;height:34px;font:inherit;}
+.countyImageStage {position:relative;flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab;user-select:none;}
+.countyImageStage:active {cursor:grabbing;}
+.countyImageStage img {max-width:90%;max-height:90%;object-fit:contain;pointer-events:none;user-select:none;transform-origin:center center;}
+.countyImageHint {text-align:center;font-size:11px;color:#c4d1e7;padding:7px 10px;}
+
+/* Phase 146: one header action, sent case remains read-only. */
+.sentCaseButton {display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:32px;padding:5px 12px;
+  border:1px solid #a8d8c0;border-radius:9px;background:#eaf8f0;color:#116f49;cursor:pointer;
+  font:inherit;font-size:13px;font-weight:600;}
+.sentCaseButton:hover{background:#d9f1e4;}
+.hozeProvinceSendModal .replyReportTextarea[readonly] {background:#f7f9fe;border-color:#dce6f3;color:#263a58;cursor:default;}
+
+/* Read-only county evidence action, visually separated and left-aligned within the referral. */
+.dossierActionRow { display:flex; justify-content:flex-end; padding-top:10px; }
+.dossierViewButton { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:37px;
+  border:1px solid #b9c9ed; border-radius:10px; padding:7px 14px; font:inherit; font-size:12px; font-weight:650;
+  color:#274f96; background:linear-gradient(110deg,#eef4ff,#fafdff); cursor:pointer; box-shadow:0 2px 5px rgba(42,69,124,.035); }
+.dossierViewButton:hover { background:#e5eeff; border-color:#8fa9e7; }
+.dossierViewButton:focus-visible { outline:2px solid #6a69d9; outline-offset:2px; }

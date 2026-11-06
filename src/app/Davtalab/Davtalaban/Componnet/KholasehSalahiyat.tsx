@@ -1,5 +1,7 @@
 "use client";
 
+import { meratAlert } from "@/component/MeratFeedback/feedback";
+
 import { useMeratUser } from "@/lib/useMeratUser";
 
 import { useAlert } from "@/component/AlertContext";
@@ -696,19 +698,19 @@ export default function PageLayout({
         if (isLocked) return;
 
         if (!ShomarehParvandeh || CodeEntekhabat == null) {
-            alert("اطلاعات پرونده کامل نیست.");
+            meratAlert("اطلاعات پرونده کامل نیست.");
             return;
         }
 
         const userId = toNum(user?.UserId);
         if (!userId) {
-            alert("شناسه کاربر معتبر نیست.");
+            meratAlert("شناسه کاربر معتبر نیست.");
             return;
         }
 
         const tagId = toNum(item.tagId);
         if (!tagId) {
-            alert("شناسه تگ معتبر نیست.");
+            meratAlert("شناسه تگ معتبر نیست.");
             return;
         }
 
@@ -742,7 +744,7 @@ export default function PageLayout({
                     await loadSalahiyat();
                     await loadSalahiyatParvandeh();
                 } catch (e: any) {
-                    alert(e?.message || "خطا در حذف خلاصه تگ");
+                    meratAlert(e?.message || "خطا در حذف خلاصه تگ");
                 } finally {
                     setDeletingTagId(null);
                 }
@@ -762,7 +764,7 @@ export default function PageLayout({
         const userId = toNum(user?.UserId);
         if (!userId) {
             setErrortozihat(true);
-            alert("شناسه کاربر معتبر نیست.");
+            meratAlert("شناسه کاربر معتبر نیست.");
             return;
         }
 

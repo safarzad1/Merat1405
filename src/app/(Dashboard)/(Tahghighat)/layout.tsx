@@ -17,7 +17,7 @@ export default async function ResearchLayout({ children }: { children: React.Rea
   try {
     session = verifyToken(token) as SessionPayload;
   } catch {
-    redirect("/Api/Auth/Logout");
+    redirect("/Logout");
   }
 
   return (

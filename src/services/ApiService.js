@@ -343,7 +343,7 @@ export async function GetKarbargPeyvast(karbargid) {
 }
 
 // -----------------------------------------------------------------
-export async function DeletePeyvastTahghigh(filename, userid) {
+export async function DeletePeyvastTahghigh(filename, userid, karbargid) {
   try {
     const res = await fetch("/Api/Mohaghegh/DeletePeyvastTahghigh", {
       method: "POST",
@@ -351,7 +351,7 @@ export async function DeletePeyvastTahghigh(filename, userid) {
         "Content-Type": "application/json",
 
       },
-      body: JSON.stringify({ filename, userid }),
+      body: JSON.stringify({ filename, userid, karbargid }),
     });
 
     const data = await res.json();
@@ -759,6 +759,31 @@ export async function InsertJambandiOstan(
 }
 
 // -----------------------------------------------------------------
+
+// Phase 11: images, summary and case transition are committed in one SQL transaction.
+export async function CommitJambandiOstanAtomic(
+  erjaId, answers, selected, jambandi, isDone, erjaLastState, userId, page1, page2, expectedState
+) {
+  const form = new FormData();
+  form.append("erjaId", String(erjaId));
+  form.append("userId", String(userId));
+  form.append("jambandi", jambandi);
+  form.append("isDone", String(Boolean(isDone)));
+  form.append("erjaLastState", String(erjaLastState));
+  form.append("expectedState", String(expectedState));
+  answers.forEach((value, index) => form.append(`pasokh${index + 1}`, value));
+  selected.forEach((value, index) => form.append(`valuesoal${index + 1}`, String(value)));
+  form.append("page1", page1, "page1.png");
+  form.append("page2", page2, "page2.png");
+  const response = await fetch("/Api/Tahghigh/CommitJambandiOstan", {
+    method: "POST", body: form,
+  });
+  const result = await response.json();
+  if (!response.ok || result?.status !== 200 || result?.data?.[0]?.IsSuccess !== 1) {
+    throw new Error(result?.error || "ثبت یکپارچه جمع‌بندی ناموفق بود.");
+  }
+  return result;
+}
 
 export async function InsertJambandiOstan_Peyvast(erjaId, fileName, fileExtend, fileSize, userid) {
   try {

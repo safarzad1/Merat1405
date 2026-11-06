@@ -1,0 +1,132 @@
+/* Direct port of the printed div_image_page1 in old ErjaMohaghegh.tsx.
+   Layout deliberately uses the old physical sheet size, font and section order.
+   Do not apply normal dashboard card styles to the print sheet. */
+.sheet {
+  width:330mm;
+  min-height:466mm;
+  padding:5mm;
+  box-sizing:border-box;
+  background:#fff;
+  color:#000;
+  font:normal 20px/1.9 "bnaznin","B Nazanin",Tahoma,serif!important;
+  border:3px solid #2563eb;
+  border-radius:10px;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  box-shadow:0 0 25px rgba(0,0,0,.25);
+  direction:rtl;
+}
+.sheet * { box-sizing:border-box; }
+.header {
+  width:100%;
+  height:140px;
+  flex:none;
+  margin-bottom:8px;
+  display:grid;
+  grid-template-columns:24% 43% minmax(0,33%);
+  align-items:center;
+  border:2px solid #000;
+  border-radius:5px;
+  padding:0 5px;
+}
+.seal,.headline {min-width:0;display:flex;align-items:center;justify-content:center;height:100%;}
+.sealImage {width:150px;height:110px;object-fit:contain;display:block;}
+.headingImage {width:100%;max-width:400px;height:130px;object-fit:contain;display:block;}
+.headerInfo {display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-width:0;padding:0 6px;font:normal 20px/1.8 "bnaznin","B Nazanin",Tahoma,serif;}
+.headerInfo div {max-width:100%;overflow-wrap:anywhere;}
+.dottedSerial {letter-spacing:1px;}
+.hoze {font-size:16px;}
+.legacyPanel {
+  width:100%;
+  min-height:130px;
+  margin-bottom:8px;
+  display:flex;
+  flex-direction:row;
+  align-items:stretch;
+  border:2px solid #000;
+  border-radius:5px;
+  overflow:hidden;
+}
+.sideLabel {
+  flex:0 0 40px;
+  width:40px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#e5e5e5;
+  border-left:2px solid #000;
+  border-radius:3px 0 0 3px;
+  overflow:hidden;
+}
+.sideLabel span {
+  font:700 17px/1.15 "titr","B Titr",Tahoma,serif;
+  white-space:nowrap;
+  transform:rotate(-90deg);
+  display:block;
+}
+.panelBody {
+  min-width:0;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:7px;
+  padding:7px 11px;
+  font:normal 20px/1.8 "bnaznin","B Nazanin",Tahoma,serif;
+}
+.fieldRow {min-height:35px;display:flex;flex-direction:row;align-items:center;gap:3px 10px;flex-wrap:wrap;}
+.field,.stat {display:inline-flex;align-items:center;flex-wrap:nowrap;gap:5px;white-space:nowrap;min-height:34px;}
+.value {display:inline-flex;align-items:center;justify-content:center;background:#e5e7eb;border-radius:19px;padding:0 12px;min-height:35px;max-width:430px;overflow-wrap:anywhere;white-space:normal;text-align:center;}
+.digits {display:inline-flex;align-items:center;justify-content:center;gap:3px;margin:0 5px;flex-direction:row;white-space:nowrap;}
+.digit {display:inline-flex;width:29px;height:37px;border:1px solid #111;border-radius:10px;align-items:center;justify-content:center;font-size:19px;line-height:1;}
+.numberValue {display:inline-flex;align-items:center;justify-content:center;background:#e5e7eb;border-radius:12px;border:1px solid transparent;min-width:27px;height:33px;padding:0 6px;line-height:1.5;}
+.blueValue {background:#e0f2fe;border-color:#c3e4f7;}
+.serialLabel {white-space:nowrap;}
+.dottedLine {height:2px;min-width:45px;flex:1;border-bottom:2px dotted #b6b6c9;align-self:center;}
+.worksheetSerials {font-size:16px;color:#555;min-height:20px;overflow-wrap:anywhere;}
+.report {
+  width:100%;
+  flex:1;
+  min-height:280mm;
+  margin-bottom:2px;
+  padding:6px 10px 8px;
+  border:2px solid #000;
+  border-radius:5px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.reportTitle {font:normal 18px/1.7 "titr","B Titr",Tahoma,serif;margin:0 0 4px;}
+.reportText,.reportEditor {
+  width:100%;
+  min-height:260mm;
+  flex:1;
+  border:1px dashed #999;
+  border-radius:10px;
+  padding:12px;
+  color:#0c4a6e;
+  background:#fff;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font:normal 18px/2 "shabnam","ShabnamApp",Tahoma,sans-serif!important;
+  box-shadow:none;
+  outline:none;
+}
+.reportEditor {resize:vertical;}
+.reportEditor:focus {border-color:#2563eb;}
+.footer {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:30px;
+  padding:5px 3px;
+  flex-wrap:wrap;
+  font:normal 22px/1.9 "bnaznin","B Nazanin",Tahoma,serif;
+}
+.footer b {font-weight:normal;}
+
+/* The county summary uses the official investigator A4-style sheet proportions,
+   but does not mislabel the signing authority as an investigator. */
+.countyTitle {font:700 27px/1.8 "titr","B Titr",Tahoma,serif;text-align:center;color:#111;max-width:100%;}
+.countyTitle small {display:block;font:normal 20px/1.8 "bnaznin","B Nazanin",Tahoma,serif;}

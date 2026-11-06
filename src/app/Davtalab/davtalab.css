@@ -1226,3 +1226,40 @@ body.merat-drawer-open .davtalab-page-shell{padding-right:292px}
 .z-\[30010\]{z-index:30010}
 .z-\[30020\]{z-index:30020}
 .z-\[30030\]{z-index:30030}
+
+
+/* Modal title alignment — shared root modal system, route-level priority.
+   Keep this after historic .bg-gray-200 / modal-header utility overrides. */
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy {
+  box-sizing:border-box;
+  min-height:54px;
+  margin:0 -24px 14px!important;
+  padding:11px 20px!important;
+  background:var(--merat-modal-title-surface)!important;
+  color:var(--merat-modal-title-color)!important;
+  border:0!important;
+  border-bottom:1px solid var(--merat-modal-title-border)!important;
+  border-right:3px solid var(--app-primary,#5b50dc)!important;
+  border-radius:16px 16px 0 0!important;
+  position:relative;
+  top:auto;
+}
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy :is(h1,h2,h3,strong,span,label) {
+  margin:0;
+  color:var(--merat-modal-title-color)!important;
+  font:600 16px/1.65 "PeydaApp","ShabnamApp",Tahoma,sans-serif!important;
+}
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy+hr {display:none!important;}
+@media(max-width:640px){body .fixed.inset-0 .bg-white .merat-modal-header--legacy {min-height:50px;padding:9px 15px!important;margin-bottom:12px!important;}}
+
+
+/* Semantic modal tones: overrides old research route fallback title colors. */
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy:is(.merat-modal-tone--return,.merat-modal-tone--confirm,.merat-modal-tone--notice,.merat-modal-tone--neutral){
+  background:var(--merat-modal-title-surface)!important;
+  color:var(--merat-modal-title-color)!important;
+  border-bottom:1px solid var(--merat-modal-title-border)!important;
+  border-right:3px solid var(--merat-modal-title-accent)!important;
+}
+body .fixed.inset-0 .bg-white .merat-modal-header--legacy:is(.merat-modal-tone--return,.merat-modal-tone--confirm,.merat-modal-tone--notice,.merat-modal-tone--neutral) :is(h1,h2,h3,strong){
+  color:var(--merat-modal-title-color)!important;
+}

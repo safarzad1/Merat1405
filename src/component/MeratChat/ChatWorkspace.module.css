@@ -1,0 +1,95 @@
+.workspace{position:relative;display:grid;grid-template-columns:300px minmax(0,1fr);min-height:calc(100vh - 176px);height:calc(100vh - 176px);background:#f7f9fc;direction:rtl;overflow:hidden;color:#25354b;font-family:ShabnamApp,Shabnam,Tahoma,sans-serif;font-size:13.5px}
+.compact{height:100%;min-height:0;grid-template-columns:285px minmax(0,1fr)}
+.workspace button,.workspace input,.workspace textarea{font:inherit}
+.workspace button{cursor:pointer}
+.sidebar{min-width:0;display:flex;flex-direction:column;background:#fff;border-left:1px solid #e5eaf0;overflow:hidden}
+.sideHeader{display:flex;align-items:center;justify-content:space-between;height:62px;flex:0 0 62px;padding:0 15px;border-bottom:1px solid #e5eaf0}
+.heading{display:flex;gap:9px;align-items:center;color:#20566e;font-size:15px;font-weight:500}
+.smallButton{display:flex;align-items:center;justify-content:center;width:33px;height:33px;border:1px solid #d4e2e9;border-radius:9px;background:#edf6f8;color:#176b84}
+.smallButton:hover{background:#def1f5}
+.search{display:flex;align-items:center;gap:8px;min-height:40px;margin:11px 11px 9px;padding:0 11px;border:1px solid #e1e8ef;border-radius:9px;background:#f8fafc;color:#8a99ac}
+.search input{width:100%;min-width:0;border:0;background:transparent;color:#334155;outline:none;font-size:13.5px}
+.search:focus-within{border-color:#57a9bb}
+.contacts{overflow-y:auto;flex:1;min-height:0}
+.contact{width:100%;display:flex;align-items:center;gap:10px;text-align:right;padding:11px 12px;border:0;border-bottom:1px solid #f1f4f7;background:#fff;color:#2f4053}
+.contact:hover{background:#f3f8fb}.activeContact{background:#eaf5f9!important;box-shadow:inset -3px 0 #2694a9}
+.avatar{width:40px;height:40px;flex:0 0 40px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#e5f4f8,#d3e9ef);color:#206b7f;font-size:15px}
+.contactContent{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.contactContent strong{font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contactContent small{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#84919d}
+.contactAside{min-width:34px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.contactAside small{font-size:13px;color:#8da0aa}
+.contactAside b{min-width:21px;height:21px;border-radius:20px;padding:2px 4px;background:#2b8eae;color:#fff;font-weight:400;font-size:13px;text-align:center}
+.sideFooter{padding:11px;text-align:center;background:#f9fbfd;border-top:1px solid #edf0f4;color:#8493a7;font-size:13px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.chatPane{min-width:0;display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(135deg,#f5f9fc,#f7f8fb)}
+.chatHeader{height:62px;flex:0 0 62px;display:flex;align-items:center;gap:11px;background:#fff;padding:8px 16px;border-bottom:1px solid #e3eaf0}
+.chatHeader .avatar{width:39px;height:39px;flex-basis:39px}
+.peerTitle{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.peerTitle strong{font-size:14px;font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.peerTitle small{color:#8695a6;font-size:13px}
+.connection{display:flex;align-items:center;gap:5px;color:#9e7d35;font-size:13px;white-space:nowrap}
+.connected{color:#20866d}
+.messages{flex:1;overflow-y:auto;padding:14px 17px 18px;min-height:0}
+.day{text-align:center;margin:15px 0;color:#82919f;font-size:13px}
+.day span{display:inline-block;background:#e8eef3;border-radius:20px;padding:3px 12px}
+.bubble{max-width:min(77%,530px);width:max-content;min-width:80px;padding:9px 12px 6px;border-radius:12px;margin:7px 0;overflow-wrap:anywhere;line-height:1.85;box-shadow:0 2px 7px rgba(10,40,60,.04)}
+.bubble p{margin:0;white-space:pre-wrap;font-size:13.5px}
+.mine{margin-right:0;margin-left:auto;border-bottom-right-radius:4px;background:#dff3f1;color:#1f4750}
+.theirs{margin-left:0;margin-right:auto;border-bottom-left-radius:4px;background:#fff;color:#344257}
+.messageFooter{display:flex;justify-content:flex-end;align-items:center;gap:5px;direction:ltr;color:#70869a;font-size:13px;line-height:18px;margin-top:2px}
+.messageFooter svg{color:#268eaf}
+.imageLink{display:block;margin-top:6px;max-width:275px}
+.imageLink img{display:block;max-width:100%;max-height:240px;border-radius:8px;object-fit:contain}
+.media{display:block;margin-top:6px;max-width:100%;width:260px;border-radius:7px}
+.fileLink{display:flex;align-items:center;gap:10px;color:#246b91;text-decoration:none;margin-top:5px;padding:8px;border-radius:8px;background:#f0f8fa;font-size:13px}
+.fileLink span{display:flex;flex-direction:column;min-width:0;flex:1;overflow-wrap:anywhere}
+.fileLink small{color:#8592a1;font-size:13px}
+.composer{flex:0 0 auto;border-top:1px solid #e2e9ef;padding:9px 12px 12px;background:#fff}
+.composeRow{display:flex;align-items:center;gap:8px}
+.composeRow textarea{resize:none;max-height:110px;min-height:42px;width:100%;flex:1;outline:none;border:1px solid #dde6ef;border-radius:9px;padding:9px 12px;background:#f9fbfd;color:#2f4559;font-size:13.5px;line-height:22px}
+.composeRow textarea:focus{border-color:#6cb1c1}
+.attachButton{border:0;background:transparent;color:#607e91;padding:8px;display:grid;place-items:center}
+.sendButton{width:42px;height:42px;border:0;border-radius:10px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#20788d,#289eac)}
+.sendButton:disabled{opacity:.5;cursor:not-allowed}
+.fileSelection{display:flex;align-items:center;gap:8px;margin-bottom:7px;padding:7px 10px;background:#f0f7fa;border:1px solid #d8e8ee;border-radius:8px;overflow-wrap:anywhere}
+.fileSelection button{margin-right:auto;border:0;background:none;color:#687f92}
+.placeholder,.noMessages{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;color:#91a0ad;flex:1;padding:30px}
+.placeholder strong{color:#566d7f;font-size:17px;font-weight:500}
+.placeholder button{margin-top:10px;display:flex;align-items:center;gap:6px;border:0;color:#fff;background:#288da2;border-radius:9px;padding:9px 16px}
+.noMessages{min-height:200px;font-size:13px}
+.empty{padding:20px 12px;text-align:center;color:#8795a3;font-size:13px;line-height:1.9}
+.dialogLayer{position:absolute;z-index:10;inset:0;display:grid;place-items:center}
+.dialogBackdrop{position:absolute;inset:0;border:0;background:rgba(12,26,41,.36)}
+.dialog{position:relative;width:min(440px,calc(100% - 30px));max-height:80%;display:flex;flex-direction:column;background:#fff;border-radius:14px;box-shadow:0 24px 70px #14283a33;overflow:hidden}
+.dialog header{display:flex;align-items:center;justify-content:space-between;padding:15px 17px;border-bottom:1px solid #e5eaf0}
+.dialog header strong{font-size:15px;font-weight:500}
+.dialog header button{border:0;background:none;color:#8c9baa}
+.users{min-height:100px;overflow-y:auto;padding:4px 0 10px}
+.users button{width:100%;display:flex;align-items:center;text-align:right;gap:11px;border:0;border-bottom:1px solid #f2f4f8;padding:8px 15px;background:#fff;color:#334155}
+.users button:hover{background:#edf7fa}
+.users button>span:nth-child(2){display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.users button strong{font-weight:500;font-size:13.5px}
+.users button small{font-size:13px;color:#8f9dad}
+.error{position:absolute;z-index:11;right:50%;transform:translateX(50%);bottom:76px;display:flex;align-items:center;gap:10px;max-width:90%;padding:10px 14px;background:#fff1f1;border:1px solid #f7caca;border-radius:8px;color:#a02f2f;font-size:13px;box-shadow:0 5px 20px #0002}
+.error button{border:0;background:none;color:#a02f2f}
+.spinner{animation:meratChatSpin .85s linear infinite}@keyframes meratChatSpin{to{transform:rotate(360deg)}}
+.backMobile{display:none}
+@media(max-width:760px){
+.workspace{height:calc(100dvh - 115px);min-height:420px;grid-template-columns:minmax(0,1fr)}
+.compact{height:100dvh;min-height:0}
+.sidebar,.chatPane{grid-row:1;grid-column:1}
+.mobileHidden{display:none!important}
+.backMobile{display:grid;place-items:center;border:0;background:none;color:#5d7785}
+.chatHeader{padding:7px 9px}
+.connection{font-size:0;gap:0}.connection svg{width:18px}
+.messages{padding:10px}.bubble{max-width:85%}
+.dialog{max-height:calc(100dvh - 60px)}
+}
+
+/* Messenger dialogs share the same visual language; keep them inside chat panel. */
+.dialogLayer{z-index:25;}
+.dialogBackdrop{background:rgba(24,32,57,.37);backdrop-filter:blur(2px);}
+.dialog{border:1px solid #dce4ef;border-radius:15px;box-shadow:0 16px 44px rgba(27,37,74,.2);}
+.dialog header{min-height:53px;padding:10px 16px;background:var(--merat-dialog-head,#f6f7fe);border-bottom:1px solid #dce4ef;border-right:3px solid var(--app-primary,#5d52eb);}
+.dialog header strong{font:700 15px/1.65 "PeydaApp","ShabnamApp",Tahoma,sans-serif;color:#263756;}
+.dialog header button{min-width:31px;min-height:31px;border:1px solid #dce4ef;border-radius:9px;background:#fff;color:#596684;}

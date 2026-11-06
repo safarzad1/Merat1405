@@ -1,0 +1,35 @@
+.shell{background:#f8faff;border-top:1px solid #e1e9f8;padding:10px;display:grid;gap:9px;min-width:0;font:400 13.5px/1.7 "ShabnamApp",Tahoma,sans-serif;color:#3b5272}
+.shell button,.shell input,.shell select{font:inherit}.shell button{cursor:pointer}.shell button:disabled{opacity:.5;cursor:not-allowed}
+.head,.detailToolbar,.publishRow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.head{font:500 14px/1.8 "PeydaApp","ShabnamApp",sans-serif;color:#465b81}.taskName{color:#72839e}
+.add{border:1px solid #5f59d8;background:#6058dc;color:white;border-radius:8px;padding:5px 12px;min-height:33px;white-space:nowrap}
+.add:hover:not(:disabled){background:#4f49ba}.items{display:grid;gap:5px}
+.item{width:100%;display:grid;grid-template-columns:minmax(110px,1.2fr) minmax(90px,.8fr) minmax(80px,.7fr) minmax(65px,.6fr) minmax(88px,.7fr) 22px;gap:8px;align-items:center;text-align:right;padding:7px 12px;background:white;border:1px solid #e1e7f2;border-radius:8px;color:#536984;min-height:43px}
+.item:hover{background:#f5f5ff;border-color:#bbbff2}.item.chosen{border-color:#a9afea;background:#f7f6ff}.province{color:#334d77;font:500 14px "PeydaApp","ShabnamApp",sans-serif}
+.marker{justify-self:start;border:1px solid #e5debc;border-radius:7px;padding:1px 7px;color:#956e35;background:#fffaf0;font-size:13px;white-space:nowrap}
+.published{border-color:#b6e4d5;color:#277b69;background:#effaf6}.toggle{color:#918ac4;font-size:17px}
+.detail{border:1px solid #e2e7f4;background:white;border-radius:10px;padding:10px;display:grid;gap:9px}.detailToolbar{color:#3d5982;font:500 14px "PeydaApp","ShabnamApp",sans-serif}
+.actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.actions button,.person button,.secondary{background:#fff;border:1px solid #dce3f4;border-radius:7px;color:#5953aa;padding:4px 11px;min-height:32px}.actions .remove{color:#b6565f;border-color:#efd1d4}
+.people{display:flex;gap:6px;flex-wrap:wrap}.person{display:flex;align-items:center;gap:9px;border:1px solid #e4eaf3;border-radius:8px;padding:4px 8px;background:#fbfcfe}.muted{color:#8a94a8;font-size:13px}
+.assignRow{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.assignRow select{min-width:190px;max-width:100%;flex:1;border:1px solid #d8e1f2;border-radius:8px;background:white;color:#3d5174;padding:7px}
+.assignRow button{background:#f0eeff;color:#5d56b6;border:1px solid #d8d4f6;border-radius:8px;padding:6px 11px}
+.publishRow{border-top:1px solid #e8edf6;padding-top:10px}.empty{margin:0;padding:11px;color:#8996ab;text-align:center;font-size:13px}
+.notice,.error{padding:8px 11px;border-radius:8px;color:#2c7a62;background:#f0fcf7;border:1px solid #c8eddf}.error{color:#b44f58;border-color:#edd6da;background:#fff7f8}
+.backdrop{position:fixed;inset:0;z-index:11500;background:rgba(19,27,51,.48);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{width:min(100%,560px);max-height:calc(100dvh - 32px);background:#fff;border-radius:14px;border:1px solid #dde6f3;box-shadow:0 24px 70px #1726473f;overflow:auto}
+.modalHead{display:flex;justify-content:space-between;align-items:center;background:#f5f5fe;padding:10px 16px;border-bottom:1px solid #e5e8f4}.modalHead h3{margin:0;font:500 17px "PeydaApp","ShabnamApp",sans-serif}
+.modalHead button{background:white;border:1px solid #dce3f4;border-radius:8px;width:32px;height:32px;font-size:20px;color:#64728e}
+.formFields{display:grid;gap:11px;padding:14px 17px}.formFields label,.formFields .field{display:grid;gap:6px;color:#4e6485;min-width:0}.formFields input,.formFields select{width:100%;min-height:42px;padding:8px 10px;border:1px solid #d7dfef;border-radius:8px;background:white;color:#324a71}
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:11px}.star{color:#be465b;display:inline;font-weight:400;line-height:1}
+.modalFooter{display:flex;gap:7px;justify-content:flex-start;background:#fafbfe;border-top:1px solid #e8ecf4;padding:10px 16px}
+.modalFooter button:not(.add){border:1px solid #dce3f1;border-radius:8px;padding:5px 12px;background:white;color:#546986}
+.confirmText{padding:18px 16px;margin:0;white-space:pre-line}
+@media(max-width:800px){.item{grid-template-columns:1fr 1fr 1fr}.item .marker{justify-self:start}.item .toggle{display:none}}
+@media(max-width:500px){.item{grid-template-columns:1fr 1fr}.dual{grid-template-columns:1fr}}
+
+.fieldTitle{display:inline-flex;align-items:center;justify-content:flex-start;gap:4px;line-height:1.6}
+
+/* Shared custom dropdowns for the province and season fields: match form inputs. */
+.dropdownField{width:100%;min-width:0}
+.dropdownField :global(button[aria-haspopup="listbox"]){min-height:42px;height:42px;border-color:#d7dfef;border-radius:8px;color:#324a71;background:#fff;font-size:13.5px}
+.dropdownField :global(button[aria-haspopup="listbox"]:focus-visible){outline:2px solid #7d72e8;outline-offset:2px}

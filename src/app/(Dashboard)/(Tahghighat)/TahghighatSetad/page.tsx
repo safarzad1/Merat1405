@@ -1,5 +1,7 @@
 "use client";
 
+import { meratAlert } from "@/component/MeratFeedback/feedback";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import CustomTable from "@/component/DataTable/CustomTable1";
@@ -12,20 +14,20 @@ const Page = () => {
             icon: <Plus size={16} />,
             colorClass: "bg-blue-500",
             title: "ارجاع جدید",
-            onClick: (row: any) => alert(`مشاهده: ${row.name}`),
+            onClick: (row: any) => meratAlert(`مشاهده: ${row.name}`),
         }
         // ,
         // {
         //     icon: <Edit size={16} />,
         //     colorClass: "bg-yellow-500",
         //     title: "ویرایش",
-        //     onClick: (row: any) => alert(`ویرایش: ${row.code}`),
+        //     onClick: (row: any) => meratAlert(`ویرایش: ${row.code}`),
         // },
         // {
         //     icon: <Trash2 size={16} />,
         //     colorClass: "bg-red-500",
         //     title: "حذف",
-        //     onClick: (row: any) => alert(`حذف ${row.name}`),
+        //     onClick: (row: any) => meratAlert(`حذف ${row.name}`),
         // },
     ];
 

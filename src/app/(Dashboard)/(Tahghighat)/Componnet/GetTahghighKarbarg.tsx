@@ -25,6 +25,13 @@ import domtoimage from "@/lib/domToImageCompat";
 import ModalEjraBeMohaghegh from "../Componnet/EjraBeMohaghegh";
 
 const SWIPE_THRESHOLD = 60;
+const jalaliYear = () => {
+  const match = new Intl.DateTimeFormat("en-US-u-ca-persian", { year: "numeric" })
+    .format(new Date()).match(/\d{4}/);
+  return match ? Number(match[0]) : 1405;
+};
+const attachmentUrl = (filename: string, karbargId: number) =>
+  `/Api/Mohaghegh/GetKarbargPeyvastFile?karbargid=${encodeURIComponent(karbargId)}&filename=${encodeURIComponent(filename)}`;
 
 // ✅ Portal helper (برای رندر مودال‌ها روی body)
 function Portal({ children }: { children: React.ReactNode }) {
@@ -54,6 +61,11 @@ interface KarbargItem {
   ErjaLastStateErja: number;
   EmteyazKeyfi: number;
   EmteyazPrice: number;
+  NoeParvandeh?: number | null;
+  NaveBazkhani?: number | null;
+  NameSazman?: string | null;
+  NameShahr?: string | null;
+  Peyvast?: number | null;
 }
 
 interface GetTahghighKarbargProps {
@@ -124,6 +136,18 @@ export default function GetTahghighKarbarg({
 
   const [images, setImages] = useState<{ file: File; url: string; size: number }[]>([]);
   const [gridBoxes, setGridBoxes] = useState<{ url: string; label: string }[]>([]);
+  const [documentsLoading, setDocumentsLoading] = useState(false);
+  const [documentsError, setDocumentsError] = useState("");
+  const [saveError, setSaveError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [loadingEdit, setLoadingEdit] = useState(false);
+  const [editReady, setEditReady] = useState(true);
+  const [savingKarbarg, setSavingKarbarg] = useState(false);
+  const saveKarbargGuard = useRef(false);
+  const confirmKarbargGuard = useRef(false);
+  const editRequestSequence = useRef(0);
+  const [reportExportError, setReportExportError] = useState("");
+  const reportDescriptionRef = useRef("");
 
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerItems, setViewerItems] = useState<ViewerItem[]>([]);
@@ -208,34 +232,30 @@ export default function GetTahghighKarbarg({
         index === self.findIndex((f) => f.name === file.name && f.size === file.size)
     );
 
-    const localImages = uniqueFiles.map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
-      size: file.size,
-    }));
-
-    setImages((prev) => {
-      const existingKeys = new Set(prev.map((img) => img.file.name + img.file.size));
-      const newImages = localImages.filter((img) => !existingKeys.has(img.file.name + img.file.size));
-      return [...prev, ...newImages];
-    });
-
     const validFiles = uniqueFiles.filter((file) => file.size <= MAX_SIZE);
     const skippedFiles = uniqueFiles.filter((file) => file.size > MAX_SIZE);
 
     if (skippedFiles.length > 0) {
-      console.warn("⛔ Some files skipped (too large):", skippedFiles.map((f) => f.name));
+      setUploadError("فایل‌های بزرگ‌تر از ۳ مگابایت پذیرفته نشدند.");
     }
 
     if (validFiles.length === 0) {
       setUploadError("هیچ فایل معتبری برای آپلود وجود ندارد (همه بزرگ‌تر از ۳MB هستند).");
-      return;
+      return false;
     }
 
     if (!idKarbarg) {
       setUploadError("شناسه کاربرگ (idKarbarg) نامعتبر است.");
-      return;
+      return false;
     }
+
+    // Preview only accepted files; generate object URLs only for new entries.
+    setImages((prev) => {
+      const existing = new Set(prev.map((img) => `${img.file.name}:${img.file.size}`));
+      const additions = validFiles.filter((file) => !existing.has(`${file.name}:${file.size}`))
+        .map((file) => ({ file, url: URL.createObjectURL(file), size: file.size }));
+      return [...prev, ...additions];
+    });
 
     setUploading(true);
     setUploadText("شروع آپلود...");
@@ -258,41 +278,49 @@ export default function GetTahghighKarbarg({
           const ext = "." + (originalFile.name.split(".").pop() ?? "");
           const mmtype = ext;
 
-          await InsertKarbargTahghighPeyvast(idKarbarg, savedFileName, mmtype, sizeMB, user.UserId);
-          // await AsddPeyvastKarbargTahghigh(idKarbarg, savedFileName, user.UserId, originalFile);
+          const registered = await InsertKarbargTahghighPeyvast(idKarbarg, savedFileName, mmtype, sizeMB, user.UserId);
+          if (registered?.status !== 200 || registered?.data?.some((row: any) =>
+            row.IsSuccess === false || row.IsSuccess === 0 || row.IsSuccess === "0")) {
+            throw new Error(registered?.error || "ثبت اطلاعات پیوست در دیتابیس ناموفق بود.");
+          }
         }
 
         setUploadProgress(100);
         setUploadText("✅ آپلود با موفقیت انجام شد");
         await loadGridImages(idKarbarg);
+        return true;
       } else {
-        setUploadError(data.error || "Upload failed: unknown error");
+        setUploadError(data.error || "خطا در بارگذاری فایل");
         setUploadText("");
+        return false;
       }
     } catch (err) {
       console.error("Upload error:", err);
-      setUploadError(err instanceof Error ? err.message : "Upload error");
+      setUploadError(err instanceof Error ? err.message : "خطا در بارگذاری فایل");
       setUploadText("");
+      return false;
     } finally {
       setUploading(false);
     }
   };
 
   const loadGridImages = async (karbargId: number) => {
+    setDocumentsLoading(true);
+    setDocumentsError("");
     try {
       const res = await GetKarbargPeyvast(karbargId);
-      if (res.status === 200 && res.data?.length > 0) {
-        const boxes = res.data.map((item: any) => ({
-          url: `/uploads/${item.FileName}`,
-          label: item.FileName,
-        }));
-        setGridBoxes(boxes);
-      } else {
-        setGridBoxes([]);
-      }
+      if (res?.status !== 200) throw new Error(res?.error || "دریافت اسناد ناموفق بود");
+      const rows = Array.isArray(res.data) ? res.data : [];
+      setGridBoxes(rows.filter((item: any) => item.FileName).map((item: any) => ({
+        url: attachmentUrl(item.FileName, karbargId),
+        label: String(item.FileName),
+      })));
     } catch (err) {
-      console.error("خطا در دریافت Grid:", err);
+      console.error("خطا در دریافت اسناد:", err);
+      setDocumentsError("دریافت اسناد انجام نشد؛ اتصال یا مجوز مشاهده پرونده را بررسی کنید.");
       setGridBoxes([]);
+    } finally {
+      setDocumentsLoading(false);
     }
   };
 
@@ -331,52 +359,85 @@ export default function GetTahghighKarbarg({
     setSwipeX(0);
   };
 
-  const openModalKarbarg = (karbarg?: KarbargItem) => {
 
-    setModalOpenShowKarbarg(false);
-    setModalOpenCreateForm(false);
-    setModalOpenEmteyazOstan(false);
-    setModalOpenEmteyazOstan(false);
+// Always load the complete stored row when editing. The list SP does not
+// include fields such as NameSazman/Peyvast; saving its partial row would
+// silently overwrite those fields with empty values.
+const openModalKarbarg = async (karbarg?: KarbargItem) => {
+  const requestId = ++editRequestSequence.current;
+  setModalOpenShowKarbarg(false);
+  setModalOpenCreateForm(false);
+  setModalOpenEmteyazOstan(false);
+  setSaveError("");
+  setErrorKarbarg(false);
+  setErrorcodeManba(false);
+  setErrorAzsal(false);
+  setErrorTasal(false);
+  setErrornahveasnai(false);
+  setModalOpenKarbarg(true);
+  setEditReady(!karbarg);
 
-    if (karbarg) {
-      setLastState(karbarg.ErjaLastStateErja);
-      setTahghightype(Number(karbarg.TahghighType));
-      setCodeManba(karbarg.CodeManba);
+  if (!karbarg) {
+    setLoadingEdit(false);
+    setidKarbarg(0);
+    setLastState(0);
+    setTypeMahalTahghigh(0);
+    setTahghightype(0);
+    setnoeParvandeh(0);
+    setnahvebazkhani(0);
+    setnameSazman("");
+    setnameShahr("");
+    setpeyvast("");
+    setcodeMohaghegh(0);
+    settozihat("");
+    setAzSal("");
+    setTaSal("");
+    setNahve_Ashnai("");
+    setAddress("");
+    setShoghl("");
+    setTahsilat("");
+    setCodeManba(0);
+    return;
+  }
 
-      setTypeMahalTahghigh(Number(karbarg.TypeMahalTahghigh));
-      setAzSal(String(karbarg.AzSal));
-      setTaSal(String(karbarg.TaSal));
-      setShoghl(String(karbarg.Shghol));
-      setTahsilat(String(karbarg.Tahsilat));
-      settozihat(karbarg.Description || "");
-      setNahve_Ashnai(karbarg.Nahve_Ashnai || "");
-
-      setErrorKarbarg(false);
-      setErrorcodeManba(false);
-    } else {
-      setidKarbarg(0);
-      setTypeMahalTahghigh(0);
-      setTahghightype(0);
-
-      setnoeParvandeh(0);
-      setnahvebazkhani(0);
-      setnameSazman("");
-      setnameShahr("");
-      setpeyvast("");
-
-      setcodeMohaghegh(0);
-      settozihat("");
-      setAzSal("");
-      setTaSal("");
-      setNahve_Ashnai("");
-      setAddress("");
-      setShoghl("");
-      setTahsilat("");
-      setCodeManba(0);
+  setidKarbarg(Number(karbarg.KarbargId));
+  setLoadingEdit(true);
+  try {
+    const response = await GetKarbargByID(karbarg.KarbargId);
+    if (response?.status !== 200 || !Array.isArray(response?.data) || !response.data[0]) {
+      throw new Error(response?.error || "دریافت اطلاعات کامل کاربرگ ناموفق بود.");
     }
-
-    setModalOpenKarbarg(true);
-  };
+    // Ignore an obsolete request if the user opened another worksheet.
+    if (requestId !== editRequestSequence.current) return;
+    const item = response.data[0];
+    if (Number(item.KarbargId) !== Number(karbarg.KarbargId) ||
+        Number(item.TahghighId) !== Number(taghighid)) {
+      throw new Error("شناسه اطلاعات دریافت‌شده با پرونده انتخابی مطابقت ندارد.");
+    }
+    setLastState(karbarg.ErjaLastStateErja);
+    setTahghightype(Number(item.TahghighType) || 0);
+    setCodeManba(Number(item.CodeManba) || 0);
+    setTypeMahalTahghigh(Number(item.TypeMahalTahghigh) || 0);
+    setAzSal(item.AzSal == null ? "" : String(item.AzSal));
+    setTaSal(item.TaSal == null ? "" : String(item.TaSal));
+    setShoghl(String(item.Shghol ?? ""));
+    setTahsilat(String(item.Tahsilat ?? ""));
+    settozihat(String(item.Description ?? ""));
+    setNahve_Ashnai(String(item.Nahve_Ashnai ?? ""));
+    setnoeParvandeh(Number(item.NoeParvandeh) || 0);
+    setnahvebazkhani(Number(item.NaveBazkhani) || 0);
+    setnameSazman(String(item.NameSazman ?? ""));
+    setnameShahr(String(item.NameShahr ?? ""));
+    setpeyvast(item.Peyvast == null ? "" : String(item.Peyvast));
+    setEditReady(true);
+  } catch (error) {
+    if (requestId === editRequestSequence.current) {
+      setSaveError(error instanceof Error ? error.message : "بارگذاری اطلاعات کاربرگ ناموفق بود.");
+    }
+  } finally {
+    if (requestId === editRequestSequence.current) setLoadingEdit(false);
+  }
+};
 
   const saveKarbarg = async (
     karbargid: number,
@@ -396,6 +457,7 @@ export default function GetTahghighKarbarg({
     peyvastParam: string
   ) => {
     setErrornahveasnai(false);
+    setSaveError("");
 
     let noeParvandehLocal = noeParvandehParam;
     let naveBazkhaniLocal = naveBazkhaniParam;
@@ -436,12 +498,12 @@ export default function GetTahghighKarbarg({
       return;
     }
 
-    if (Number(azSalParam) < 1320 || Number(azSalParam) > 1404) {
+    if (Number(azSalParam) < 1320 || Number(azSalParam) > jalaliYear()) {
       setErrorAzsal(true);
       return;
     }
 
-    if (Number(taSalParam) < 1320 || Number(taSalParam) > 1404) {
+    if (Number(taSalParam) < 1320 || Number(taSalParam) > jalaliYear()) {
       setErrorTasal(true);
       return;
     }
@@ -454,47 +516,63 @@ export default function GetTahghighKarbarg({
     setErrorKarbarg(false);
     setErrorcodeManba(false);
 
+    if (loadingEdit || saveKarbargGuard.current) return;
+    saveKarbargGuard.current = true;
+    setSavingKarbarg(true);
     const codeManbaFinal = tahghightypeParam === 2 ? 999999 : CodeManbaParam;
 
-    await InsertKarbarg(
-      karbargid,
-      tahghightypeParam,
-      typeMahalTahghighParam,
-      azSalParam,
-      taSalParam,
-      codeManbaFinal,
-      tahghighidParam,
-      tozihatParam,
-      nahve_AshnaiParam,
-      useridParam,
-      noeParvandehLocal,
-      nameSazmanLocal,
-      nameShahrLocal,
-      naveBazkhaniLocal,
-      peyvastLocal
+
+try {
+  const resultSave = await InsertKarbarg(
+    karbargid, tahghightypeParam, typeMahalTahghighParam,
+    azSalParam, taSalParam, codeManbaFinal, tahghighidParam,
+    tozihatParam, nahve_AshnaiParam, useridParam,
+    noeParvandehLocal, nameSazmanLocal, nameShahrLocal,
+    naveBazkhaniLocal, peyvastLocal
+  );
+  // The patched SP always returns an explicit IsSuccess. An empty or
+  // unrecognised result must not be considered a successful save.
+  const success = resultSave?.status === 200 &&
+    Array.isArray(resultSave.data) && resultSave.data.some((row: any) =>
+      row.IsSuccess === true || row.IsSuccess === 1 || row.IsSuccess === "1"
     );
-
-    setModalOpenKarbarg(false);
-
-    const result = await Get_Tahghigh_Karbarg(tahghighidParam);
-    setData(result.data || []);
-    onChangeCount?.((result.data || []).length);
+  if (!success) {
+    setSaveError(resultSave?.error || "ذخیره کاربرگ در پایگاه داده تأیید نشد.");
+    return;
+  }
+  setModalOpenKarbarg(false);
+  const result = await Get_Tahghigh_Karbarg(tahghighidParam);
+  if (result?.status === 200 && Array.isArray(result.data)) {
+    setData(result.data);
+    onChangeCount?.(result.data.length);
+  }
+} catch (error) {
+  setSaveError("ارتباط با سرور برقرار نشد؛ وضعیت ثبت را قبل از تلاش مجدد بررسی کنید.");
+  console.error("خطا در ذخیره کاربرگ", error);
+} finally {
+  saveKarbargGuard.current = false;
+  setSavingKarbarg(false);
+}
   };
 
   const loadGetKarbargByID = async (karbargid: number) => {
     const result = await GetKarbargByID(karbargid);
     if (result.data?.length > 0) {
+      setidKarbarg(karbargid);
+      setTahghightype(Number(result.data[0].TahghighType));
+      setCodeManba(Number(result.data[0].CodeManba));
       setNameDavtalab(result.data[0].FullNameDavtalab);
       setNamePedarDavtalab(result.data[0].NamePedarDavtalab);
       setCodeMelliDavtalab(result.data[0].CodeMelliDavtalab);
-      setTypeMahalTahghigh(result.data[0].TypeMahalTahghigh);
+      setTypeMahalTahghigh(Number(result.data[0].TypeMahalTahghigh) || 0);
       setcodeMohaghegh(result.data[0].CodeManba);
       setTarikhTahghigh(result.data[0].TarikhTahghigh);
       setCreateDateTime(result.data[0].CreateDateTime);
       setAzSal(result.data[0].AzSal);
       setTaSal(result.data[0].TaSal);
-      settozihat(result.data[0].Description);
-      setNahve_Ashnai(result.data[0].nahve_Ashnai);
+      settozihat(result.data[0].Description || "");
+      reportDescriptionRef.current = result.data[0].Description || "";
+      setNahve_Ashnai(result.data[0].Nahve_Ashnai || result.data[0].nahve_Ashnai || "");
 
       setModalOpenKarbarg(false);
       setModalOpenShowKarbarg(false);
@@ -515,35 +593,63 @@ export default function GetTahghighKarbarg({
 
   const DeleteKarbarg = async (karbargid: number, userId: number) => {
     try {
-      await DeleteKarbargTahghigh(karbargid, userId);
+      const resultDelete = await DeleteKarbargTahghigh(karbargid, userId);
+      if (resultDelete?.status !== 200 || resultDelete.data?.some((row: any) =>
+        row.IsSuccess === false || row.IsSuccess === 0 || row.IsSuccess === "0")) {
+        throw new Error(resultDelete?.error || "حذف کاربرگ تأیید نشد.");
+      }
       const result = await Get_Tahghigh_Karbarg(taghighid);
-      setData(result.data || []);
-      onChangeCount?.((result.data || []).length);
+      if (result?.status !== 200 || !Array.isArray(result.data)) {
+        throw new Error(result?.error || "بارگذاری مجدد کاربرگ‌ها انجام نشد.");
+      }
+      setData(result.data);
+      onChangeCount?.(result.data.length);
+      setActionError("");
     } catch (error) {
       console.error("Error deleting data:", error);
+      setActionError(error instanceof Error ? error.message : "حذف کاربرگ ناموفق بود.");
     }
   };
 
   const handleConfirmKarbarg = async (karbargid: number, userid: number) => {
-    const restult = await UpdateDoneKarbarg(karbargid, 1, userid);
-    if (restult.data?.[0]?.IsSuccess === true) {
-      await loadData();
-      setModalOpenShowKarbarg(false);
-
-      const result = await Get_Tahghigh_Karbarg(taghighid);
-      const newData: KarbargItem[] = result.data || [];
-      setData(newData);
-
-      if (onChangeCountPayan) {
-        const countDone = newData.filter((x) => x.IsDone === true).length;
-        onChangeCountPayan(countDone);
+    if (confirmKarbargGuard.current) return;
+    confirmKarbargGuard.current = true;
+    setActionError("");
+    try {
+      const result = await UpdateDoneKarbarg(karbargid, 1, userid);
+      const confirmed = result?.status === 200 &&
+        Array.isArray(result.data) && result.data.some((row: any) =>
+          row.IsSuccess === true || row.IsSuccess === 1 || row.IsSuccess === "1"
+        );
+      if (!confirmed) throw new Error(result?.error || "تأیید کاربرگ در سرور انجام نشد.");
+      const refreshed = await Get_Tahghigh_Karbarg(taghighid);
+      if (refreshed?.status !== 200 || !Array.isArray(refreshed.data)) {
+        throw new Error("تأیید ثبت شد، اما دریافت فهرست جدید انجام نشد. صفحه را دوباره باز کنید.");
       }
+      const newData: KarbargItem[] = refreshed.data;
+      setData(newData);
+      onChangeCount?.(newData.length);
+      onChangeCountPayan?.(newData.filter((x) => x.IsDone === true).length);
+      setModalOpenShowKarbarg(false);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "تأیید کاربرگ ناموفق بود.");
+    } finally {
+      confirmKarbargGuard.current = false;
     }
   };
 
   const DeletePeyvast = async (fileName: string) => {
-    await DeletePeyvastTahghigh(fileName, user.UserId);
-    await loadGridImages(idKarbarg);
+    try {
+      const result = await DeletePeyvastTahghigh(fileName, user.UserId, idKarbarg);
+      if (result?.status !== 200 || result.data?.some((row: any) =>
+          row.IsSuccess === false || row.IsSuccess === 0 || row.IsSuccess === "0")) {
+        throw new Error(result?.error || "حذف سند تأیید نشد.");
+      }
+      await loadGridImages(idKarbarg);
+      setDocumentsError("");
+    } catch (error) {
+      setDocumentsError(error instanceof Error ? error.message : "حذف سند ناموفق بود.");
+    }
   };
 
   const ChangeEmteyazForOstan = async () => {
@@ -576,11 +682,28 @@ export default function GetTahghighKarbarg({
   };
 
   const handleExportPNG = async () => {
+    setReportExportError("");
     try {
       const node = document.getElementById("div_image");
+      // Preserve the last inline edit even if the editor has not lost focus.
+      settozihat(reportDescriptionRef.current);
       if (!node) {
         console.error('❌ عنصر با id="div_image" پیدا نشد');
         return;
+      }
+
+      // Report fonts and embedded logos must be ready before image capture;
+      // otherwise the uploaded worksheet may differ from the visible form.
+      if (typeof document !== "undefined") {
+        try { await document.fonts.ready; } catch { /* use browser fallback */ }
+        await Promise.all(
+          Array.from(node.querySelectorAll("img")).map((img) =>
+            img.decode().catch(() => undefined)
+          )
+        );
+        await new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+        );
       }
 
       const scale = 3;
@@ -602,13 +725,15 @@ export default function GetTahghighKarbarg({
 
       const file = dataURLtoFile(dataUrl, "Karbarg.png");
       if (idKarbarg) {
-        await uploadImages(idKarbarg, [file]);
-        setModalOpenCreateForm(false);
+        const uploaded = await uploadImages(idKarbarg, [file]);
+        if (uploaded) setModalOpenCreateForm(false);
+        else setReportExportError("تصویر ساخته شد اما ذخیره آن در سرور تأیید نشد؛ مجدداً تلاش کنید.");
       } else {
-        console.error("❌ idKarbarg پیدا نشد");
+        setReportExportError("شناسه کاربرگ نامعتبر است؛ خروجی ثبت نشد.");
       }
     } catch (err) {
       console.error("❌ خطا در تولید تصویر:", err);
+      setReportExportError("تولید خروجی تصویر با خطا مواجه شد.");
     }
   };
 
@@ -632,6 +757,7 @@ export default function GetTahghighKarbarg({
   return (
     <div className="p-6">
       <div className="max-w-8xl mx-auto bg-sky-100 shadow-2xl rounded-2xl border border-gray-300">
+        {actionError && <p role="alert" className="m-3 rounded border border-red-200 bg-red-50 p-2 text-sm text-red-700">{actionError}</p>}
         {/* Header */}
         <div className="px-6 py-2 border-b border-gray-300 flex justify-between items-center bg-sky-200 rounded-t-2xl">
           <h2 className="text-black-800">
@@ -858,7 +984,7 @@ export default function GetTahghighKarbarg({
             <div className="absolute inset-0 bg-black/40" onClick={() => setModalOpenKarbarg(false)} />
 
             <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-[10000] w-[600px] relative">
-              <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+              <div className="merat-modal-header--legacy merat-modal-tone--neutral bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
                 <h2 className="text-lg font-bold">{idKarbarg === 0 ? "افزودن کاربرگ جدید" : "ویرایش کاربرگ"}</h2>
               </div>
 
@@ -1006,6 +1132,8 @@ export default function GetTahghighKarbarg({
                 </>
               )}
 
+              {loadingEdit && <p role="status" className="mt-2 text-sm text-sky-700">در حال دریافت اطلاعات کامل کاربرگ...</p>}
+              {saveError && <p role="alert" className="mt-2 text-sm text-red-600">{saveError}</p>}
               <textarea
                 className="text-[15px] w-full mt-1 h-24 border border-gray-300 rounded p-2 mb-1 resize-none focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 outline-none"
                 placeholder="توضیحات"
@@ -1023,6 +1151,7 @@ export default function GetTahghighKarbarg({
 
                 <button
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded cursor-pointer"
+                  disabled={loadingEdit || savingKarbarg || !editReady}
                   onClick={() =>
                     saveKarbarg(
                       idKarbarg,
@@ -1043,7 +1172,7 @@ export default function GetTahghighKarbarg({
                     )
                   }
                 >
-                  تایید
+                  {savingKarbarg ? "در حال ثبت..." : "تایید"}
                 </button>
               </div>
             </div>
@@ -1056,7 +1185,7 @@ export default function GetTahghighKarbarg({
             <div className="absolute inset-0 bg-black/40" onClick={() => setModalOpenShowKarbarg(false)} />
 
             <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-[10000] w-[60%] max-h-[90vh] overflow-hidden absolute top-5 left-1/2 -translate-x-1/2">
-              <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+              <div className="merat-modal-header--legacy merat-modal-tone--notice bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
                 <h2 className="text-lg font-bold">پیوست های کاربرگ</h2>
               </div>
 
@@ -1120,7 +1249,7 @@ export default function GetTahghighKarbarg({
                         <div
                           key={index}
                           className="flex-none w-28 h-38 bg-gray-300 rounded-md flex flex-col items-center justify-center text-gray-600 font-semibold cursor-pointer hover:bg-gray-400 transition-all relative"
-                          onClick={() => openViewer(gridBoxes, index)}
+                          onClick={() => openViewer(images.map((item) => ({ url: item.url, label: item.file.name })), index)}
                         >
                           <img src={img.url} alt={`img-${index + 1}`} className="w-full h-[80%] object-cover rounded-md" />
                           <span className={`mt-1 ${isOk ? "text-green-600" : "text-red-600"}`}>{sizeMB} MB</span>
@@ -1157,12 +1286,25 @@ export default function GetTahghighKarbarg({
               <div className="mt-6">
                 <h3 className="font-bold mb-3">اسناد دریافت شده</h3>
 
+                {documentsLoading && <p role="status" className="text-sm text-gray-500 mb-2">در حال دریافت اسناد...</p>}
+                {documentsError && <p role="alert" className="text-sm text-red-600 mb-2">{documentsError}</p>}
+                {!documentsLoading && !documentsError && gridBoxes.length === 0 && (
+                  <p className="text-sm text-gray-500 mb-2">سندی برای این کاربرگ ثبت نشده است.</p>
+                )}
                 <div className="overflow-y-auto" style={{ maxHeight: "40vh" }}>
                   <div className="grid grid-cols-5 gap-3">
                     {gridBoxes.map((box, index) => (
-                      <div key={index} onClick={() => openViewer(gridBoxes, index)} className="cursor-pointer">
+                      <div key={index} onClick={() => {
+                        if (/\.(png|jpe?g|webp|gif|bmp)$/i.test(box.label)) openViewer(gridBoxes, index);
+                        else window.open(box.url, "_blank", "noopener,noreferrer");
+                      }} className="cursor-pointer">
                         <div className="relative w-full h-38 bg-gray-200 rounded-md flex items-center justify-center border border-gray-300 hover:shadow-lg transition-all">
-                          <img src={box.url} alt={box.label} className="w-full h-[80%] object-cover rounded-md" />
+                          {/\.(png|jpe?g|webp|gif|bmp)$/i.test(box.label) ? (
+                            <img src={box.url} alt={box.label} className="w-full h-[80%] object-cover rounded-md"
+                              onError={() => setDocumentsError("فایل ثبت شده پیدا نشد؛ وجود فایل در public/uploads سرور را بررسی کنید.")} />
+                          ) : (
+                            <span className="text-sm break-all px-2 text-center" title={box.label}>📄 {box.label}</span>
+                          )}
 
                           {!IsDoneKarbarg && (
                             <button
@@ -1249,6 +1391,15 @@ export default function GetTahghighKarbarg({
                   ›
                 </button>
 
+                <div className="absolute top-4 left-4 z-50 flex items-center gap-2" dir="ltr">
+                  <button type="button" aria-label="کوچک‌نمایی" className="text-white bg-black/60 rounded-lg px-3 py-2"
+                    onClick={(e) => { e.stopPropagation(); setZoom((z) => Math.max(1, +(z - 0.25).toFixed(2))); }}>−</button>
+                  <span className="text-white bg-black/60 rounded-lg px-2 py-2">{Math.round(zoom * 100)}٪</span>
+                  <button type="button" aria-label="بزرگ‌نمایی" className="text-white bg-black/60 rounded-lg px-3 py-2"
+                    onClick={(e) => { e.stopPropagation(); setZoom((z) => Math.min(5, +(z + 0.25).toFixed(2))); }}>+</button>
+                  <button type="button" className="text-white bg-black/60 rounded-lg px-3 py-2"
+                    onClick={(e) => { e.stopPropagation(); setZoom(1); setOffset({ x: 0, y: 0 }); }}>اندازه اصلی</button>
+                </div>
                 <button
                   type="button"
                   className="absolute top-4 right-4 z-50 text-white bg-black/50 hover:bg-black/80 rounded-full w-10 h-10 flex items-center justify-center text-2xl select-none"
@@ -1266,11 +1417,12 @@ export default function GetTahghighKarbarg({
                   draggable={false}
                   className="select-none"
                   style={{
-                    height: "100vh",
+                    maxHeight: "85vh",
+                    height: "auto",
                     width: "auto",
                     maxWidth: "100vw",
                     objectFit: "contain",
-                    transform: `scale(${zoom}) translate(${offset.x + (zoom <= 1.05 ? swipeX : 0)}px, ${offset.y}px)`,
+                    transform: `translate(${offset.x + (zoom <= 1.05 ? swipeX : 0)}px, ${offset.y}px) scale(${zoom})`,
                     transition: isDragging || isSwiping ? "none" : "transform 0.2s ease",
                     cursor: zoom > 1.05 ? (isDragging ? "grabbing" : "grab") : "default",
                     borderRadius: 10,
@@ -1317,6 +1469,7 @@ export default function GetTahghighKarbarg({
                     swipeStartXRef.current = null;
                     setIsDragging(false);
                   }}
+                  onDoubleClick={(e) => { e.stopPropagation(); setZoom((z) => z > 1 ? 1 : 2); setOffset({ x: 0, y: 0 }); }}
                   onClick={(e) => e.stopPropagation()}
                 />
 
@@ -1358,8 +1511,9 @@ export default function GetTahghighKarbarg({
                   </button>
                 </div>
 
+                {reportExportError && <p role="alert" className="mt-2 text-red-600">{reportExportError}</p>}
                 <div
-                  id="div_image"
+                  id="div_image" className="merat-legacy-print-form"
                   ref={divRef}
                   style={{
                     width: "280mm",
@@ -1514,7 +1668,19 @@ export default function GetTahghighKarbarg({
                     <h3 className="bnaznin" style={{ marginBottom: "10px", fontSize: "22px" }}>
                       شرح گزارش و دلایل عدم امکان تحقیق :
                     </h3>
-                    <p className="text-[18px] leading-9">{tozihat}</p>
+                    <div
+                      key={idKarbarg}
+                      contentEditable
+                      suppressContentEditableWarning
+                      dir="rtl"
+                      role="textbox"
+                      aria-label="شرح گزارش و دلایل عدم امکان تحقیق"
+                      aria-multiline="true"
+                      className="bnaznin text-[20px] leading-9 outline-none whitespace-pre-wrap min-h-[170px]"
+                      style={{ overflowWrap: "anywhere" }}
+                      onInput={(e) => { reportDescriptionRef.current = e.currentTarget.innerText; }}
+                      onBlur={() => settozihat(reportDescriptionRef.current)}
+                    >{tozihat}</div>
                   </div>
 
                   <div
@@ -1573,7 +1739,7 @@ export default function GetTahghighKarbarg({
             <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalOpenEmteyazOstan(false)} />
 
             <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-[10000] w-[800px] h-[500px] relative max-h-[90vh] overflow-y-auto">
-              <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+              <div className="merat-modal-header--legacy merat-modal-tone--neutral bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
                 <h2 className="text-lg font-bold">ثبت امتیاز</h2>
               </div>
               <hr className="mb-3 text-blue-800" />

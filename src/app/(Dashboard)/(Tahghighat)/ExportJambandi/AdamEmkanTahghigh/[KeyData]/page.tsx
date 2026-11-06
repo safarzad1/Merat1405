@@ -16,31 +16,25 @@ export default function A4LetterWithHeaderThreeColumns() {
     const user = useMeratUser();
     const router = useRouter();
     const params = useParams();
+    // Load report data once for this encrypted route parameter.
+    const keyData = params?.KeyData as string | undefined;
+    useEffect(() => {
+        if (!keyData) return;
+        let active = true;
+        try {
+            const tahghigh = Number(decryptText(decodeURIComponent(keyData)));
+            if (!Number.isFinite(tahghigh)) return;
+            SetIDTahghigh(tahghigh);
+            GetTahghighat_Mohaghegh_ByID(tahghigh)
+                .catch((error) => { if (active) console.error("خطا در دریافت گزارش تحقیق", error); });
+        } catch (error) {
+            console.error("خطا در رمزگشایی شناسه تحقیق", error);
+        }
+        return () => { active = false; };
+    }, [keyData]);
+
     // خروجی PNG
     const handleExportPNG = async () => {
-
-        useEffect(() => {
-
-            const keyData = params?.KeyData as string;
-            if (keyData) {
-                try {
-                    const tahghigh = Number(decryptText(decodeURIComponent(keyData)));
-                    SetIDTahghigh(tahghigh);
-                    loadData(tahghigh);
-
-                } catch (err) {
-                    console.error("❌ خطا در رمزگشایی شناسه:", err);
-                }
-            }
-        }, [params, user]);
-
-        const loadData = async (idtahghigh: number) => {
-
-            const result = await GetTahghighat_Mohaghegh_ByID(idtahghigh);
-            console.log(result);
-        }
-
-
         if (!divRef.current) return;
 
         const canvas = await html2canvas(divRef.current, { scale: 3, useCORS: true, backgroundColor: 'white' });
@@ -65,7 +59,7 @@ export default function A4LetterWithHeaderThreeColumns() {
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save('letter.pdf');
+        await pdf.save('letter.pdf');
     };
 
     return (
@@ -78,6 +72,7 @@ export default function A4LetterWithHeaderThreeColumns() {
 
             <div
                 ref={divRef}
+                className="merat-legacy-print-form"
                 style={{
                     width: '230mm',
                     minHeight: '320mm',

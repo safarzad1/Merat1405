@@ -1,5 +1,9 @@
 "use client";
 
+import { meratAlert } from "@/component/MeratFeedback/feedback";
+
+import { isResearchMutationSuccessful, isResearchDuplicateReferral, isResearchSessionExpired } from "@/lib/researchMutationResult";
+
 import { useParams } from "next/navigation";
 import { useMeratUser } from "@/lib/useMeratUser";
 import { use, useEffect, useState } from "react";
@@ -11,7 +15,7 @@ import { AlertTriangle } from "@/component/ResearchIcons";
 import EjraBeMohaghegh from '../../Componnet/EjraBeMohaghegh'
 import ErjaMohaghegh from '../../Componnet/ErjaMohaghegh'
 import { useConfirm } from "@/Utils/ConfirmModalContext";
-import PersianDateInput from '@/component/Objects/InputPersianDatePicker'
+import PersianDateInput, { getTodayJalali } from '@/component/Objects/InputPersianDatePicker'
 import { useRouter } from "next/navigation";
 import { Update_ErjaParvandeh, ErjaBeMohaghegh, GetErjaByID } from '@/services/ApiService';
 import DescriptionWithModal from '../../Componnet/DescriptionWithModal';
@@ -23,7 +27,7 @@ export default function ParvandehPage() {
     const [erjaId, setErjaId] = useState(0);
     const [erjaParentId, setErjaParentId] = useState(0);
     const [CodeMohaghegh, setCodeMohaghegh] = useState<number | null>(null);
-    const [tarikh, settarikh] = useState<string | null>(null);
+    const [tarikh, settarikh] = useState<string | null>(() => getTodayJalali());
 
     const [tozihat, setTozihat] = useState("");
     const [errorTozihat, seterrorTozihat] = useState(false);
@@ -47,9 +51,14 @@ export default function ParvandehPage() {
             return;
         }
 
-        const result = await Update_ErjaParvandeh(erjaid, true, 2, tozihat, Userid);
-        if (result.status == 200) {
-            router.push("/TahghighatManage");
+        try {
+            const result = await Update_ErjaParvandeh(erjaid, true, 2, tozihat, Userid);
+            if (isResearchSessionExpired(result)) { router.push("/Login"); return; }
+            if (isResearchMutationSuccessful(result)) router.push("/TahghighatManage");
+            else meratAlert("ثبت و ارسال پرونده موفق نبود.");
+        } catch (error) {
+            console.error(error);
+            meratAlert("در ارسال پرونده به سرور خطا رخ داد.");
         }
     }
 
@@ -96,40 +105,24 @@ export default function ParvandehPage() {
     }, [params]);
 
     const saveKarbarg = async (isInsert: number, userid: number) => {
-
-        if (!CodeMohaghegh || CodeMohaghegh === 0) {
-            setErrorMohaghegh(true);
-            return;
-        }
-
-        if (!tarikh) {
-            seterrorTarikh(true);
-            return;
-        }
-
+        if (!CodeMohaghegh || CodeMohaghegh <= 0) { setErrorMohaghegh(true); return; }
+        if (!tarikh) { seterrorTarikh(true); return; }
         seterrorTarikh(false);
         setErrorMohaghegh(false);
-
-        const result = await ErjaBeMohaghegh(erjaId, erjaParentId, CodeMohaghegh, tarikh, tozihat, userid, isInsert);
-
-        if (result.data[0].InSuccess == true) {
+        try {
+            const result = await ErjaBeMohaghegh(erjaId, erjaParentId, CodeMohaghegh, tarikh, tozihat, userid, isInsert);
+            if (isResearchSessionExpired(result)) { router.push("/Login"); return; }
+            if (isResearchDuplicateReferral(result) && isInsert === 0) {
+                showConfirm("آیا از ارجاع مجدد اطمینان دارید؟", () => saveKarbarg(1, user.UserId), "هشدار!", "warning");
+                return;
+            }
+            if (!isResearchMutationSuccessful(result)) { meratAlert("ارجاع به محقق ثبت نشد."); return; }
             setModalOpenErjaBeMohaghegh(false);
             setrefreshKeyErjaMohaghegh(prev => prev + 1);
             setCodeMohaghegh(0);
             settarikh("");
-        }
-
-        else if (result.data[0].IsSuccess == false && result.data[0].Status == 201) {
-            showConfirm(
-                "آیا از ارجاع مجدد اطمینان دارید؟",
-                () => saveKarbarg(1, user.UserId),
-                "هشدار!",
-                "warning"
-            )
-        }
-
+        } catch (error) { console.error(error); meratAlert("ارتباط با سرور برقرار نشد."); }
     }
-
 
     return (
         <>
@@ -220,7 +213,7 @@ export default function ParvandehPage() {
                                 {(data[0].IsDone == false && (
                                     <div className="flex gap-2">
                                         <button
-                                            onClick={() => { setModalOpenErjaBeMohaghegh(true) }
+                                            onClick={() => { settarikh(getTodayJalali()); setCodeMohaghegh(null); setModalOpenErjaBeMohaghegh(true) }
                                             }
                                             className="flex items-center gap-1 p-1 px-4 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition-colors text-sm cursor-pointer">
                                             <PlusCircle className="w-4 h-4" />
@@ -283,8 +276,8 @@ export default function ParvandehPage() {
                     ></div>
 
                     {/* محتوای مودال */}
-                    <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-96 relative">
-                        <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+                    <div className="merat-referral-dialog bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-96 relative">
+                        <div className="merat-modal-header--legacy merat-modal-tone--neutral bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
                             <h2 className="text-lg font-bold">افزودن ارجاع جدید</h2>
                         </div>
                         <hr className="mb-3 text-blue-800" />
@@ -307,7 +300,7 @@ export default function ParvandehPage() {
                         <div className="">
                             <PersianDateInput
                                 label="مهلت انجام"
-                                // value={tarikh ?? undefined}
+                                value={tarikh}
                                 allowPastDates={false}
                                 onChange={(v: any) => {
                                     settarikh(v);
@@ -357,7 +350,7 @@ export default function ParvandehPage() {
 
                     {/* محتوای مودال */}
                     <div className="bg-white rounded-lg px-6 pb-4 shadow-lg z-50 w-[600px] relative">
-                        <div className="bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
+                        <div className="merat-modal-header--legacy merat-modal-tone--neutral bg-gray-200 -mx-6 p-3 rounded-t-lg border-b border-gray-300">
                             <h2 className="text-lg font-bold">ارسال پرونده</h2>
                         </div>
                         <hr className="mb-3 text-blue-800" />

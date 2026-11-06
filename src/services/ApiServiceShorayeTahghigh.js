@@ -59,7 +59,7 @@ export async function InsertLogState(idShorayeTahghigh, recordState, description
 // -----------------------------------------------------------------
 export async function UpdateTahghighShoraye(idShorayeTahghigh, recordState, description, createUserId) {
     try {
-        const res = await fetch("/Api/ShorayeTahghigh/Update_Tahghigh_Shoraye", {
+        const res = await fetch("/Api/ShorayeTahghigh/UpdateTahghighShoraye", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

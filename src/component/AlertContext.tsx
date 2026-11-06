@@ -1,6 +1,43 @@
 "use client";
-import {createContext,useContext,useState,type ReactNode} from "react";
-type Opt={title:string;description:string;type?:"info"|"warning"|"error"|"success";onConfirm?:()=>void;confirmText?:string;cancelText?:string;showCancel?:boolean};
-const C=createContext<{showAlert:(o:Opt)=>void}|null>(null);
-export function AlertProvider({children}:{children:ReactNode}){const[state,setState]=useState<(Opt&{open:boolean})>({open:false,title:"",description:""});return <C.Provider value={{showAlert:o=>setState({...o,open:true})}}>{children}{state.open?<div className="research-modal-root"><button className="research-modal-backdrop" onClick={()=>setState(s=>({...s,open:false}))}/><div className="research-modal-card"><div className="research-modal-header">{state.title}</div><div className="research-modal-body"><p>{state.description}</p><div className="research-modal-actions">{state.showCancel?<button className="research-button secondary" onClick={()=>setState(s=>({...s,open:false}))}>{state.cancelText||"انصراف"}</button>:null}<button className="research-button primary" onClick={()=>{state.onConfirm?.();setState(s=>({...s,open:false}))}}>{state.confirmText||"تایید"}</button></div></div></div></div>:null}</C.Provider>}
-export function useAlert(){const c=useContext(C);if(!c)throw new Error("useAlert must be used within AlertProvider");return c}
+
+import type { ReactNode } from "react";
+import { meratAlert, meratConfirm } from "@/component/MeratFeedback/feedback";
+
+export type AlertOptions = {
+  title: string;
+  description: string;
+  type?: "info" | "warning" | "error" | "success";
+  onConfirm?: () => void | Promise<void>;
+  confirmText?: string;
+  cancelText?: string;
+  showCancel?: boolean;
+};
+
+export function AlertProvider({ children }: { children: ReactNode }) {
+  return <>{children}</>;
+}
+
+export function useAlert() {
+  const showAlert = (options: AlertOptions) => {
+    if (options.showCancel) {
+      void meratConfirm(options.description, {
+        title: options.title,
+        type: options.type || "warning",
+        confirmText: options.confirmText || "تأیید",
+        cancelText: options.cancelText || "انصراف",
+      }).then(async (accepted) => {
+        if (accepted && options.onConfirm) {
+          try { await options.onConfirm(); }
+          catch (error) { meratAlert(error, { title: "عملیات ناموفق", type: "error" }); }
+        }
+      });
+      return;
+    }
+    meratAlert(options.description, {
+      title: options.title,
+      type: options.type || "error",
+      confirmText: options.confirmText || "متوجه شدم",
+    });
+  };
+  return { showAlert };
+}

@@ -1,45 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import sql from "mssql";
-
 import { getConnection } from "@/lib/db";
-import { verifyToken } from "@/lib/auth";
+import {
+  requireResearchIdentity, researchAccessResponse, researchMutationResponse,
+  positiveId, assertResearchCaseScope,
+} from "@/lib/researchSecurity";
 
 export async function POST(req: NextRequest) {
-    const token = req.cookies.get("token")?.value;
-    if (!token) {
-        return NextResponse.json(
-            { status: 401, error: "Unauthorized: No token" },
-            { status: 401 }
-        );
+  try {
+    const actor = await requireResearchIdentity(req.cookies.get("token")?.value);
+    const { filename, userid, karbargid } = await req.json();
+    if (positiveId(userid) !== actor.userId || !positiveId(karbargid) ||
+        typeof filename !== "string" || !filename.trim() || filename.length > 200 ||
+        filename.includes("\0")) {
+      return NextResponse.json({ status: 400, error: "شناسه کاربرگ یا نام فایل نامعتبر است." }, { status: 400 });
     }
-    const body = await req.json();
-    const { filename, userid } = body;
-
-    try {
-        verifyToken(token);
-    } catch {
-        return NextResponse.json(
-            { status: 401, error: "Unauthorized: Invalid or expired token" },
-            { status: 401 }
-        );
+    const pool = await getConnection();
+    const link = await pool.request()
+      .input("KarbargId", sql.BigInt, Number(karbargid))
+      .input("FileName", sql.NVarChar(200), filename)
+      .query(`SELECT TOP (1) K.ErjaId
+              FROM Tahghighat.Erja_Tahghigh_Karbarg K
+              INNER JOIN Tahghighat.Erja_Tahghigh_Karbarg_Peyvast P
+                ON P.KarbargId = K.KarbargId
+              WHERE K.KarbargId = @KarbargId AND P.FileName = @FileName
+                AND ISNULL(K.IsDelete,0) = 0 AND ISNULL(P.IsDelete,0) = 0`);
+    if (!link.recordset?.[0]) {
+      return NextResponse.json({ status: 404, error: "پیوست این کاربرگ یافت نشد." }, { status: 404 });
     }
-
-    try {
-        const pool = await getConnection();
-        const result = await pool
-            .request()
-            .input("FileName", sql.NVarChar(200), filename)
-            .input("UserId", sql.BigInt, userid)
-            .execute("Tahghighat.SP_DeletePeyvastTahghigh");
-
-        return NextResponse.json(
-            { status: 200, data: result.recordset }
-        );
-
-    } catch (err) {
-        return NextResponse.json(
-            { error: err instanceof Error ? err.message : "Unknown error" },
-            { status: 500 }
-        );
-    }
+    await assertResearchCaseScope(actor, link.recordset[0].ErjaId);
+    const result = await pool.request()
+      .input("KarbargId", sql.BigInt, Number(karbargid))
+      .input("FileName", sql.NVarChar(200), filename)
+      .input("UserId", sql.BigInt, actor.userId)
+      .execute("Tahghighat.SP_DeletePeyvastTahghighByKarbarg");
+    return researchMutationResponse(result);
+  } catch (err) {
+    return researchAccessResponse(err);
+  }
 }

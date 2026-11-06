@@ -32,6 +32,11 @@ export type SearchableDropdownProps<T extends DropdownValue = string> =
         noResultText?: string;
         menuWidth?: number;
         itemFontSize?: string;
+        compact?: boolean;
+        /** Keep an open menu within its parent dialog, rather than behind or outside it. */
+        containInDialog?: boolean;
+        /** Maximum height of the popup, including the search input. */
+        menuMaxHeight?: number;
     };
 
 export default function SearchableDropdown<
@@ -48,10 +53,12 @@ export default function SearchableDropdown<
     loading = false,
     loadingText = "در حال دریافت...",
     compact = false,
+    containInDialog = false,
+    menuMaxHeight = 300,
     className = "",
     ariaLabel = "جست‌وجو و انتخاب گزینه",
     leadingIcon,
-    dropdownZIndex = 2147483000,
+    dropdownZIndex = 2147483600,
     menuWidth,
     itemFontSize = "12px",
 }: SearchableDropdownProps<T>) {
@@ -95,7 +102,29 @@ export default function SearchableDropdown<
     }, [normalizedOptions, query]);
 
     const updatePosition = () => {
-        setPosition(getDropdownPosition(rootRef, menuWidth ?? 390));
+        const root = rootRef.current;
+        const base = getDropdownPosition(rootRef, menuWidth, menuMaxHeight);
+        const dialog = containInDialog
+            ? root?.closest<HTMLElement>('[role="dialog"]')
+            : null;
+        if (!root || !dialog) {
+            setPosition(base);
+            return;
+        }
+        const field = root.getBoundingClientRect();
+        const bounds = dialog.getBoundingClientRect();
+        const inset = 12;
+        const gap = 4;
+        const width = Math.min(field.width, Math.max(150, bounds.width - 2 * inset));
+        const left = Math.max(bounds.left + inset,
+            Math.min(field.right - width, bounds.right - inset - width));
+        const below = Math.max(0, bounds.bottom - inset - field.bottom - gap);
+        const above = Math.max(0, field.top - bounds.top - inset - gap);
+        const openingAbove = below < Math.min(140, menuMaxHeight) && above > below;
+        const available = openingAbove ? above : below;
+        const maxHeight = Math.max(48, Math.min(menuMaxHeight, available));
+        const top = openingAbove ? field.top - gap - maxHeight : field.bottom + gap;
+        setPosition({top, left, width, maxHeight});
     };
 
     const closeDropdown = () => {
@@ -125,7 +154,11 @@ export default function SearchableDropdown<
             }
         };
         const closeOnEscape = (event: KeyboardEvent) => {
-            if (event.key === "Escape") closeDropdown();
+            if (event.key === "Escape") {
+                event.stopPropagation();
+                closeDropdown();
+                rootRef.current?.querySelector<HTMLButtonElement>('button[aria-haspopup="listbox"]')?.focus();
+            }
         };
         const handleViewportChange = () => updatePosition();
 
@@ -142,7 +175,7 @@ export default function SearchableDropdown<
             window.removeEventListener("resize", handleViewportChange);
             window.removeEventListener("scroll", handleViewportChange, true);
         };
-    }, [open, menuWidth]);
+    }, [open, menuWidth, menuMaxHeight, containInDialog]);
 
     useEffect(() => {
         if (disabled || loading) closeDropdown();
@@ -154,7 +187,7 @@ export default function SearchableDropdown<
                   <div
                       ref={menuRef}
                       id={listId}
-                      className={styles.searchMenu}
+                      className={`${styles.searchMenu} ${compact ? styles.searchMenuCompact : ""}`}
                       role="listbox"
                       aria-label={ariaLabel}
                       style={{

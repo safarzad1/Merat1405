@@ -29,6 +29,7 @@ type UserRow = {
   PostId?: number | null;
   OnvanPost?: string | null;
   IsActive?: boolean | number | null;
+  IsAdmin?: boolean | number | null;
   Active_NameFarsi?: string | null;
 };
 
@@ -80,6 +81,15 @@ function UserIcon() {
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="8" r="3.5" />
       <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
+    </svg>
+  );
+}
+
+function EditIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 20h4l10.5-10.5a2.8 2.8 0 0 0-4-4L4 16v4Z" />
+      <path d="m13.5 6.5 4 4" />
     </svg>
   );
 }
@@ -151,7 +161,8 @@ function uniqueUsers(rows: UserRow[]) {
   });
 }
 
-export default function UsersListClient() {
+export default function UsersListClient({ scope = "ostan" }: { scope?: "ostan" | "setad" }) {
+  const isSetad = scope === "setad";
   const router = useRouter();
   const cityRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
@@ -170,6 +181,7 @@ export default function UsersListClient() {
   const [usersError, setUsersError] = useState<Record<number, string>>({});
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<UserRow | null>(null);
   const [selectedCityId, setSelectedCityId] = useState<number | null>(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -177,6 +189,8 @@ export default function UsersListClient() {
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [mayManageAdmins, setMayManageAdmins] = useState(false);
 
   const [personQuery, setPersonQuery] = useState("");
   const [personOptions, setPersonOptions] = useState<PersonOption[]>([]);
@@ -198,8 +212,31 @@ export default function UsersListClient() {
   }, []);
 
   useEffect(() => {
+    let active = true;
+    fetch("/Api/Users/AdminAccess", { cache: "no-store" })
+      .then(async (r) => r.ok ? (await r.json()).isAdmin === true : false)
+      .then((allowed) => { if (active) setMayManageAdmins(allowed); })
+      .catch(() => { if (active) setMayManageAdmins(false); });
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
     const mahal = currentUser.Mahal;
     if (mahal === undefined || mahal === null || mahal === "") return;
+
+    if (isSetad) {
+      if (Number(mahal) !== 1) {
+        setCitiesError("مدیریت کاربران ستاد فقط برای کاربران مجاز ستاد امکان‌پذیر است.");
+        setCities([]);
+      } else {
+        setCities([{ CityId: 1, PCityId: 0, FullName: "ستاد" }]);
+        setCitiesError("");
+        setExpandedCityId(1);
+        void fetchUsersByCity(1, true);
+      }
+      setCitiesLoading(false);
+      return;
+    }
 
     let active = true;
 
@@ -226,7 +263,7 @@ export default function UsersListClient() {
     return () => {
       active = false;
     };
-  }, [currentUser.Mahal, router]);
+  }, [currentUser.Mahal, router, isSetad]);
 
   useEffect(() => {
     if (!modalOpen) return;
@@ -272,7 +309,7 @@ export default function UsersListClient() {
 
   useEffect(() => {
     const query = personQuery.trim();
-    const mahal = currentUser.Mahal;
+    const mahal = isSetad ? 1 : currentUser.Mahal;
 
     if (!modalOpen || selectedPerson || query.length < 2 || mahal === undefined || mahal === null || mahal === "") {
       setPersonOptions([]);
@@ -322,7 +359,7 @@ export default function UsersListClient() {
 
   useEffect(() => {
     const query = userSearch.trim();
-    const mahal = currentUser.Mahal;
+    const mahal = isSetad ? 1 : currentUser.Mahal;
 
     if (!query) {
       setSearchResultsByCity({});
@@ -343,7 +380,7 @@ export default function UsersListClient() {
         let grouped: Record<number, UserRow[]> = {};
         let usedPagedSearch = false;
 
-        const globalResult = await postJson<UserRow[]>("/Api/Users/GetUsers", {
+        const globalResult = await postJson<UserRow[]>(isSetad ? "/Api/Users/GetSetadUsers" : "/Api/Users/GetUsers", {
           mahal,
           page: 1,
           sizepage: 1000,
@@ -361,7 +398,7 @@ export default function UsersListClient() {
         if (globalResult.status === 200 && Array.isArray(globalResult.data)) {
           const knownCityIds = new Set(cities.map((city) => Number(city.CityId)));
           for (const row of globalResult.data) {
-            const cityId = Number(row.CityId ?? row.Mahal);
+            const cityId = isSetad ? Number(row.Mahal) : Number(row.CityId ?? row.Mahal);
             if (!cityId || !knownCityIds.has(cityId)) continue;
             if (!grouped[cityId]) grouped[cityId] = [];
             grouped[cityId].push(row);
@@ -373,7 +410,7 @@ export default function UsersListClient() {
           const results = await Promise.all(
             cities.map(async (city) => {
               const cityId = Number(city.CityId);
-              const result = await postJson<UserRow[]>("/Api/Users/GetListUsers", { mahal: cityId, search: query });
+              const result = await postJson<UserRow[]>(isSetad ? "/Api/Users/GetSetadUsers" : "/Api/Users/GetListUsers", { mahal: cityId, search: query });
               return { cityId, result };
             }),
           );
@@ -443,7 +480,7 @@ export default function UsersListClient() {
     setUsersError((current) => ({ ...current, [cityId]: "" }));
 
     try {
-      const result = await postJson<UserRow[]>("/Api/Users/GetListUsers", { mahal: cityId, search: "" });
+      const result = await postJson<UserRow[]>(isSetad ? "/Api/Users/GetSetadUsers" : "/Api/Users/GetListUsers", { mahal: cityId, search: "" });
       if (handleUnauthorized(result)) return;
       if (result.status !== 200) throw new Error(result.error || result.message || "خطا در دریافت کاربران");
       setUsersByCity((current) => ({ ...current, [cityId]: uniqueUsers(Array.isArray(result.data) ? result.data : []) }));
@@ -482,11 +519,24 @@ export default function UsersListClient() {
     setPersonOptions([]);
     setPersonMenuOpen(false);
     setFormErrors({});
+    setIsAdmin(false);
   }
 
   function openAddUser(cityId: number) {
     resetModal();
+    setEditingUser(null);
     setSelectedCityId(cityId);
+    setModalOpen(true);
+  }
+
+  function openEditUser(cityId: number, user: UserRow) {
+    resetModal();
+    setEditingUser(user);
+    setSelectedCityId(cityId);
+    setUsername(String(user.UserId || ""));
+    setSelectedPerson(user.PersonId ? { PersonId: Number(user.PersonId), FullName: String(user.FullName || user.CodeMelli || user.PersonId) } : null);
+    setSelectedPostId(user.PostId ? Number(user.PostId) : null);
+    setIsAdmin(user.IsAdmin === true || user.IsAdmin === 1);
     setModalOpen(true);
   }
 
@@ -494,13 +544,15 @@ export default function UsersListClient() {
     if (saving) return;
     setModalOpen(false);
     setSelectedCityId(null);
+    setEditingUser(null);
     resetModal();
   }
 
   async function saveUser() {
     const errors: Record<string, string> = {};
     if (!username.trim()) errors.username = "نام کاربر الزامی است.";
-    if (!password.trim()) errors.password = "کلمه عبور الزامی است.";
+    else if (!/^[0-9]+$/.test(username.trim()) || !Number.isSafeInteger(Number(username.trim())) || Number(username.trim()) <= 0) errors.username = "نام کاربر باید یک شناسه عددی معتبر باشد.";
+    if (!editingUser && !password.trim()) errors.password = "کلمه عبور الزامی است.";
     if (!selectedPerson) errors.person = "شخص را انتخاب کنید.";
     if (!selectedPostId) errors.post = "پست را انتخاب کنید.";
     if (!selectedCityId) errors.city = "شهر انتخاب نشده است.";
@@ -510,19 +562,22 @@ export default function UsersListClient() {
 
     setSaving(true);
     try {
-      const result = await postJson("/Api/Users/InsertUser", {
+      const result = await postJson(editingUser ? "/Api/Users/UpdateUser" : "/Api/Users/InsertUser", {
         userId: username.trim(),
+        oldUserId: editingUser?.UserId ?? null,
         mahal: selectedCityId,
         personId: selectedPerson?.PersonId ?? null,
         postId: selectedPostId,
         password: password.trim(),
         createUserId: currentUser.UserId ?? null,
+        ...(mayManageAdmins ? { isAdmin } : {}),
       });
 
       if (handleUnauthorized(result)) return;
-      if (result.status !== 200) throw new Error(result.error || result.message || "ثبت کاربر انجام نشد");
+      if (result.status !== 200) throw new Error(result.error || result.message || (editingUser ? "ویرایش کاربر انجام نشد" : "ثبت کاربر انجام نشد"));
 
       await fetchUsersByCity(selectedCityId, true);
+      window.dispatchEvent(new Event("merat-admin-updated"));
       setExpandedCityId(selectedCityId);
       setSaving(false);
       closeAddUser();
@@ -563,14 +618,14 @@ export default function UsersListClient() {
           <div className={styles.headerTitle}>
             <span className={styles.headerIcon}><UserIcon /></span>
             <div>
-              <h1>فهرست کاربران</h1>
-              <p>مدیریت کاربران استان و شهرستان‌ها</p>
+              <h1>{isSetad ? "کاربران ستاد" : "فهرست کاربران"}</h1>
+              <p>{isSetad ? "مدیریت کاربران ستاد مرکزی" : "مدیریت کاربران استان و شهرستان‌ها"}</p>
             </div>
           </div>
 
           <div className={styles.headerStats}>
             <div>
-              <span>شهرها</span>
+              <span>{isSetad ? "واحد" : "شهرها"}</span>
               <strong>{cities.length}</strong>
             </div>
             <div>
@@ -697,6 +752,7 @@ export default function UsersListClient() {
                                   <th>نام و نام خانوادگی</th>
                                   <th>محل</th>
                                   <th>عنوان پست</th>
+                                  <th>مدیر سامانه</th>
                                   <th>وضعیت</th>
                                   <th>عملیات</th>
                                 </tr>
@@ -709,6 +765,7 @@ export default function UsersListClient() {
                                     <td data-label="نام و نام خانوادگی">{item.FullName || "-"}</td>
                                     <td data-label="محل">{item.NameMahal || "-"}</td>
                                     <td data-label="عنوان پست">{item.OnvanPost || "-"}</td>
+                                    <td data-label="مدیر سامانه">{item.IsAdmin === true || item.IsAdmin === 1 ? "بله" : "—"}</td>
                                     <td data-label="وضعیت">
                                       <span className={`${styles.statusBadge} ${item.IsActive === false || item.IsActive === 0 ? styles.statusInactive : ""}`}>
                                         <i />
@@ -718,11 +775,22 @@ export default function UsersListClient() {
                                     <td data-label="عملیات">
                                       <button
                                         type="button"
+                                        disabled={!mayManageAdmins && (item.IsAdmin === true || item.IsAdmin === 1)}
+                                        title={!mayManageAdmins && (item.IsAdmin === true || item.IsAdmin === 1) ? "فقط مدیر سامانه می‌تواند حساب مدیر را تغییر دهد." : undefined}
                                         className={styles.deleteButton}
                                         onClick={() => setDeleteTarget({ cityId, user: item })}
                                       >
                                         <TrashIcon />
                                         <span>حذف</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        disabled={!mayManageAdmins && (item.IsAdmin === true || item.IsAdmin === 1)}
+                                        className={styles.editButton}
+                                        onClick={() => openEditUser(cityId, item)}
+                                      >
+                                        <EditIcon />
+                                        <span>ویرایش</span>
                                       </button>
                                     </td>
                                   </tr>
@@ -742,13 +810,13 @@ export default function UsersListClient() {
       </section>
 
       {modalOpen ? (
-        <div className={styles.modalLayer} role="dialog" aria-modal="true" aria-label="افزودن کاربر">
+        <div className={styles.modalLayer} role="dialog" aria-modal="true" aria-label={editingUser ? "ویرایش کاربر" : "افزودن کاربر"}>
           <button type="button" className={styles.modalBackdrop} onClick={closeAddUser} aria-label="بستن" />
           <div className={styles.modalCard}>
-            <div className={styles.modalHeader}>
+            <div className={`${styles.modalHeader} merat-modal-tone--neutral`}>
               <div>
-                <strong>افزودن کاربر جدید</strong>
-                <span>اطلاعات کاربر را تکمیل کنید.</span>
+                <strong>{editingUser ? "ویرایش کاربر" : "افزودن کاربر جدید"}</strong>
+                <span>{editingUser ? "اطلاعات کاربر را ویرایش کنید." : "اطلاعات کاربر را تکمیل کنید."}</span>
               </div>
               <button type="button" className={styles.closeButton} onClick={closeAddUser} aria-label="بستن">
                 <CloseIcon />
@@ -768,19 +836,20 @@ export default function UsersListClient() {
                     placeholder="نام کاربر"
                     className={formErrors.username ? styles.fieldError : ""}
                     autoComplete="off"
+                    inputMode="numeric"
                   />
                   {formErrors.username ? <small>{formErrors.username}</small> : null}
                 </label>
 
                 <label className={styles.field}>
-                  <span>کلمه عبور</span>
+                  <span>{editingUser ? "کلمه عبور جدید (اختیاری)" : "کلمه عبور"}</span>
                   <input
                     value={password}
                     onChange={(event) => {
                       setPassword(event.target.value);
                       if (formErrors.password) setFormErrors((current) => ({ ...current, password: "" }));
                     }}
-                    placeholder="کلمه عبور"
+                    placeholder={editingUser ? "در صورت عدم تغییر خالی بگذارید" : "کلمه عبور"}
                     type="password"
                     autoComplete="new-password"
                     className={formErrors.password ? styles.fieldError : ""}
@@ -874,13 +943,21 @@ export default function UsersListClient() {
                 </div>
               </div>
 
+              {mayManageAdmins ? (
+                <label className={styles.adminToggle}>
+                  <input type="checkbox" checked={isAdmin} onChange={(event) => setIsAdmin(event.target.checked)} />
+                  <span>مدیر سامانه (IsAdmin)</span>
+                  <small>این دسترسی اجازه ورود به تنظیمات مدیریت سامانه را می‌دهد.</small>
+                </label>
+              ) : null}
+
               {formErrors.submit ? <div className={styles.submitError}>{formErrors.submit}</div> : null}
             </div>
 
             <div className={styles.modalFooter}>
               <button type="button" className={styles.secondaryButton} onClick={closeAddUser} disabled={saving}>انصراف</button>
               <button type="button" className={styles.primaryButton} onClick={() => void saveUser()} disabled={saving}>
-                {saving ? "در حال ثبت..." : "ثبت کاربر"}
+                {saving ? (editingUser ? "در حال ویرایش..." : "در حال ثبت...") : (editingUser ? "ذخیره تغییرات" : "ثبت کاربر")}
               </button>
             </div>
           </div>

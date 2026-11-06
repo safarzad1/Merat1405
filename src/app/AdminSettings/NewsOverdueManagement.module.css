@@ -1,0 +1,21 @@
+
+.root{margin-top:15px;padding:16px;border:1px solid var(--border-color,#e1e3eb);border-radius:13px;background:var(--card-bg,#fff)}
+.heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.heading h2{margin:0 0 4px;font-size:16px}.heading p{margin:0;color:var(--text-secondary,#687386);font-size:12px}
+.heading>button,.threshold button{border:0;border-radius:8px;background:var(--app-primary,#6153d9);color:#fff;padding:8px 12px;font:inherit;font-size:12px;cursor:pointer}
+.heading button:disabled,.threshold button:disabled{opacity:.5;cursor:default}
+.thresholds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:13px}
+.threshold{border:1px solid var(--border-color,#e1e3eb);border-radius:9px;padding:9px;display:grid;gap:7px}
+.threshold label{font-size:12px;font-weight:650}.threshold>div{display:flex;gap:5px}
+.threshold input{width:100%;min-width:0;padding:6px;border:1px solid #d7dfec;border-radius:7px;font:inherit;font-size:12px}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:13px 0}
+.metrics>div{border:1px solid #e1e5ee;border-radius:8px;padding:10px;display:grid;gap:4px}
+.metrics span{font-size:11px;color:var(--text-secondary,#687386)}.metrics strong{font-size:18px}
+.details{border-top:1px solid #e6e9ef;padding-top:10px;margin-top:11px}.details>summary{cursor:pointer;font-size:12px;font-weight:650}
+.tableWrap{overflow:auto;max-height:350px;margin-top:10px;border:1px solid #e2e7ef;border-radius:8px}
+.tableWrap table{border-collapse:collapse;width:100%;min-width:650px;font-size:12px;text-align:right}
+.tableWrap td,.tableWrap th{border-bottom:1px solid #e8eaf1;padding:8px;vertical-align:top}
+.tableWrap th{position:sticky;top:0;background:#f8f9fc}
+.error{color:#b42318;font-size:12px}.success{color:#18794e;font-size:12px}
+.note{font-size:11px;color:var(--text-secondary,#687386);line-height:2;margin:13px 0 0}
+@media(max-width:700px){.thresholds{grid-template-columns:repeat(2,minmax(0,1fr))}.root{padding:10px}}

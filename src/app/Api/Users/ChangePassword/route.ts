@@ -2,27 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import sql from "mssql";
 
 import { getConnection } from "@/lib/db";
-import { verifyToken } from "@/lib/auth";
+import { getAdminAccess } from "@/lib/adminAccess";
 
 export async function POST(req: NextRequest) {
     const token = req.cookies.get("token")?.value;
-    if (!token) {
-        return NextResponse.json(
-            { status: 401, error: "Unauthorized: No token" },
-            { status: 401 }
-        );
-    }
     const body = await req.json();
     const { password, userid } = body;
-
+    let access;
     try {
-        verifyToken(token);
+      access = await getAdminAccess(token);
     } catch {
-        return NextResponse.json(
-            { status: 401, error: "Unauthorized: Invalid or expired token" },
-            { status: 401 }
-        );
+      return NextResponse.json({ status:401, error:"نشست نامعتبر است." }, { status:401 });
     }
+    const targetId = Number(userid);
+    if (!Number.isSafeInteger(targetId) || targetId <= 0)
+      return NextResponse.json({ status:400, error:"شناسه کاربر نامعتبر است." }, { status:400 });
+    if (targetId !== access.actor.userId && !access.isAdmin)
+      return NextResponse.json({ status:403, error:"اجازه تغییر رمز عبور کاربر دیگر را ندارید." }, { status:403 });
 
     try {
         const pool = await getConnection();

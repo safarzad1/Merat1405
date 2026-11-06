@@ -26,3 +26,494 @@
 @media(max-width:1100px){.layout{grid-template-columns:270px minmax(0,1fr)}.formGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.detailGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.historyList{grid-template-columns:1fr}}
 @media(max-width:820px){.page{padding:8px}.layout{grid-template-columns:1fr}.sidebar{position:static;max-height:none}.hero,.tableToolbar{align-items:stretch;flex-direction:column}.searchBox{width:100%}.formGrid,.coopGrid,.detailGrid{grid-template-columns:1fr 1fr}.modalLayer{padding:20px 8px}.modalCard{max-height:calc(100vh - 35px)}}
 @media(max-width:560px){.formGrid,.coopGrid,.detailGrid{grid-template-columns:1fr}.historyItem{align-items:flex-start;flex-direction:column}.historyActions{width:100%;justify-content:flex-end}.filters{overflow-x:auto;flex-wrap:nowrap}.filterChip{flex-shrink:0}}
+
+/* Readable, visually separated cooperation list */
+.tableCard{padding:15px;border-color:#ccd8e7;box-shadow:0 10px 30px rgba(26,49,83,.075)}
+.tableToolbar{padding:2px 3px 12px;margin-bottom:7px;border-bottom:1px solid #e7edf5}
+.tableTitle{font-size:14px;color:#1e334f;gap:9px}
+.tableTitle>b,.tableTitle small{font-size:13px}
+.tableScroll{border:1px solid #d2deeb;border-radius:11px;box-shadow:0 3px 12px rgba(27,52,87,.035);scrollbar-color:#bbcce0 #f3f6fa}
+.tableScroll table{border-collapse:separate;border-spacing:0;min-width:1080px;font-variant-numeric:tabular-nums}
+.tableScroll th{position:sticky;top:0;z-index:2;height:40px;padding:5px 10px;background:var(--app-primary);color:#fff;border-bottom:2px solid color-mix(in srgb,var(--app-primary) 65%,#102f40);border-left:1px solid rgba(255,255,255,.2);font-size:13.5px;font-weight:500;text-align:center;line-height:1.5}
+.tableScroll th:last-child{border-left:0}
+.tableScroll th:nth-child(3):hover,.tableScroll th:nth-child(4):hover,.tableScroll th:nth-child(5):hover{background:var(--app-primary);color:#fff;text-decoration:underline;text-underline-offset:4px}
+.tableScroll td{height:39px;padding:3px 9px;border-top:0;border-bottom:1px solid #dce6e9;border-left:1px solid #e1e9ed;font-size:14.5px;line-height:1.45;color:#151d29;text-align:center;font-weight:400}
+.tableScroll td:last-child{border-left:0}
+.tableScroll tbody tr:nth-child(odd){background:#fff}
+.tableScroll tbody tr:nth-child(even){background:#eaf3f5}
+.tableScroll tbody tr:hover{background:#d3ecee;box-shadow:inset 4px 0 var(--app-primary)}
+.tableScroll tbody tr:last-child td{border-bottom:0}
+.tableScroll tbody td:nth-child(1){color:#276470;font-size:13.5px;background:color-mix(in srgb,var(--app-primary) 9%,transparent)}
+.tableScroll tbody td:nth-child(2){color:#173c56;font-weight:500;background:rgba(95,142,180,.055)}
+.tableScroll tbody td:nth-child(3){color:#242b35;background:rgba(241,199,116,.10)}
+.tableScroll tbody td:nth-child(4),.tableScroll tbody td:nth-child(5){color:#101820;font-weight:600}
+.tableScroll tbody td:nth-child(8){color:#173d49;background:rgba(91,171,173,.07)}
+.tableScroll .noRows{font-size:14px;color:#61738d!important}
+.iconButton{width:29px;height:29px;border:1px solid color-mix(in srgb,var(--app-primary) 35%,#cedfe2);border-radius:7px;background:var(--app-soft);color:var(--app-primary);transition:background .15s,transform .15s,border-color .15s}
+.iconButton:hover{background:color-mix(in srgb,var(--app-primary) 20%,#fff);border-color:var(--app-primary);transform:translateY(-1px)}
+.iconButton:focus-visible,.pagination button:focus-visible{outline:2px solid var(--app-primary);outline-offset:2px}
+.pagination{gap:7px;margin-top:14px}.pagination button{min-height:34px;min-width:34px;font-size:13px;border-color:#cfdaea}
+@media(max-width:820px){.tableCard{padding:11px}.tableScroll th,.tableScroll td{padding-right:9px;padding-left:9px}}
+
+/* Full-screen person dossier */
+.personTableRow{cursor:pointer}.personTableRow:focus-visible{outline:2px solid var(--app-primary);outline-offset:-2px}
+.fullModalLayer{padding:0;align-items:stretch;overflow:hidden}
+.fullModalCard{width:100vw;max-width:none;height:100dvh;max-height:none;min-height:0;border-radius:0;border:0;display:flex;flex-direction:column;overflow:hidden}
+.fullModalCard>.modalHeader{flex-shrink:0;height:53px}
+.profileWorkspace{flex:1;min-height:0;display:flex;flex-direction:column;padding:14px;gap:12px;background:#f2f6f9;overflow:hidden}
+.profileOverview{display:flex;align-items:center;gap:19px;padding:15px 20px;border:1px solid #d7e3e9;border-radius:13px;background:#fff;box-shadow:0 4px 18px rgba(21,50,65,.05);flex-shrink:0}
+.profilePortrait{width:100px;height:112px;flex:0 0 100px;border:3px solid #fff;outline:1px solid #cbdde2;border-radius:12px;overflow:hidden;background:#eaf2f5;box-shadow:0 4px 12px rgba(26,57,71,.11)}
+.profilePortrait img{width:100%;height:100%;object-fit:cover}
+.profileIdentity{flex:1;min-width:0}.profileName{font-size:19px;font-weight:600;color:#152833;margin-bottom:13px}
+.profileSummaryGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.profileSummaryField,.profilePersonalField{border:1px solid #d9e6e9;border-radius:9px;background:#f9fcfd;padding:9px 12px;min-width:0;display:flex;flex-direction:column;gap:5px}
+.profileSummaryField span,.profilePersonalField span{font-size:13px;color:#637783}.profileSummaryField strong,.profilePersonalField strong{font-size:14.5px;color:#142330;font-weight:500;overflow-wrap:anywhere}
+.profileTopActions{display:flex;flex-direction:column;align-self:center;gap:8px;flex-shrink:0}.profileTopActions button{min-width:145px}
+.profileLower{display:grid;grid-template-columns:minmax(0,1fr) 178px;gap:12px;min-height:0;flex:1;direction:rtl}
+.profileMain,.profileNav{background:#fff;border:1px solid #d6e2e8;border-radius:12px;min-height:0;overflow:auto}
+.profileMain{padding:17px}.profileSectionHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px;margin-bottom:16px;border-bottom:1px solid #e0e9ed}
+.profileSectionHeader h3{font-size:16px;font-weight:500;color:#183d47;margin:0}.profileSectionHeader span{font-size:13px;color:#738591}
+.profilePersonalGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.profilePersonalField{min-height:69px;background:linear-gradient(135deg,#fff,#f1f8f9)}
+.profilePersonalField:nth-child(4n+2){background:#f0f6fb}.profilePersonalField:nth-child(4n+3){background:#faf7f0}
+.profileNav{padding:8px 6px;background:#f8fafb}.profileNavTitle{padding:12px 9px;font-size:13.5px;font-weight:600;color:var(--app-primary);border-bottom:1px solid #dae7eb;margin-bottom:6px}
+.profileNavButton{width:100%;min-height:38px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:4px;border:1px solid transparent;border-radius:7px;background:transparent;color:#3b5260;font:inherit;font-size:13px;text-align:right;cursor:pointer}
+.profileNavButton:hover{background:#e9f3f5}.profileNavActive{background:var(--app-primary)!important;color:#fff;border-color:var(--app-primary)}
+.profileComingSoon{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;color:#78919a;text-align:center;border:1px dashed #c8dce2;border-radius:12px;background:#f8fbfc;padding:24px}.profileComingSoon strong{font-size:15px;color:#3f6570;font-weight:500}.profileComingSoon p{font-size:13.5px;margin:0}
+@media(max-width:1100px){.profileSummaryGrid,.profilePersonalGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.profileOverview{align-items:flex-start}.profileTopActions{align-self:flex-start}}
+@media(max-width:700px){.profileWorkspace{padding:8px;overflow:auto}.profileOverview{flex-wrap:wrap;padding:11px;gap:12px}.profilePortrait{width:75px;height:85px;flex-basis:75px}.profileIdentity{flex-basis:calc(100% - 100px)}.profileName{font-size:16px}.profileTopActions{width:100%;flex-direction:row}.profileTopActions button{min-width:0;flex:1}.profileLower{display:flex;flex-direction:column;overflow:visible;min-height:500px}.profileNav{order:-1;flex-shrink:0;max-height:120px;display:flex;overflow-x:auto;align-items:center;padding:6px}.profileNavTitle{display:none}.profileNavButton{width:auto;min-width:max-content}.profileNavButton svg{display:none}.profileMain{overflow:visible;flex:1}.profilePersonalGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:450px){.profileSummaryGrid,.profilePersonalGrid{grid-template-columns:1fr}.profileSummaryField,.profilePersonalField{min-height:0}.profileSectionHeader{align-items:flex-start;flex-direction:column}}
+
+/* Editable personal information, consistent with the reference form */
+.profilePortrait{position:relative}
+.profilePhotoAction{position:absolute;bottom:0;right:0;left:0;display:flex;align-items:center;justify-content:center;gap:4px;padding:5px 2px;background:rgba(22,64,72,.88);color:#fff;font-size:11px;cursor:pointer}
+.profilePhotoAction input{display:none}
+.profileEditSection{display:flex;flex-direction:column;gap:13px}
+.profileFormIntro{font-size:13px;color:#617985;background:#f1f8f9;border-right:3px solid var(--app-primary);padding:8px 12px;border-radius:7px}
+.profilePersonalGrid>.field{background:#f8fbfc;border:1px solid #d8e5e9;border-radius:10px;padding:10px 11px;min-width:0;gap:7px}
+.profilePersonalGrid>.field:nth-child(4n+2){background:#f0f6fa}.profilePersonalGrid>.field:nth-child(4n+3){background:#faf7f0}
+.profilePersonalGrid>.field label{font-size:13.5px;color:#345460;font-weight:400}
+.profilePersonalGrid>.field .input,.profilePersonalGrid>.field .textarea{height:39px;background:#fff;border:1px solid #bfcfd6;border-radius:7px;color:#121f2a;font-size:14.5px;padding:0 11px}
+.profilePersonalGrid>.field .input:focus{border-color:var(--app-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-primary) 12%,transparent)}
+.profilePersonalGrid>.field .profileReadOnly{background:#e8eff2;color:#556b76;cursor:default}
+.profileFormActions{display:flex;justify-content:flex-end;gap:9px;padding:14px 0 2px;border-top:1px solid #e2ebef}
+
+/* Compact, unified personal form: no individual field cards */
+.profileEditSection{gap:9px}
+.profileFormIntro{padding:6px 10px;font-size:13px}
+.profilePersonalGrid{column-gap:13px;row-gap:10px}
+.profilePersonalGrid>.field,.profilePersonalGrid>.field:nth-child(4n+2),.profilePersonalGrid>.field:nth-child(4n+3){padding:0;border:0;border-radius:0;background:transparent;gap:4px}
+.profilePersonalGrid>.field label{font-size:13.5px;color:#344b58}
+.profilePersonalGrid>.field .input,.profilePersonalGrid>.field .textarea{height:36px;background:#f0f4f6;border:1px solid #aebfc8;border-radius:7px;color:#162631;font-size:14.5px;padding:0 10px}
+.profilePersonalGrid>.field .profileReadOnly{background:#e2e9ed;color:#435c68}
+.profilePersonalGrid>.field:focus-within label{color:var(--app-primary)}
+.profileFormActions{margin-top:2px;padding-top:11px}
+
+/* News submitted by the selected informant */
+.profileNewsSection{display:flex;flex-direction:column;gap:10px}
+.profileNewsSummary{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#315461;font-size:13.5px;padding:4px 2px}.profileNewsSummary span{padding:5px 12px;background:var(--app-soft);color:var(--app-primary);border-radius:20px;font-size:13px}
+.profileNewsScroll{max-width:100%;overflow:auto;border:1px solid #cbdce3;border-radius:9px}
+.profileNewsTable{width:100%;min-width:1030px;border-collapse:collapse;font-size:13.5px;text-align:center}
+.profileNewsTable th{height:39px;padding:8px 10px;background:var(--app-primary);color:#fff;font-weight:500;white-space:nowrap;border-left:1px solid rgba(255,255,255,.2)}
+.profileNewsTable td{padding:9px 11px;min-height:39px;color:#172530;border-bottom:1px solid #dce8ed;border-left:1px solid #e0e9ed}
+.profileNewsTable tbody tr:nth-child(even){background:#ecf4f6}.profileNewsTable tbody tr:hover{background:#dceef1}
+.profileNewsTable .profileNewsTitle{text-align:right;min-width:260px;color:#112d39;font-weight:500;white-space:normal}
+.profileNewsStatus{padding:4px 9px;border-radius:7px;background:#e6eff5;color:#24475f;font-size:13px;white-space:nowrap}
+.profileNewsTable .profileNewsEmpty{padding:35px 10px;color:#697f8b}
+.profileNewsPaging{display:flex;justify-content:center;align-items:center;gap:12px;font-size:13px;color:#4c6571}.profileNewsPaging button{padding:5px 13px;min-height:32px;background:#fff;border:1px solid #cbdce3;border-radius:7px;color:var(--app-primary);cursor:pointer}.profileNewsPaging button:disabled{opacity:.45;cursor:not-allowed}
+.profileNewsTable .profileResearchDescription{min-width:220px;max-width:400px;white-space:normal;text-align:right;line-height:1.7;color:#394e5b}
+
+/* Database-driven researcher evaluations */
+.evaluationSection{display:flex;flex-direction:column;gap:12px}
+.evaluationToolbar{display:flex;align-items:center;justify-content:space-between;gap:12px}.evaluationToolbar>div{display:flex;flex-direction:column;gap:5px}.evaluationToolbar strong{font-size:15px;color:#1e3946;font-weight:500}.evaluationToolbar span{font-size:13px;color:#69808b}
+.evaluationAdd{border:0;border-radius:8px;background:var(--app-primary);color:#fff;min-height:36px;padding:0 14px;display:flex;align-items:center;gap:6px;cursor:pointer;font:inherit;font-size:13.5px}
+.evaluationDefaultRow td{background:#f1f7f9;color:#415b68}.evaluationView{display:inline-flex;align-items:center;justify-content:center;gap:5px;background:var(--app-soft);border:1px solid color-mix(in srgb,var(--app-primary) 28%,#d5e2e7);border-radius:7px;color:var(--app-primary);padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.evaluationOverlay{position:fixed;inset:0;z-index:2147482700;background:rgba(10,28,40,.6);display:flex;align-items:center;justify-content:center;padding:15px}
+.evaluationDialog{width:min(970px,97vw);max-height:calc(100dvh - 30px);display:flex;flex-direction:column;overflow:hidden;border-radius:13px;border:1px solid #c9dce1;background:#fff;box-shadow:0 25px 80px rgba(0,0,0,.25)}
+.evaluationDialogHeader{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px 18px;background:var(--app-primary);color:#fff;flex-shrink:0}.evaluationDialogHeader>div{display:flex;flex-direction:column;gap:4px}.evaluationDialogHeader strong{font-size:16px;font-weight:500}.evaluationDialogHeader span{font-size:13px;color:#e0f0f2}.evaluationDialogHeader button{width:32px;height:32px;display:grid;place-items:center;border-radius:7px;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;cursor:pointer}
+.evaluationDialogBody{overflow:auto;min-height:0;padding:14px 20px;display:flex;flex-direction:column;gap:11px;background:#fbfcfd}
+.evaluationQuestion{padding:13px 14px;background:#fff;border:1px solid #d8e4e8;border-radius:9px;display:flex;flex-direction:column;gap:10px}.evaluationQuestion:nth-child(even){background:#f3f8fa}.evaluationFinalQuestion{background:#fff1f1!important;border-color:#eaa8a8;border-right:4px solid #d64c4c}
+.evaluationQuestionTitle{font-size:14px;color:#233947;line-height:1.95}.evaluationFinalQuestion .evaluationQuestionTitle{color:#a62d32;font-weight:500}
+.evaluationChoices{display:flex;flex-wrap:wrap;gap:9px 13px;align-items:center}.evaluationChoice{display:flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid #d0dfe5;border-radius:8px;cursor:pointer;color:#405867;font-size:13.5px;background:#fff}.evaluationChoice input{accent-color:var(--app-primary);width:15px;height:15px;margin:0}.evaluationChoiceSelected{border-color:var(--app-primary);background:var(--app-soft);color:#163e47}
+.evaluationQuestion textarea{width:100%;min-height:55px;resize:vertical;border:1px solid #bdced6;border-radius:8px;padding:8px 11px;background:#fff;color:#182b35;font:inherit;font-size:13.5px;outline:0}.evaluationQuestion textarea:focus{border-color:var(--app-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--app-primary) 12%,transparent)}
+.evaluationDialogFooter{padding:11px 17px;display:flex;justify-content:flex-end;gap:9px;background:#fff;border-top:1px solid #dfebef;flex-shrink:0}
+@media(max-width:700px){.evaluationToolbar{align-items:stretch;flex-direction:column}.evaluationAdd{align-self:flex-start}.evaluationDialogBody{padding:10px}.evaluationQuestion{padding:10px}}
+.evaluationRowActions{display:flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}.evaluationDelete{display:inline-flex;align-items:center;gap:4px;padding:6px 9px;border-radius:7px;border:1px solid #e8c4c4;background:#fff5f5;color:#a52c31;font:inherit;font-size:13px;cursor:pointer}
+
+/* Extensible profile header menu and independent profile page */
+.profileHeaderControls{display:flex;align-items:center;gap:7px}
+.profileDisplayMenuWrap{position:relative}
+.profileDisplayMenu{position:absolute;top:40px;left:0;width:235px;padding:10px;display:flex;flex-direction:column;gap:5px;border-radius:10px;border:1px solid #d0e0e6;background:#fff;color:#263d4a;box-shadow:0 16px 40px rgba(15,40,55,.2);z-index:30;direction:rtl}
+.profileDisplayMenu strong{font-size:13px;font-weight:500;padding:5px 7px 9px;border-bottom:1px solid #e7eef1}
+.profileDisplayMenu label{display:flex;align-items:center;gap:8px;padding:9px 7px;border-radius:7px;font-size:13.5px;cursor:pointer}.profileDisplayMenu label:hover{background:var(--app-soft)}
+.profileDisplayMenu input{width:15px;height:15px;accent-color:var(--app-primary)}
+.inlineProfileLayer{position:relative!important;inset:auto!important;z-index:auto!important;height:calc(100dvh - 125px);min-height:560px;width:100%;padding:0!important;overflow:hidden}
+.inlineProfileLayer .fullModalCard{height:100%;width:100%;border:1px solid #d4e1e6;border-radius:10px;box-shadow:none}
+.inlineProfileLayer .modalHeader{z-index:40}.profilePageLoading{min-height:55vh;display:flex;align-items:center;justify-content:center;gap:11px;color:#607c89;font-size:14px}
+.profilePageSearch{position:relative;flex-shrink:0;z-index:12}
+.profilePageSearchInput{display:flex;align-items:center;gap:9px;min-height:42px;padding:0 13px;border:1px solid #bfd4db;border-radius:10px;background:#fff;color:var(--app-primary);box-shadow:0 3px 10px rgba(18,47,60,.04)}
+.profilePageSearchInput:focus-within{border-color:var(--app-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-primary) 10%,transparent)}
+.profilePageSearchInput input{flex:1;min-width:0;height:40px;border:0;outline:0;background:transparent;color:#172d38;font:inherit;font-size:14px}
+.profilePageSearchInput button{background:transparent;border:0;color:#6c8490;cursor:pointer}
+.profileSearchResults{position:absolute;top:calc(100% + 5px);right:0;width:min(580px,100%);max-height:330px;overflow:auto;padding:6px;border:1px solid #c5d9df;border-radius:10px;background:#fff;box-shadow:0 15px 38px rgba(25,50,65,.16);display:flex;flex-direction:column;gap:3px}
+.profileSearchResults>span{padding:12px;font-size:13px;color:#657c86}
+.profileSearchResults button{display:flex;align-items:center;gap:9px;min-height:42px;padding:8px 10px;text-align:right;background:#fff;color:#243e4c;border:0;border-radius:7px;cursor:pointer;font:inherit;font-size:13.5px}
+.profileSearchResults button:hover{background:var(--app-soft)}.profileSearchResults strong{font-size:14px;font-weight:500}.profileSearchResults small{margin-right:auto;color:#6b808a;font-size:12.5px}
+@media(max-width:600px){.profileDisplayMenu{left:0;width:215px}.profileSearchResults{width:100%}.profileSearchResults button{flex-wrap:wrap}.profileSearchResults small{margin-right:0}}
+
+/* Merat colorful internal information cards */
+.detailField{position:relative;overflow:hidden;background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.025)}
+.detailField::before{content:"";position:absolute;right:0;top:0;bottom:0;width:3px;background:currentColor}
+.detailField:nth-child(6n+1){color:#2563eb;border-color:#cfe0ff;background:linear-gradient(135deg,#fff,#eef4ff)}
+.detailField:nth-child(6n+2){color:#16865b;border-color:#ccebdc;background:linear-gradient(135deg,#fff,#edf9f3)}
+.detailField:nth-child(6n+3){color:#c88916;border-color:#f4e1b8;background:linear-gradient(135deg,#fff,#fff8e9)}
+.detailField:nth-child(6n+4){color:#7c3aed;border-color:#e1d4ff;background:linear-gradient(135deg,#fff,#f4efff)}
+.detailField:nth-child(6n+5){color:#0f8b8d;border-color:#c9ece9;background:linear-gradient(135deg,#fff,#ecf9f8)}
+.detailField:nth-child(6n+6){color:#d94674;border-color:#f7cfdd;background:linear-gradient(135deg,#fff,#fff0f5)}
+.detailField span{color:color-mix(in srgb,currentColor 68%,#667085)}.detailField b{color:#29364a}
+.jobPanel{direction:rtl;color:#172b3c;font-family:Shabnam,sans-serif;font-size:13.5px;min-width:0}
+.jobToolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:9px 12px;background:#e9f1f5;border:1px solid #ccdce5;border-radius:8px;margin-bottom:11px}
+.jobToolbar>div{display:flex;align-items:center;gap:14px}.jobToolbar strong{font-size:15px;color:#1e4057}.jobToolbar span{color:#5a7080}
+.jobToolbar button,.jobFooter button:last-child{background:#14647b;border:1px solid #14647b;color:white;padding:8px 13px;border-radius:7px;display:flex;align-items:center;justify-content:center;gap:6px;font:inherit;cursor:pointer}
+.jobTableScroll{width:100%;overflow:auto;border:1px solid #bfcfda;border-radius:8px}.jobTable{width:100%;border-collapse:collapse;white-space:nowrap;font-size:13.5px;text-align:right}.jobTable th{background:#31556b;color:white;font-weight:500;padding:10px 12px;border-left:1px solid #527185}.jobTable td{padding:7px 12px;border-bottom:1px solid #dbe4eb;color:#192c38}.jobTable tbody tr:nth-child(even){background:#eff5f8}.jobTable tbody tr:hover{background:#dcecf4}.jobTable tbody tr:last-child td{border-bottom:0}.jobName{font-weight:600;color:#173e5a!important}.jobStatus{background:#dde9f2;color:#204f6c;border:1px solid #c4d7e5;border-radius:5px;padding:3px 8px}.jobActions{display:flex;gap:6px}.jobActions button{border:1px solid #ccdae5;border-radius:6px;background:#fff;padding:5px;color:#255d82;cursor:pointer}.jobActions button:last-child{color:#b13b45;background:#fff5f5;border-color:#f2d6d6}.jobEmpty{text-align:center!important;padding:23px!important;color:#637684!important}
+.jobOverlay{position:fixed;inset:0;background:rgba(20,33,46,.58);z-index:10010;display:flex;align-items:center;justify-content:center;padding:18px}.jobDialog{background:#f3f7fa;border:1px solid #9ab5c6;border-radius:10px;box-shadow:0 18px 55px #142b3b55;width:min(850px,100%);max-height:94vh;overflow:auto;direction:rtl}.jobDialogHeader{background:#294f68;color:#fff;padding:13px 17px;display:flex;justify-content:space-between;align-items:center;font-size:16px}.jobDialogHeader button{background:transparent;color:white;border:0;cursor:pointer}.jobForm{padding:16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px 15px}.jobField{display:flex;flex-direction:column;gap:5px;min-width:0;font-size:13.5px;color:#23394a}.jobField>span{font-weight:500}.jobField input,.jobField textarea{width:100%;box-sizing:border-box;border:1px solid #a6bcca;border-radius:7px;background:#fff;color:#142737;font:inherit;font-size:14px;min-height:38px;padding:7px 10px;outline:none}.jobField input:focus,.jobField textarea:focus{border-color:#16779a;box-shadow:0 0 0 2px #16779a25}.jobWide{grid-column:1/-1}.jobFooter{padding:12px 16px;border-top:1px solid #cad7df;display:flex;justify-content:flex-end;gap:9px}.jobFooter button{font:inherit;font-size:14px;padding:8px 15px;border:1px solid #c3cfd8;border-radius:7px;background:white;cursor:pointer}.jobError{color:#ab2737;background:#fff0f2;border:1px solid #f0c6ca;padding:9px 12px;border-radius:6px;margin:8px 15px}.jobSuccess{color:#174e70;background:#e6f3fa;border:1px solid #bedce9;padding:7px 11px;border-radius:6px;margin-bottom:9px}@media(max-width:650px){.jobForm{grid-template-columns:1fr}.jobWide{grid-column:auto}.jobToolbar{flex-wrap:wrap}}
+
+/* Hamkari profile shared add/edit dialogs: unified with application theme */
+.jobOverlay{padding:18px 12px;backdrop-filter:blur(2px)}
+.jobDialog{width:min(820px,100%);max-height:calc(100dvh - 36px);background:#fff;border:1px solid #d7e2eb;border-radius:12px;overflow:auto;box-shadow:0 22px 65px rgba(17,39,58,.25);font-family:Shabnam,inherit;font-size:14px;color:#27394a}
+.jobDialogHeader{position:sticky;top:0;z-index:2;min-height:52px;padding:10px 18px;background:var(--app-gradient,var(--app-primary));color:#fff;border-bottom:1px solid rgba(255,255,255,.16);font-family:Shabnam,inherit;font-size:15px;gap:12px}
+.jobDialogHeader strong{font-family:inherit;font-size:15px;font-weight:500;line-height:1.8}
+.jobDialogHeader button{width:32px;height:32px;flex-shrink:0;display:grid;place-items:center;border:1px solid rgba(255,255,255,.32);border-radius:8px;background:rgba(255,255,255,.1);font:inherit}
+.jobDialogHeader button:hover{background:rgba(255,255,255,.2)}
+.jobForm{padding:18px 20px;gap:13px 16px;background:#fff}
+.jobField{gap:6px;color:#33485a;font-family:Shabnam,inherit;font-size:13.5px;line-height:1.75}
+.jobField>span{font-size:13.5px;font-weight:500;color:#33485a}
+.jobField input,.jobField textarea,.jobField select{box-sizing:border-box;width:100%;min-height:40px;padding:8px 11px;border:1px solid #cbd8e3;border-radius:8px;background:#fff;color:#243648;font-family:Shabnam,inherit;font-size:14px;font-weight:400;line-height:1.7;outline:0;transition:border-color .15s,box-shadow .15s}
+.jobField textarea{min-height:92px;resize:vertical;line-height:1.9}
+.jobField input:focus,.jobField textarea:focus,.jobField select:focus{border-color:var(--app-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-primary) 12%,transparent)}
+.jobField input::placeholder,.jobField textarea::placeholder{color:#8694a3;opacity:1}
+.jobFooter{position:sticky;bottom:0;z-index:2;gap:9px;padding:12px 20px;background:#f8fafc;border-top:1px solid #e1e8ef}
+.jobFooter button{min-height:38px;padding:7px 16px;font-family:Shabnam,inherit;font-size:13.5px;border-radius:8px}
+.jobFooter button:last-child{background:var(--app-gradient,var(--app-primary));border-color:var(--app-primary);color:#fff}
+.jobFooter button:focus-visible,.jobDialogHeader button:focus-visible{outline:2px solid var(--app-primary);outline-offset:2px}
+@media(max-width:650px){.jobDialog{max-height:calc(100dvh - 24px)}.jobForm{padding:13px;gap:11px}.jobDialogHeader{padding:9px 13px}.jobFooter{padding:11px 13px}}
+
+/* Profile add/edit dialogs — body and controls aligned with provided sample (2026-10-24).
+   Header intentionally inherits Merat's own application gradient. */
+.jobOverlay{align-items:center;padding:16px;background:rgba(17,40,50,.58);backdrop-filter:blur(2px)}
+.jobDialog{display:flex;flex-direction:column;max-height:calc(100dvh - 32px);width:min(850px,96vw);overflow:hidden;background:#f5f8f9;border:1px solid #cbdcdf;border-radius:14px;box-shadow:0 28px 85px rgba(17,40,50,.32);font-family:Shabnam,Tahoma,Arial,sans-serif;font-size:14px}
+.jobDialogHeader{position:relative;top:auto;flex:0 0 auto;min-height:60px;padding:8px 16px;background:var(--app-gradient,var(--app-primary));border-bottom:1px solid rgba(255,255,255,.18)}
+.jobDialogHeader strong{font-family:PeydaRegular,Shabnam,Tahoma,sans-serif;font-size:17px;font-weight:400}
+.jobDialogHeader button{width:34px;height:34px;border-radius:9px}
+.jobForm{min-height:0;flex:1 1 auto;overflow-y:auto;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px 13px;align-items:start;padding:17px;background:#fff}
+.jobField{min-width:0;gap:5px;font-family:Shabnam,Tahoma,Arial,sans-serif;font-size:13.5px;line-height:1.7;color:#506b76}
+.jobField>span{font-family:Shabnam,Tahoma,Arial,sans-serif;font-size:13.5px;font-weight:400;line-height:1.65;color:#506b76}
+.jobField input,.jobField textarea,.jobField select{box-sizing:border-box;width:100%;min-height:38px;border:1px solid #d5e1e5;border-radius:8px;background:#fbfcfd;color:#385461;font-family:Shabnam,Tahoma,Arial,sans-serif;font-size:14px;font-weight:400;outline:none;transition:border-color .14s,box-shadow .14s,background .14s}
+.jobField input{height:38px;padding:0 11px}
+.jobField textarea{min-height:85px;padding:9px 11px;line-height:1.8;resize:vertical}
+.jobField input:focus,.jobField textarea:focus,.jobField select:focus{border-color:var(--app-primary);background:#fff;box-shadow:0 0 0 3px color-mix(in srgb,var(--app-primary) 9%,transparent)}
+.jobField input::placeholder,.jobField textarea::placeholder{color:#9babb3}
+.jobFooter{position:relative;bottom:auto;flex:0 0 auto;min-height:62px;padding:10px 16px;align-items:center;gap:8px;background:#fff;border-top:1px solid #d9e5e8}
+.jobFooter button{min-height:40px;padding:0 17px;border-radius:9px;font-family:Shabnam,Tahoma,Arial,sans-serif;font-size:13.5px;font-weight:400}
+.jobFooter button:first-child{background:#fff;color:#4b6571;border:1px solid #d8e3e7}
+.jobFooter button:last-child{background:var(--app-gradient,var(--app-primary));color:#fff}
+@media(max-width:650px){.jobOverlay{padding:8px}.jobDialog{width:100%;max-height:calc(100dvh - 16px)}.jobForm{grid-template-columns:1fr;padding:12px;gap:10px}.jobDialogHeader{min-height:54px;padding:8px 12px}.jobFooter{padding:10px 12px}}
+
+/* Profile typography: Peyda for headers, Shabnam for all body and form content. */
+.page,.page button,.page input,.page select,.page textarea,
+.fullModalCard,.fullModalCard button,.fullModalCard input,.fullModalCard select,.fullModalCard textarea,
+.jobDialog,.jobDialog button,.jobDialog input,.jobDialog select,.jobDialog textarea {
+  font-family:"ShabnamApp",Shabnam,Tahoma,Arial,sans-serif;
+}
+.page :is(input,select,textarea),.fullModalCard :is(input,select,textarea),.jobDialog :is(input,select,textarea) {font-size:max(13.5px,1em);}
+.page :is(.heroTitle,.sidebarHeader,.tableTitle,.historyHeader,.profileName,.profileNavTitle,.profileSectionHeader),
+.page :is(.personTable,.profileNewsTable,.jobTable) th,
+.fullModalCard :is(.modalHeader,.profileHeader,.profileSectionHeader,.profileNavTitle,.evaluationDialogHeader),
+.fullModalCard :is(.personTable,.profileNewsTable,.jobTable) th,
+.fullModalCard .modalHeader :is(h1,h2,h3,strong),
+.jobDialog .jobDialogHeader,.jobDialog .jobDialogHeader strong {
+  font-family:"PeydaApp",PeydaRegular,"ShabnamApp",Tahoma,sans-serif;
+  font-weight:400;
+}
+
+/* Explicit typography for every profile add/edit modal label and control. */
+.jobDialog {font-family:"ShabnamApp",Tahoma,Arial,sans-serif!important;font-size:14px;}
+.jobDialog .jobForm .jobField,
+.jobDialog .jobForm .jobField > span,
+.jobDialog .jobForm label,
+.jobDialog .jobForm input,
+.jobDialog .jobForm select,
+.jobDialog .jobForm select option,
+.jobDialog .jobForm textarea,
+.jobDialog .jobForm input::placeholder,
+.jobDialog .jobForm textarea::placeholder,
+.jobDialog .jobFooter button,
+.jobDialog .jobDialogHeader button {
+  font-family:"ShabnamApp",Tahoma,Arial,sans-serif!important;
+  font-size:14px;
+  font-weight:400;
+}
+.jobDialog .jobForm .jobField > span,
+.jobDialog .jobForm label {font-size:13.5px;color:#405969;}
+.jobDialog .jobForm :is(input,select,textarea) {font-size:14px;line-height:1.8;}
+.jobDialog .jobForm select {height:38px;padding:0 11px;}
+.jobDialog .jobDialogHeader,
+.jobDialog .jobDialogHeader strong {
+  font-family:"PeydaApp", "ShabnamApp",Tahoma,sans-serif!important;
+  font-size:17px;font-weight:400;
+}
+
+/* Financial profile: search control and consistent typography */
+.financeSearch {min-width:240px;max-width:340px;width:100%;height:38px;border:1px solid #b9ccda;border-radius:8px;padding:6px 12px;background:#fff;color:#183e54;font-family:Shabnam, sans-serif !important;font-size:14px;direction:rtl;}
+.financeSearch:focus {outline:none;border-color:#22617d;box-shadow:0 0 0 2px rgba(34,97,125,.12);}
+@media(max-width:640px){.financeSearch{min-width:0;max-width:100%;}}
+
+
+/* Financial profile typography audit — 2026-10-24.
+   Header and table column headings: Peyda; all other content: Shabnam. */
+.jobPanel,
+.jobPanel :is(p,span,label,td,input,textarea,select,option,button),
+.jobPanel .jobToolbar span,
+.jobPanel .jobEmpty,
+.jobPanel .jobStatus,
+.jobPanel .jobName,
+.jobPanel .jobActions button,
+.jobPanel .financeSearch {
+  font-family:"ShabnamApp",Shabnam,Tahoma,Arial,sans-serif !important;
+  font-size:14px;
+  font-weight:400;
+  line-height:1.8;
+}
+.jobPanel .jobToolbar strong,
+.jobPanel .jobTable thead th {
+  font-family:"PeydaApp","ShabnamApp",Tahoma,Arial,sans-serif !important;
+  font-size:15px;
+  font-weight:400;
+  line-height:1.6;
+}
+.jobPanel .jobToolbar strong {font-size:16px;}
+.jobPanel .jobTable tbody td {font-size:14px;line-height:1.85;}
+.jobPanel .jobTable .jobEmpty {font-size:14px !important;}
+.jobPanel .jobToolbar button,
+.jobPanel .jobActions button {font-size:14px;}
+.jobPanel .financeSearch,
+.jobPanel .jobForm input,
+.jobPanel .jobForm select,
+.jobPanel .jobForm textarea {
+  font-family:"ShabnamApp",Shabnam,Tahoma,Arial,sans-serif !important;
+  font-size:14px !important;
+}
+.jobPanel .financeSearch::placeholder,
+.jobPanel .jobForm input::placeholder,
+.jobPanel .jobForm textarea::placeholder {
+  font-family:"ShabnamApp",Shabnam,Tahoma,Arial,sans-serif !important;
+  font-size:14px;
+}
+/* Dialogs mount inside jobPanel but preserve Peyda for the dialog heading. */
+.jobPanel .jobDialogHeader strong {
+  font-family:"PeydaApp","ShabnamApp",Tahoma,Arial,sans-serif !important;
+  font-size:17px;
+}
+.jobPanel .jobDialog .jobField > span,
+.jobPanel .jobDialog label {
+  font-family:"ShabnamApp",Shabnam,Tahoma,Arial,sans-serif !important;
+  font-size:14px;
+}
+@media(max-width:640px){
+ .jobPanel .jobToolbar strong{font-size:15px;}
+ .jobPanel .jobTable thead th{font-size:14px;}
+}
+
+/* Training forms: matches Merat profile typography and field dimensions */
+.jobDialogHeader strong{font-family:PeydaApp,Peyda,sans-serif;font-size:17px}
+.jobField,.jobField>span,.jobField input,.jobField select,.jobField textarea,.jobField option,.jobFooter button,.jobTable td,.jobEmpty{font-family:ShabnamApp,Shabnam,sans-serif!important;font-size:14px!important}
+.jobField select{min-height:38px;width:100%;box-sizing:border-box;border:1px solid #c8d6df;border-radius:8px;background:#fff;color:#203849;padding:7px 10px;outline:none;direction:rtl}
+.jobField select:focus{border-color:#287395;box-shadow:0 0 0 2px #28739520}
+.jobTable th,.jobToolbar strong{font-family:PeydaApp,Peyda,sans-serif;font-size:15px}
+
+/* Relevant experiences; scoped to the Hamkari profile */
+.experienceTabs{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.experienceTabs button{font-family:ShabnamApp,Shabnam,sans-serif;font-size:14px;border:1px solid #bfd0db;background:#f5f9fb;color:#26475b;padding:9px 13px;border-radius:8px;cursor:pointer}
+.experienceTabs button.experienceTabActive{background:#284d63;color:#fff;border-color:#284d63}
+
+/* Supplementary person information */
+.supplementPanel{direction:rtl;font-family:ShabnamApp,Shabnam,sans-serif;color:#304e60;font-size:14px}
+.supplementGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 18px;margin-top:18px}
+.supplementField,.supplementNotes{display:flex;flex-direction:column;gap:7px;font-family:ShabnamApp,Shabnam,sans-serif;font-size:14px;color:#34576c}
+.supplementField select,.supplementNotes textarea{width:100%;min-height:40px;border:1px solid #bdcfdc;background:#fff;border-radius:8px;padding:8px 12px;font:14px ShabnamApp,Shabnam,sans-serif;color:#243c50;box-sizing:border-box}
+.supplementField select:focus,.supplementNotes textarea:focus{border-color:#196985;outline:2px solid #cbe7f2}
+.supplementNotes{margin-top:18px}.supplementNotes textarea{resize:vertical;line-height:1.9}
+.supplementFooter{display:flex;justify-content:flex-start;margin-top:18px;padding-top:14px;border-top:1px solid #e0e8ee}
+.supplementFooter button{display:inline-flex;align-items:center;gap:8px;border:0;background:#23485d;color:white;border-radius:8px;padding:10px 20px;font:14px ShabnamApp,Shabnam,sans-serif;cursor:pointer}
+.supplementFooter button:disabled{opacity:.6;cursor:default}
+@media(max-width:680px){.supplementGrid{grid-template-columns:1fr}}
+
+/* Profile sidebar: slightly wider, independent vertical scrolling */
+@media(min-width:701px){.profileLower{grid-template-columns:minmax(0,1fr) 218px}.profileNav{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#a2b6c4 #f1f6f9}.profileNavButton{min-height:39px;font-size:13.5px;white-space:normal;line-height:1.6}}
+.casePanel{direction:rtl;display:flex;flex-direction:column;gap:13px;font-family:ShabnamApp,Shabnam,sans-serif;font-size:14px;color:#263b49}.caseToolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 13px;background:#eaf2f6;border:1px solid #cbdee7;border-radius:10px}.caseToolbar strong{font:500 17px PeydaApp,Peyda,sans-serif}.caseToolbar button,.caseActions button,.caseModal button{font-family:ShabnamApp,Shabnam,sans-serif;font-size:14px;cursor:pointer;border-radius:8px;border:1px solid #c4d6e0;background:#fff;color:#244a5b;padding:8px 12px}.caseToolbar button:first-of-type,.casePrimary{background:var(--app-primary)!important;color:white!important;border-color:var(--app-primary)!important}.caseList{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.caseCard{border:1px solid #d3e1e8;border-radius:11px;padding:12px;background:#fff}.caseThumb{height:155px;display:flex;align-items:center;justify-content:center;background:#f3f7f9;border-radius:9px;overflow:hidden;color:#728694}.caseThumb img{max-height:100%;max-width:100%;object-fit:contain}.caseCard h4{font:500 16px PeydaApp,Peyda,sans-serif;margin:10px 0 5px}.caseCard p{font-size:13.5px;color:#657984;margin:5px 0}.caseActions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}.caseModalBackdrop{position:fixed;inset:0;z-index:2147483000;background:#142b38a8;display:flex;align-items:center;justify-content:center;padding:14px}.caseModal{background:white;width:min(740px,97vw);max-height:94vh;overflow:auto;border-radius:12px;direction:rtl}.caseModalHead{display:flex;align-items:center;justify-content:space-between;background:var(--app-gradient);color:#fff;padding:12px 16px;font:500 18px PeydaApp,Peyda,sans-serif}.caseModalHead button{background:transparent!important;color:white!important}.caseModalBody{padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.caseModalBody label{display:flex;flex-direction:column;gap:5px;font-size:14px}.caseModalBody input,.caseModalBody select,.caseModalBody textarea{width:100%;min-height:38px;padding:8px 10px;border:1px solid #bdced7;border-radius:8px;background:#fbfcfd;font:14px ShabnamApp,Shabnam,sans-serif}.caseModalBody .wide{grid-column:1/-1}.casePreview{width:100%;max-height:310px;object-fit:contain;background:#f4f7f9;border:1px solid #d8e4e8;border-radius:9px}.caseModalFooter{border-top:1px solid #e0e9ed;padding:12px 16px;display:flex;gap:9px;justify-content:flex-end}.caseError{color:#a51d24;background:#fff1f0;padding:10px;border-radius:8px}.caseEmpty{padding:36px;text-align:center;color:#718695;border:1px dashed #cbdbe2;border-radius:10px}@media(max-width:700px){.caseModalBody{grid-template-columns:1fr}.caseToolbar{flex-wrap:wrap}}
+
+
+/* 2026-10-24 — Unified Persian typography for Hamkari profile forms.
+   Explicit option rules are needed because native select popups do not
+   consistently inherit typography from their parent select. */
+.supplementPanel,
+.supplementPanel .supplementGrid,
+.supplementPanel .supplementField,
+.supplementPanel .supplementNotes,
+.supplementPanel .supplementFooter {
+  font-family: "ShabnamApp", Shabnam, Tahoma, Arial, sans-serif !important;
+  font-size: 14px;
+  direction: rtl;
+}
+.supplementPanel :is(label, label > span, p, span, button, input, textarea, select),
+.supplementPanel select option,
+.supplementPanel select optgroup,
+.jobPanel select option,
+.jobDialog select option,
+.caseModal select option {
+  font-family: "ShabnamApp", Shabnam, Tahoma, Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 400;
+}
+.supplementPanel :is(select, textarea, input),
+.jobPanel select,
+.jobDialog select,
+.caseModal select {
+  direction: rtl;
+  text-align: right;
+  font-family: "ShabnamApp", Shabnam, Tahoma, Arial, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.8;
+}
+.supplementPanel select option,
+.supplementPanel select optgroup,
+.jobPanel select option,
+.jobDialog select option,
+.caseModal select option {
+  direction: rtl;
+  text-align: right;
+  background-color: #fff;
+  color: #263d4d;
+}
+.supplementPanel .jobToolbar strong,
+.supplementPanel :is(h1, h2, h3, h4),
+.jobPanel :is(h1, h2, h3),
+.caseModalHead {
+  font-family: "PeydaApp", PeydaRegular, "ShabnamApp", Tahoma, sans-serif !important;
+}
+.supplementPanel .jobToolbar span {
+  font-family: "ShabnamApp", Shabnam, Tahoma, sans-serif !important;
+  font-size: 14px !important;
+}
+
+
+/* Supplementary: browser-independent dropdown with guaranteed Shabnam text. */
+.supplementPanel .supplementField > label,
+.supplementPanel .supplementSelectButton,
+.supplementPanel .supplementSelectButton span,
+.supplementPanel .supplementSelectMenu,
+.supplementPanel .supplementSelectOption {
+  font-family:"ShabnamApp",Tahoma,Arial,sans-serif !important;
+  font-size:14px !important;
+  font-weight:400 !important;
+  line-height:1.85;
+  letter-spacing:0;
+}
+.supplementSelectWrap{position:relative;min-width:0;}
+.supplementSelectButton{display:flex;align-items:center;justify-content:space-between;gap:8px;direction:rtl;text-align:right;width:100%;min-height:40px;padding:7px 12px;border:1px solid #bdcfdc;border-radius:8px;background:#fff;color:#243c50;cursor:pointer;}
+.supplementSelectButton:hover{border-color:#77a6ba;}
+.supplementSelectButton:focus-visible{outline:2px solid #cbe7f2;border-color:#196985;}
+.supplementSelectButton:disabled{opacity:.65;cursor:default;}
+.supplementSelectButton svg{flex-shrink:0;color:#38576a;}
+.supplementSelectMenu{position:absolute;top:calc(100% + 4px);right:0;left:0;z-index:70;max-height:225px;overflow-y:auto;border:1px solid #a9c4d2;border-radius:8px;background:#fff;box-shadow:0 9px 24px #1b405029;direction:rtl;padding:4px;}
+.supplementSelectOption{display:block;width:100%;border:0;border-radius:5px;padding:7px 10px;text-align:right;direction:rtl;color:#243c50;background:#fff;cursor:pointer;}
+.supplementSelectOption:hover,.supplementSelectOption:focus-visible{background:#eaf4f8;outline:none;}
+.supplementSelectSelected{background:#e2f0f6;color:#154b66;}
+
+
+/* Cooperation tables: replace saturated blue/teal heading backgrounds
+   with the same light heading treatment as Bazargani. */
+.tableScroll table thead th,
+.profileNewsTable thead th,
+.jobTable thead th,
+.jobPanel .jobTable thead th {
+  font-family: "PeydaApp", "ShabnamApp", Tahoma, sans-serif !important;
+  font-size: max(13px, calc(13px * var(--ui-font-scale, 1))) !important;
+  font-weight: 700 !important;
+  color: #29395d !important;
+  background: #f5f7fc !important;
+  background-image: none !important;
+  border-bottom: 1px solid #e1e7f2 !important;
+  border-left-color: #e9eef6 !important;
+  height: 42px;
+  line-height: 1.65;
+  vertical-align: middle;
+}
+
+/* Hamkari person/profile/job/evaluation modals: calm chrome and reliable scroll. */
+.modalLayer,.confirmLayer,.jobOverlay,.evaluationOverlay,.caseModalBackdrop{align-items:safe center;overscroll-behavior:contain;}
+.modalLayer:not(.fullModalLayer){padding:14px;}
+.modalCard:not(.fullModalCard),.confirmCard,.jobDialog,.evaluationDialog,.caseModal{
+  border:1px solid #dce4ef;border-radius:18px;background:#fff;
+  box-shadow:var(--merat-dialog-shadow,0 24px 72px rgba(27,37,74,.2));
+  max-height:calc(100dvh - 28px);
+}
+.modalHeader,.jobDialogHeader,.evaluationDialogHeader,.caseModalHead{
+  background:var(--merat-dialog-head,#f6f7fe)!important;
+  color:#263756!important;border-bottom:1px solid #dce4ef!important;
+  border-right:3px solid var(--app-primary,#5d52eb);
+  min-height:54px;padding:10px 16px;
+}
+.modalHeader :is(h1,h2,h3,strong),.jobDialogHeader strong,.evaluationDialogHeader :is(h1,h2,h3,strong),.caseModalHead strong{
+  color:#263756;font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif!important;font-size:16px;font-weight:700!important;
+}
+.jobDialogHeader button,.caseModalHead button,.evaluationDialogHeader button{background:#fff!important;color:#596684!important;border:1px solid #dce4ef!important;border-radius:10px;min-width:32px;min-height:32px;}
+.jobDialog{overflow:hidden;background:#fff!important;}
+.jobForm{min-height:0;overflow-y:auto;background:#fff;}
+.jobFooter,.evaluationDialogFooter{background:#fafbfe;border-top:1px solid #e4eaf2;padding:11px 16px;}
+.jobDialog .jobForm :is(input,select,textarea),.caseModal :is(input,select,textarea){border-radius:10px;background:#fbfcff;}
+.evaluationDialogBody{background:#fff;}
+/* Intentional full-screen profile mode should remain full screen. */
+.fullModalLayer{padding:0;align-items:stretch;}
+.fullModalCard{border-radius:0;max-height:none;}
+@media(max-width:640px){.modalLayer:not(.fullModalLayer),.jobOverlay,.evaluationOverlay,.caseModalBackdrop{padding:9px}.modalCard:not(.fullModalCard),.jobDialog,.evaluationDialog,.caseModal{max-height:calc(100dvh - 18px)}.jobForm{padding:13px}}
+
+
+/* MERAT | Hamkari profile viewer: readable close/menu actions on light header.
+   Scoped to profile header only; other modals and theme colors remain unchanged. */
+:global(body) .modalHeader .profileHeaderControls .profileHeaderAction {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0 !important;
+  border: 1px solid #ccd8e8 !important;
+  border-radius: 10px !important;
+  background: #f7f9ff !important;
+  color: #344763 !important;
+  opacity: 1 !important;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+:global(body) .modalHeader .profileHeaderControls .profileHeaderAction svg {
+  color: inherit !important;
+  stroke: currentColor !important;
+  opacity: 1 !important;
+}
+:global(body) .modalHeader .profileHeaderControls .profileHeaderAction:hover {
+  color: #3f36b9 !important;
+  background: #eae9ff !important;
+  border-color: #b9b6f5 !important;
+}
+:global(body) .modalHeader .profileHeaderControls .profileHeaderAction:focus-visible {
+  outline: 2px solid #6558e8 !important;
+  outline-offset: 2px;
+}
+:global(body) .modalHeader .profileHeaderControls .profileHeaderAction[aria-expanded="true"] {
+  background: #eae9ff !important;
+  color: #4436bd !important;
+  border-color: #aaa5f4 !important;
+}

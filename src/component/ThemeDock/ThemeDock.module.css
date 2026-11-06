@@ -1,0 +1,38 @@
+.dock{position:fixed;z-index:180;right:20px;bottom:84px;font-family:ShabnamApp,Tahoma,sans-serif;direction:rtl;font-size:14px}
+.launcher{width:52px;height:52px;border:1px solid #ffffff90;border-radius:17px;display:grid;place-items:center;background:var(--app-gradient);color:white;cursor:pointer;box-shadow:0 12px 28px rgba(38,38,90,.25);transition:transform .16s,box-shadow .16s}
+.launcher:hover{transform:translateY(-2px);box-shadow:0 15px 30px rgba(38,38,90,.3)}.launcher svg{width:24px;height:24px}
+.backdrop{position:fixed;inset:0;background:rgba(22,26,55,.23);border:0;cursor:default;z-index:0}
+.popover{position:absolute;bottom:64px;right:0;width:min(450px,calc(100vw - 28px));max-height:min(730px,calc(100dvh - 132px));background:var(--ui-surface,#fff);border:1px solid var(--ui-line,#e6e8f2);border-radius:17px;overflow:hidden;box-shadow:0 24px 70px rgba(20,22,55,.25);z-index:1;display:flex;flex-direction:column}
+.popoverHeader{background:var(--app-gradient);color:#fff;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex:none}
+.popoverHeader>div{display:flex;flex-direction:column;gap:3px}.popoverHeader strong{font-family:PeydaApp,ShabnamApp,sans-serif;font-size:17px;font-weight:600}.popoverHeader small{font-size:12.5px;color:#ffffffd9}
+.popoverHeader button{background:#ffffff24;color:white;border:1px solid #ffffff40;border-radius:9px;width:32px;height:32px;font-size:24px;cursor:pointer;line-height:1}
+.popoverBody{overflow:auto;overscroll-behavior:contain;padding:14px}
+.controls{font-family:ShabnamApp,Tahoma,sans-serif;color:var(--ui-text,#1e2440);font-size:14px}.intro{line-height:1.9;color:var(--ui-muted,#737a96);font-size:13px;margin:0 0 13px}
+.sectionTitle{font-family:PeydaApp,ShabnamApp,sans-serif;font-size:15px;font-weight:600;color:var(--ui-text,#1e2440);margin:14px 0 9px}
+.themeGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.preset{display:flex;flex-direction:column;gap:7px;min-width:0;align-items:stretch;border:1px solid var(--ui-line,#e6e8f2);border-radius:11px;background:var(--ui-surface,#fff);padding:7px;text-align:right;color:var(--ui-text,#1e2440);cursor:pointer}
+.presetActive{border-color:var(--app-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--app-primary) 12%,transparent)}.preset:disabled{opacity:.7;cursor:wait}
+.palette{height:27px;display:flex;overflow:hidden;border-radius:7px}.palette span{flex:1}.presetLabel{font-size:12.5px;line-height:1.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.colorGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.colorRow{display:flex;flex-direction:column;gap:5px;padding:9px;border:1px solid var(--ui-line,#e6e8f2);border-radius:10px;font-size:12.5px;background:var(--ui-surface,#fff)}
+.colorInput{display:flex;gap:8px;align-items:center}.colorInput input{width:44px;height:34px;border:1px solid #e3e5ef;border-radius:8px;padding:2px;background:transparent;cursor:pointer}.colorInput small{font-size:12.5px;direction:ltr;font-family:Consolas,monospace;color:#667085}
+.optionGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.selectLabel{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--ui-text,#1e2440)}
+.selectLabel select{width:100%;height:38px;border:1px solid #dde0eb;border-radius:9px;background:var(--ui-surface,#fff);padding:0 8px;font:inherit;font-size:12.5px;color:inherit}
+.preview{height:104px;margin-top:14px;display:flex;border:1px solid var(--ui-line,#e6e8f2);border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 5px 20px #1f23461a}
+.previewSide{width:24%;flex:none}.previewMain{flex:1;display:flex;flex-direction:column;gap:7px;padding:9px}.previewHeader{height:18px;border-radius:5px;display:block}.previewCards{display:flex;gap:7px;flex:1}.previewCards span{flex:1;border:1px solid #e6e8f2;border-radius:6px;box-shadow:0 2px 8px #22274c12}.previewAction{width:32%;height:10px;border-radius:5px;display:block}
+.message{font-size:13px;line-height:1.7;color:var(--app-primary);margin:12px 0 0}.actions{display:flex;gap:7px;justify-content:flex-start;flex-wrap:wrap;border-top:1px solid var(--ui-line,#e6e8f2);padding-top:13px;margin-top:14px}
+.actions button{min-height:36px;padding:0 10px;border-radius:9px;font:inherit;font-size:12.5px;cursor:pointer}.actions button:disabled{opacity:.6;cursor:wait}
+.resetButton{border:1px solid #e0e2ea;background:var(--ui-surface,#fff);color:var(--ui-text,#1e2440)}.cancelButton{border:1px solid #dadcef;background:#f2f3fb;color:#535b74}.saveButton{border:0;background:var(--app-gradient);color:#fff;box-shadow:0 6px 17px #4f46e529}
+.pageControls{max-width:1060px;margin:0 auto;padding:18px 20px 24px;background:var(--ui-surface,#fff)}.pageControls h1{font-family:PeydaApp,ShabnamApp,sans-serif;font-size:18px;font-weight:700;margin:0 0 12px}
+.pageControls .themeGrid{grid-template-columns:repeat(4,minmax(0,1fr))}.pageControls .controls{max-width:1000px}.pageControls .preview{max-width:560px}
+@media(max-width:650px){.dock{right:12px;bottom:calc(75px + env(safe-area-inset-bottom,0px))}.launcher{width:48px;height:48px}.popover{right:0;bottom:60px;max-height:calc(100dvh - 146px)}.popoverBody{padding:10px}.pageControls{padding:13px}.pageControls .themeGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.optionGrid{grid-template-columns:1fr}.actions button{flex:1}.colorGrid{grid-template-columns:1fr 1fr}}
+
+/* Bazargani v2 - floating palette dialog */
+.launcher{width:48px;height:48px;border-radius:14px;background:var(--app-primary);box-shadow:0 5px 17px color-mix(in srgb,var(--app-primary) 19%,transparent);}
+.launcher:hover{box-shadow:0 8px 18px color-mix(in srgb,var(--app-primary) 23%,transparent);}
+.popover{border-color:var(--ui-line);border-radius:15px;box-shadow:0 18px 50px rgba(27,32,65,.16);}
+.popoverHeader{background:#F2F2FE;color:var(--ui-text);border-bottom:1px solid #E2E3FA;padding:11px 14px;}
+.popoverHeader strong{color:#29375A;font-size:16px;}
+.popoverHeader small{color:var(--ui-muted);font-size:12.5px;}
+.popoverHeader button{color:#5B6483;border:1px solid #DEE3F1;background:#FFFFFF;}
+.presetActive{border-color:color-mix(in srgb,var(--app-primary) 45%,#B8BED7);box-shadow:0 0 0 2px color-mix(in srgb,var(--app-primary) 9%,transparent);}
+@media(max-width:650px){.launcher{width:46px;height:46px;}}

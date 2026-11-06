@@ -4,7 +4,7 @@ const C=createContext<{close?:()=>void}>({});
 export function AlertDialog({open=true,onOpenChange,children}:{open?:boolean;onOpenChange?:(v:boolean)=>void;children:ReactNode}){if(!open)return null;return <C.Provider value={{close:()=>onOpenChange?.(false)}}>{children}</C.Provider>}
 export function AlertDialogTrigger({children}:{children:ReactNode}){return <>{children}</>}
 export function AlertDialogContent({children,className=""}:{children:ReactNode;className?:string}){const c=useContext(C);return <div className="research-modal-root"><button className="research-modal-backdrop" onClick={c.close} aria-label="بستن"/><div className={`research-modal-card ${className}`}>{children}</div></div>}
-export const AlertDialogHeader=({children}:{children:ReactNode})=><div className="research-modal-body">{children}</div>;
+export const AlertDialogHeader=({children}:{children:ReactNode})=><header className="research-modal-dialog-intro merat-modal-tone--notice">{children}</header>;
 export const AlertDialogFooter=({children}:{children:ReactNode})=><div className="research-modal-actions research-modal-body">{children}</div>;
 export const AlertDialogTitle=({children,className=""}:{children:ReactNode;className?:string})=><h3 className={className}>{children}</h3>;
 export const AlertDialogDescription=({children,className=""}:{children:ReactNode;className?:string})=><p className={className}>{children}</p>;

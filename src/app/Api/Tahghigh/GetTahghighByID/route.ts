@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import sql from "mssql";
 
 import { getConnection } from "@/lib/db";
-import { verifyToken } from "@/lib/auth";
+import { requireResearchIdentity, researchAccessResponse, positiveId, assertResearchCaseScope } from "@/lib/researchSecurity";
 
 export async function POST(req: NextRequest) {
     const token = req.cookies.get("token")?.value;
@@ -16,13 +16,14 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { erjaid, erjaParentId, lenhozeostan } = body;
 
+    if ((!positiveId(erjaid) && !positiveId(erjaParentId))) {
+        return NextResponse.json({ status: 400, error: "شناسه پرونده معتبر نیست." }, { status: 400 });
+    }
     try {
-        verifyToken(token);
-    } catch {
-        return NextResponse.json(
-            { status: 401, error: "Unauthorized: Invalid or expired token" },
-            { status: 401 }
-        );
+        const actor = await requireResearchIdentity(token);
+        await assertResearchCaseScope(actor, positiveId(erjaid) ? erjaid : erjaParentId);
+    } catch (error) {
+        return researchAccessResponse(error);
     }
 
     try {
@@ -39,9 +40,6 @@ export async function POST(req: NextRequest) {
         );
 
     } catch (err) {
-        return NextResponse.json(
-            { error: err instanceof Error ? err.message : "Unknown error" },
-            { status: 500 }
-        );
+        return researchAccessResponse(err);
     }
 }

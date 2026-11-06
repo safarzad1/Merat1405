@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import sql from "mssql";
 import { getConnection } from "@/lib/db";
-import { verifyToken } from "@/lib/auth";
+import { requireResearchIdentity, researchAccessResponse } from "@/lib/researchSecurity";
 
 export async function POST(req: NextRequest) {
     const token = req.cookies.get("token")?.value;
@@ -13,20 +13,18 @@ export async function POST(req: NextRequest) {
         );
     }
 
-    // ✅ اعتبارسنجی توکن
-    try {
-        verifyToken(token);
-    } catch {
-        return NextResponse.json(
-            { status: 401, error: "Unauthorized: Invalid or expired token" },
-            { status: 401 }
-        );
-    }
-
     // ✅ ورودی
     const body = await req.json();
     const mahal = Number(body?.mahal);
     const userId = Number(body?.userId);
+
+    // ✅ اعتبارسنجی توکن
+    try {
+        await requireResearchIdentity(token, userId);
+    } catch (error) {
+        return researchAccessResponse(error);
+    }
+
 
     if (!mahal) {
         return NextResponse.json(
@@ -45,9 +43,6 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ status: 200, data: result.recordset }, { status: 200 });
     } catch (err) {
-        return NextResponse.json(
-            { status: 500, error: err instanceof Error ? err.message : "Unknown error" },
-            { status: 500 }
-        );
+        return researchAccessResponse(err);
     }
 }

@@ -1,9 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import sql from "mssql";
 import { getConnection } from "@/lib/db";
+import { requireResearchIdentity, researchAccessResponse, requireClaimedActor } from "@/lib/researchSecurity";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
+        const actor = await requireResearchIdentity(req.cookies.get("token")?.value);
         const form = await req.formData();
 
         const ShomarehParvandeh = String(form.get("shomarehParvandeh") ?? "").trim();
@@ -11,6 +13,8 @@ export async function POST(req: Request) {
         const EbhamatParvandeh = String(form.get("ebhamatParvandeh") ?? "").trim();
         const filenameRaw = String(form.get("fileName") ?? "").trim();
         const userIdRaw = String(form.get("userId") ?? "").trim();
+
+        requireClaimedActor(actor, userIdRaw);
         const file = form.get("file") as File | null;
 
         if (!filenameRaw || !userIdRaw) {
@@ -65,12 +69,6 @@ export async function POST(req: Request) {
             { status: 200 }
         );
     } catch (err) {
-        return NextResponse.json(
-            {
-                status: 500,
-                message: err instanceof Error ? err.message : "خطای ناشناخته در سرور",
-            },
-            { status: 500 }
-        );
+        return researchAccessResponse(err);
     }
 }

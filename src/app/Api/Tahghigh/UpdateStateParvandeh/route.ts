@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import sql from "mssql";
 
 import { getConnection } from "@/lib/db";
-import { verifyToken } from "@/lib/auth";
+import { requireResearchIdentity, researchAccessResponse, researchMutationResponse, assertResearchCaseScope } from "@/lib/researchSecurity";
 
 export async function POST(req: NextRequest) {
     const token = req.cookies.get("token")?.value;
@@ -14,19 +14,19 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { erjaid, isdone, erjaLastState, sharheghdam, userid } = body;
+    const { erjaid, erjaLastState, sharheghdam, userid } = body;
 
-    if (!erjaid) {
-        return NextResponse.json({ error: "page required" }, { status: 400 });
+    if (![erjaid, erjaLastState, userid].every((value) =>
+        Number.isSafeInteger(Number(value)) && Number(value) > 0
+    ) || typeof sharheghdam !== "string") {
+        return NextResponse.json({ error: "پارامترهای تغییر وضعیت معتبر نیستند" }, { status: 400 });
     }
 
     try {
-        verifyToken(token);
-    } catch {
-        return NextResponse.json(
-            { status: 401, error: "Unauthorized: Invalid or expired token" },
-            { status: 401 }
-        );
+        const actor = await requireResearchIdentity(token, userid);
+        await assertResearchCaseScope(actor, erjaid);
+    } catch (error) {
+        return researchAccessResponse(error);
     }
 
     try {
@@ -35,18 +35,13 @@ export async function POST(req: NextRequest) {
             .request()
             .input("ErjaId", sql.BigInt, erjaid)
             .input("ErjaLastState", sql.Int, erjaLastState)
-            .input("SharhEghdam", sql.NVarChar(3000), sharheghdam)
+            .input("SharhEghdam", sql.NVarChar(sql.MAX), sharheghdam)
             .input("UserId", sql.BigInt, userid)
             .execute("Tahghighat.SP_Update_ErjaState");
 
-        return NextResponse.json(
-            { status: 200, data: result.recordset }
-        );
+        return researchMutationResponse(result);
 
     } catch (err) {
-        return NextResponse.json(
-            { error: err instanceof Error ? err.message : "Unknown error" },
-            { status: 500 }
-        );
+        return researchAccessResponse(err);
     }
 }

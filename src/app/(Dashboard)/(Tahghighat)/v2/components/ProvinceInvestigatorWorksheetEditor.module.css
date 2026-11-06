@@ -1,0 +1,294 @@
+/* Province investigator worksheet - modal uses the active Merat typography. */
+.root {
+  border-top: 1px solid var(--ui-line, #e5e8f4);
+  margin-top: 10px;
+  padding: 12px 8px 8px;
+  background: #fbfcff;
+  border-radius: 9px;
+  color: var(--ui-text, #263451);
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif);
+  font-size: 13px;
+}
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.toolbar > div { display: grid; gap: 2px; }
+.toolbar strong { font-size: 13px; }
+.toolbar small { font-size: 11px; color: var(--ui-muted, #7884a4); }
+
+/* The editor is portaled to body: typography must be explicit there as well. */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(20, 28, 57, .55);
+}
+.modal, .modal * { box-sizing: border-box; }
+.modal {
+  direction: rtl;
+  width: min(760px, 100%);
+  max-height: min(88dvh, 810px);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--ui-surface, #fff);
+  color: var(--ui-text, #263451);
+  border: 1px solid var(--ui-line, #dfe4f2);
+  border-radius: 15px;
+  box-shadow: 0 24px 80px rgba(18, 25, 58, .27);
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.modalHead {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 10px 16px;
+  flex: 0 0 auto;
+  background: var(--app-soft, #f0efff);
+  border-bottom: 1px solid var(--ui-line, #dfe4f2);
+}
+.modalHeadText { display: grid; gap: 1px; min-width: 0; }
+.modalHead h3 { font-family: var(--merat-font-heading, "PeydaApp", "ShabnamApp", Tahoma, sans-serif); font-size: 16px; font-weight: 700; margin: 0; color: var(--ui-text, #22345a); }
+.modalHead small { font-size: 12px; font-weight: 400; color: var(--ui-muted, #697794); overflow-wrap: anywhere; }
+.closeButton {
+  flex: 0 0 auto; display: inline-grid; place-items: center; width: 33px; height: 33px;
+  border: 1px solid var(--ui-line, #dfe4f2); border-radius: 9px;
+  background: #fff; color: #4e5b78; cursor: pointer;
+  font-family: inherit; font-size: 22px; line-height: 1;
+}
+.closeButton:hover { background: #f7f8ff; }
+.modalForm { display: flex; flex-direction: column; min-height: 0; flex: 1 1 auto; }
+.modalBody { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 14px 18px 12px; scrollbar-width: thin; }
+.modalFooter {
+  display: flex; gap: 8px; justify-content: flex-start; align-items: center;
+  flex: 0 0 auto; padding: 10px 18px;
+  border-top: 1px solid var(--ui-line, #e2e7f3);
+  background: var(--ui-surface, #fff);
+}
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 14px; row-gap: 6px; }
+.label { display: grid; gap: 4px; margin: 6px 0; min-width: 0; color: var(--ui-text, #354462); font-size: 12.5px; font-weight: 500; }
+.label em { color: #d02c56; font-style: normal; }
+.field {
+  display: block; width: 100%; min-height: 40px; padding: 7px 11px;
+  background: #fff; color: var(--ui-text, #273654);
+  border: 1px solid #cbd6e9; border-radius: 9px;
+  outline: none !important; box-shadow: none;
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif) !important;
+  font-size: 13.5px !important; font-weight: 400; line-height: 1.7;
+}
+/* Native select options must use the same Persian font and size as selected values. */
+.field:is(select), .field:is(select) option, .field:is(select) optgroup {
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif) !important;
+  font-size: 13.5px !important;
+  font-weight: 400;
+  direction: rtl;
+  text-align: right;
+}
+.field:is(select) { cursor: pointer; padding-inline-end: 10px; }
+.field:focus, .field:focus-visible {
+  border-color: var(--app-primary, #5b4cdb) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+.field:disabled { background: #f5f6fb; opacity: .75; }
+.textarea { resize: vertical; min-height: 90px; line-height: 1.9; }
+.primary, .secondary {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 36px; padding: 6px 15px; border-radius: 9px;
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif);
+  font-size: 13px; font-weight: 500; cursor: pointer;
+}
+.primary { border: 1px solid var(--app-primary, #5b4cdb); background: var(--app-primary, #5b4cdb); color: #fff; }
+.secondary { border: 1px solid #d9dff0; background: #f8f9fd; color: #4f5e7a; }
+.primary:disabled, .secondary:disabled, .closeButton:disabled { opacity: .5; cursor: default; }
+.itemActions { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.list { display: grid; gap: 8px; margin-top: 10px; }
+.item { border: 1px solid #dfe4f3; border-inline-start: 3px solid var(--app-primary, #5b4cdb); background: #fff; border-radius: 9px; padding: 9px; }
+.itemTop { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.itemTop > div:first-child { display: grid; gap: 3px; }
+.itemTop b { font-size: 12.5px; }
+.itemTop span { font-size: 11.5px; color: #7b849b; }
+.details { padding: 8px 2px 0; border-top: 1px solid #eff1f7; margin-top: 10px; font-size: 12.5px; }
+.details p { margin: 5px 0; overflow-wrap: anywhere; }
+.report { white-space: pre-wrap; }
+.error { border: 1px solid #ffbcc6; background: #fff3f5; color: #a82d3e; border-radius: 8px; padding: 8px 10px; font-size: 12.5px; margin: 8px 0; }
+.hint { color: #7884a4; font-size: 11.5px; margin: 8px 0 0; }
+@media (max-width: 620px) {
+  .modalBackdrop { align-items: center; padding: 8px; }
+  .modal { width: 100%; max-height: 95dvh; border-radius: 12px; }
+  .modalHead { padding: 9px 11px; }
+  .modalBody { padding: 9px 12px; }
+  .modalFooter { padding: 10px 12px; }
+  .grid { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .root { padding: 10px 2px; }
+}
+
+/* Worksheet dropdowns are custom and share the active Persian app font. */
+.labelText {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 4px;
+  width: fit-content;
+  min-height: 19px;
+  color: var(--ui-text, #354462);
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+.labelText em { display: inline-block; flex-shrink: 0; color: #d02c56; font-weight: 600; line-height: inherit; }
+.picker { position: relative; width: 100%; min-width: 0; direction: rtl; }
+.pickerTrigger, .pickerSearch, .pickerOption, .pickerEmpty, .pickerMore {
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif) !important;
+  font-size: 13px !important;
+  line-height: 1.75;
+  font-weight: 400;
+  letter-spacing: normal;
+  direction: rtl;
+  text-align: right;
+}
+.pickerTrigger {
+  appearance: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 7px 11px;
+  border: 1px solid #cbd6e9;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--ui-text, #273654);
+  box-shadow: none;
+  outline: 0;
+  cursor: pointer;
+}
+.pickerTrigger:focus-visible, .pickerTriggerOpen {
+  border-color: var(--app-primary, #5b4cdb);
+  box-shadow: none;
+  outline: none;
+}
+.pickerTrigger:disabled { opacity: .65; background: #f5f6fb; cursor: default; }
+.pickerValue { display: block; min-width: 0; overflow-wrap: anywhere; }
+.pickerPlaceholder { color: #8a93aa; }
+.pickerArrow { flex-shrink: 0; color: #68769a; }
+.pickerTriggerOpen .pickerArrow { transform: rotate(180deg); }
+.pickerPanel {
+  /* Portaled to body: overlay all fields, never expand the modal's grid. */
+  position: fixed;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 5px;
+  margin: 0;
+  padding: 7px;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--ui-surface, #fff);
+  border: 1px solid #d9dff0;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(20, 31, 66, .18);
+  z-index: 11050;
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif);
+  font-size: 13px;
+}
+.pickerSearch {
+  display: block;
+  width: 100%;
+  min-height: 37px;
+  padding: 7px 10px;
+  border: 1px solid #d5dcf0;
+  border-radius: 8px;
+  background: #fafbff;
+  color: var(--ui-text, #263451);
+  outline: 0;
+  box-shadow: none;
+}
+.pickerSearch:focus, .pickerSearch:focus-visible {
+  border-color: var(--app-primary, #5b4cdb);
+  box-shadow: none;
+  outline: none;
+}
+.pickerSearch::placeholder { color: #8995ad; opacity: 1; }
+.pickerItems { display: grid; align-content: start; gap: 2px; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.pickerOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 35px;
+  width: 100%;
+  border: 0;
+  border-radius: 7px;
+  padding: 5px 9px;
+  cursor: pointer;
+  background: transparent;
+  color: #263451;
+}
+.pickerOption:hover, .pickerOptionActive { background: var(--app-soft, #f2f0ff); color: var(--app-primary, #5b4cdb); }
+.pickerOption[aria-selected="true"] { color: var(--app-primary, #5b4cdb); font-weight: 600; }
+.pickerCheck { color: var(--app-primary, #5b4cdb); font-size: 15px; flex-shrink: 0; }
+.pickerEmpty { padding: 12px 8px; text-align: center; color: #8290a9; }
+.pickerMore { margin: 2px 5px; color: #8490a9; font-size: 11.5px !important; }
+@media (max-width: 620px) {
+  .pickerTrigger, .pickerSearch { min-height: 42px; }
+  .pickerOption { min-height: 38px; }
+}
+
+/* Consistent interaction sizing for all worksheet dropdowns. */
+.pickerOption:focus-visible { outline: 1px solid var(--app-primary, #5b4cdb); outline-offset: -1px; }
+.pickerItems::-webkit-scrollbar { width: 6px; }
+.pickerItems::-webkit-scrollbar-thumb { background: #cbd5e6; border-radius: 8px; }
+
+/* Card disclosure: visually distinct from edit, with an accessible state arrow. */
+.detailsToggle {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid #b7d8ec;
+  border-radius: 9px;
+  background: #edf8ff;
+  color: #176184;
+  font-family: var(--merat-font-body, "ShabnamApp", Tahoma, sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.65;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+.detailsToggle:hover { background: #deeffc; border-color: #8ec6e8; color: #0b4f78; }
+.detailsToggle:focus-visible {
+  outline: 2px solid var(--app-primary, #5b4cdb);
+  outline-offset: 2px;
+}
+.detailsToggleOpen { background: #dceefa; border-color: #83b9de; color: #114e73; }
+.detailsToggleArrow { flex: 0 0 auto; transition: transform .18s ease; }
+.detailsToggleOpen .detailsToggleArrow { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) {
+  .detailsToggle, .detailsToggleArrow { transition: none; }
+}
+
+/* Distinct yet restrained worksheet outlines; consistent across province,
+   constituency and subsidiary county because the editor is shared. */
+.item:nth-child(5n + 1) {border:2px solid #8ab8ed;border-inline-start:5px solid #347ac9;background:#fbfdff;}
+.item:nth-child(5n + 2) {border:2px solid #87d5b7;border-inline-start:5px solid #238c67;background:#fafffd;}
+.item:nth-child(5n + 3) {border:2px solid #d9b0e9;border-inline-start:5px solid #9655b7;background:#fefbff;}
+.item:nth-child(5n + 4) {border:2px solid #eac58e;border-inline-start:5px solid #bc8130;background:#fffdf8;}
+.item:nth-child(5n) {border:2px solid #aab5e8;border-inline-start:5px solid #5d6db3;background:#fcfcff;}
+.deleteWorksheet {color:#b23346;background:#fff4f5;border:1px solid #eac3cc;border-radius:9px;
+  padding:6px 12px;font:inherit;cursor:pointer;}
+.deleteWorksheet:disabled {opacity:.55;cursor:default;}
+.deleteConfirm {display:grid;gap:10px;padding:17px;border:1px solid #e6d7d7;background:#fff;border-radius:12px;
+  box-shadow:0 15px 35px #121a3633;max-width:440px;}
+.deleteConfirm p {margin:0;font-size:13px;}

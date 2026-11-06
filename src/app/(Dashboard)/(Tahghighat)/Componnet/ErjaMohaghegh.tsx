@@ -1,5 +1,7 @@
 "use client";
 
+import { meratAlert } from "@/component/MeratFeedback/feedback";
+
 import { useEffect, useState, useRef, use } from "react";
 import { useMeratUser } from "@/lib/useMeratUser";
 import { useRouter } from "next/navigation";
@@ -93,6 +95,11 @@ const FehrestErjaParvandeh = ({ erjaId, refreshKey, onChangeCountJambandi, onCha
     const divRef = useRef<HTMLDivElement | null>(null);
     const [errorjambandiMohaghegh, seterrorjambandiMohaghegh] = useState<string>("لطفا تکمیل کنید");
     const [JambandiMohaghegh, setJambandiMohaghegh] = useState<string>("");
+    // Phase 1: restore deletion reason/audit metadata from the working legacy version.
+    const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+    const [deleteReason, setDeleteReason] = useState("");
+    const [deleteError, setDeleteError] = useState("");
+    const [deletingReferral, setDeletingReferral] = useState(false);
 
     const [LastState, setLastState] = useState(0);
     const [ModalOpenCreateForm, setModalOpenCreateForm] = useState(false);
@@ -201,7 +208,7 @@ const FehrestErjaParvandeh = ({ erjaId, refreshKey, onChangeCountJambandi, onCha
 
         } catch (err) {
             console.error("❌ خطا:", err);
-            alert("❌ خطا در تولید یا ارسال فایل");
+            meratAlert("❌ خطا در تولید یا ارسال فایل");
         }
     };
 
@@ -358,9 +365,56 @@ const FehrestErjaParvandeh = ({ erjaId, refreshKey, onChangeCountJambandi, onCha
     if (loading) return <div>در حال بارگذاری...</div>;
     if (data.length === 0) return <div className="px-10 py-2">داده‌ای وجود ندارد.</div>;
 
-    const DeleteErjaMohaghegh = async (ID: number) => {
-        await DeleteErjaTahghighbyId(ID);
-        loadData();
+    const openDeleteReferral = (id: number) => {
+        setDeleteTargetId(id);
+        setDeleteReason("");
+        setDeleteError("");
+    };
+
+    const closeDeleteReferral = () => {
+        if (deletingReferral) return;
+        setDeleteTargetId(null);
+        setDeleteReason("");
+        setDeleteError("");
+    };
+
+    const DeleteErjaMohaghegh = async () => {
+        const reason = deleteReason.trim();
+        if (deleteTargetId === null) return;
+        // The legacy form required more than 10 characters.
+        if (reason.length <= 10) {
+            setDeleteError("دلیل حذف باید حداقل ۱۱ نویسه باشد.");
+            return;
+        }
+        if (!Number.isSafeInteger(user.UserId) || user.UserId <= 0) {
+            setDeleteError("اطلاعات کاربری معتبر نیست؛ لطفاً دوباره وارد سامانه شوید.");
+            return;
+        }
+        // The list can change while the dialog is open; protect against stale actions.
+        const target = data.find((item) => item.TahghighId === deleteTargetId);
+        if (!target || target.IsDone || target.CountKarbarg !== 0) {
+            setDeleteError("این ارجاع دیگر قابل حذف نیست. فهرست را به‌روزرسانی کنید.");
+            return;
+        }
+
+        setDeletingReferral(true);
+        setDeleteError("");
+        try {
+            const result = await DeleteErjaTahghighbyId(deleteTargetId, user.UserId, reason);
+            const successful = result?.status === 200 &&
+                result?.data?.[0]?.IsSuccess !== false &&
+                result?.data?.[0]?.IsSuccess !== 0;
+            if (!successful) {
+                throw new Error(result?.error || result?.message || "حذف ارجاع در سرور تأیید نشد.");
+            }
+            setDeleteTargetId(null);
+            setDeleteReason("");
+            await loadData();
+        } catch (error) {
+            setDeleteError(error instanceof Error ? error.message : "خطا در حذف ارجاع؛ دوباره تلاش کنید.");
+        } finally {
+            setDeletingReferral(false);
+        }
     };
 
     return (
@@ -389,12 +443,7 @@ const FehrestErjaParvandeh = ({ erjaId, refreshKey, onChangeCountJambandi, onCha
                                 {(item.CountKarbarg === 0 && !item.IsDone) && (
                                     <p onClick={(e) => {
                                         e.stopPropagation();
-                                        showConfirm(
-                                            "آیا از حذف ارجاع اطمینان دارید؟",
-                                            () => DeleteErjaMohaghegh(item.TahghighId),
-                                            "هشدار!",
-                                            "error"
-                                        );
+                                        openDeleteReferral(item.TahghighId);
                                     }} className="cursor-pointer">
                                         <Delete className="text-red-500" />
                                     </p>
@@ -786,7 +835,7 @@ const FehrestErjaParvandeh = ({ erjaId, refreshKey, onChangeCountJambandi, onCha
                                         </div>
 
 
-                                        <div id="div_image_page1"
+                                        <div id="div_image_page1" className="merat-legacy-print-form"
                                             // ref={divRef}
                                             style={{
                                                 width: "330mm",           // افزایش عرض از 210mm به 280mm
@@ -1307,6 +1356,68 @@ const FehrestErjaParvandeh = ({ erjaId, refreshKey, onChangeCountJambandi, onCha
                     </li>
                 ))}
             </ul>
+            {deleteTargetId !== null && (
+                <div className="research-modal-root" dir="rtl" role="presentation">
+                    <button
+                        type="button"
+                        className="research-modal-backdrop"
+                        aria-label="انصراف از حذف ارجاع"
+                        onClick={closeDeleteReferral}
+                        disabled={deletingReferral}
+                    />
+                    <section
+                        className="research-modal-card"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="delete-research-referral-title"
+                        aria-describedby="delete-research-referral-description"
+                    >
+                        <header className="research-modal-header merat-modal-tone--notice" style={{ minHeight: 58 }}>
+                            <h3 id="delete-research-referral-title" className="m-0 text-base font-semibold">
+                                حذف ارجاع محقق
+                            </h3>
+                        </header>
+                        <div className="research-modal-body">
+                            <p id="delete-research-referral-description" className="mb-3">
+                                برای ثبت علت حذف در سوابق پرونده، دلیل حذف محقق را وارد کنید.
+                            </p>
+                            <label htmlFor="delete-research-referral-reason" className="block mb-2 font-medium">
+                                دلیل حذف ارجاع <span className="text-red-600" aria-hidden="true">*</span>
+                            </label>
+                            <textarea
+                                id="delete-research-referral-reason"
+                                autoFocus
+                                rows={5}
+                                maxLength={3000}
+                                value={deleteReason}
+                                onChange={(event) => {
+                                    setDeleteReason(event.target.value);
+                                    if (deleteError) setDeleteError("");
+                                }}
+                                className="w-full rounded-xl border border-slate-300 p-3 text-sm"
+                                placeholder="دلیل حذف ارجاع محقق را بنویسید..."
+                                aria-invalid={Boolean(deleteError)}
+                                aria-describedby={deleteError ? "delete-research-referral-error" : undefined}
+                                disabled={deletingReferral}
+                            />
+                            <p className="text-xs text-slate-500">حداقل ۱۱ و حداکثر ۳۰۰۰ نویسه</p>
+                            {deleteError && (
+                                <p id="delete-research-referral-error" role="alert" className="mt-2 text-sm text-red-600">
+                                    {deleteError}
+                                </p>
+                            )}
+                            <div className="research-modal-actions">
+                                <button type="button" className="research-button secondary" onClick={closeDeleteReferral} disabled={deletingReferral}>
+                                    انصراف
+                                </button>
+                                <button type="button" className="research-button primary" onClick={DeleteErjaMohaghegh} disabled={deletingReferral}>
+                                    {deletingReferral ? "در حال حذف..." : "ثبت دلیل و حذف ارجاع"}
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            )}
         </div >
     );
 };

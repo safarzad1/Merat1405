@@ -1,0 +1,64 @@
+.container{border:1px solid #dfe6f2;background:#fff;border-radius:13px;overflow:hidden;min-width:0;font:400 13.5px/1.8 "ShabnamApp",Tahoma,sans-serif;color:#344765}
+.container button,.container input,.container textarea{font:inherit}
+.container button{cursor:pointer;transition:background-color .14s,border-color .14s}
+.container button:disabled{opacity:.48;cursor:not-allowed}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #e7ebf5;padding:10px 14px}
+.toolbarTitle{font:500 16px/1.6 "PeydaApp","ShabnamApp",sans-serif;display:flex;align-items:center;gap:9px;color:#344970}
+.counter{background:#f4f4ff;color:#655d9b;border-radius:9px;padding:1px 8px;font-size:13px}
+.primary{border:1px solid #6056e8;background:#6056e8;color:#fff;border-radius:9px;padding:6px 14px;min-height:34px;white-space:nowrap}
+.primary:hover{background:#5148ce}
+.secondary{border:1px solid #d9def5;border-radius:8px;background:#f6f6ff;padding:4px 12px;color:#6357c2;white-space:nowrap}
+.secondary:hover{background:#ebeaff}
+.projectList{padding:9px;display:grid;gap:7px}
+.project{border:1px solid #e3e8f2;border-radius:10px;overflow:hidden}
+.projectSelected{border-color:#bcbdf1;background:#fdfdff}
+.projectRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;min-height:55px}
+.open{display:flex;align-items:center;text-align:right;flex:1;min-width:0;gap:12px;border:0;background:transparent;color:#374b71;padding:4px}
+.open:hover{background:#f8f8ff;border-radius:7px}
+.arrow{width:22px;height:22px;border:1px solid #e2e5f6;border-radius:6px;display:grid;place-items:center;color:#716bb0;flex-shrink:0;font-size:17px}
+.projectTitle{font:500 15px/1.6 "PeydaApp","ShabnamApp",sans-serif;flex:1;min-width:100px;overflow-wrap:anywhere}
+.faint{font-size:13px;color:#8793a9;white-space:nowrap}
+.status{font-size:13px;border:1px solid #e3e6f3;border-radius:20px;padding:1px 9px;background:#f7f8fb;color:#6b7894;white-space:nowrap}
+.active{color:#25846f;background:#effaf6;border-color:#c5e8df}
+.closed{color:#8a6e67;background:#fcf6f3;border-color:#eee0d7}
+.actions,.taskButtons{display:flex;flex-wrap:wrap;gap:5px;align-items:center;flex-shrink:0}
+.actions button,.taskButtons button{border:1px solid #dde3f4;border-radius:8px;background:#fff;color:#615cac;padding:3px 9px;white-space:nowrap}
+.actions button:hover,.taskButtons button:hover{background:#f5f3ff}
+.actions .danger,.taskButtons .danger{color:#b85659;border-color:#f1d9dc}
+.detail{border-top:1px solid #e5e8f5;padding:10px 13px;background:#fbfcff;display:grid;gap:8px}
+.description{padding:8px 11px;background:#fff;border:1px solid #e6eaf3;border-radius:8px;color:#657590;white-space:pre-wrap}
+.taskHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#41567c;font:500 15px/1.6 "PeydaApp","ShabnamApp",sans-serif}
+.tasks{display:grid;gap:6px}
+.task{border:1px solid #e4eaf4;border-radius:9px;padding:8px 12px;display:flex;align-items:center;gap:10px;background:#fff}
+.taskNumber{background:#eff1fb;color:#6a67a2;width:23px;height:23px;display:grid;place-items:center;border-radius:50%;flex-shrink:0}
+.taskText{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
+.taskTitle{font:500 14.5px/1.5 "PeydaApp","ShabnamApp",sans-serif;color:#375176}
+.taskDesc{font-size:13px;color:#7686a0;white-space:pre-wrap;overflow-wrap:anywhere}
+.taskMeta{color:#8794aa;font-size:13px}
+.empty{padding:18px;color:#8390a6;text-align:center;font-size:13px}
+.success,.error{padding:8px 12px;margin:8px 10px;border-radius:8px;border:1px solid #bde8d9;background:#f1fcf7;color:#367765;display:flex;justify-content:space-between;gap:10px}
+.error{color:#ab4b50;border-color:#efd1d4;background:#fff8f8}
+.success button{border:0;background:transparent;color:inherit}
+.backdrop{position:fixed;inset:0;z-index:11000;background:rgba(18,30,58,.52);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal,.confirm{width:min(100%,650px);border:1px solid #e2e7f5;border-radius:14px;background:#fff;box-shadow:0 22px 70px #111f3440;max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden}
+.confirm{max-width:460px}
+.modalHead{background:linear-gradient(100deg,#f1f1ff,#fff);padding:12px 17px;border-bottom:1px solid #e5e8f5;display:flex;align-items:center;justify-content:space-between}
+.modalHead h3,.confirm h3{font:500 17px/1.7 "PeydaApp","ShabnamApp",sans-serif;color:#324a75;margin:0}
+.modalHead button{border:1px solid #dfe3f5;color:#566988;background:#fff;width:30px;height:30px;border-radius:8px;font-size:21px}
+.modalBody{padding:16px;overflow-y:auto;display:grid;gap:13px}
+.field{display:grid;gap:5px;color:#51637f;font-size:13px;align-content:start}
+.fieldLabel{display:inline-flex;align-items:baseline;justify-content:flex-start;gap:4px;min-width:0;line-height:1.6}
+.required{display:inline-block;color:#cb454f;font-size:14px;font-weight:500;line-height:1;flex:0 0 auto}
+.field input,.field textarea{border:1px solid #d9e2f0;background:#fff;border-radius:9px;width:100%;padding:9px 11px;outline:none;color:#314866;font-size:13.5px;min-height:42px}
+.field input:focus,.field textarea:focus{border-color:#938cf0;box-shadow:0 0 0 3px #eae9ff}
+.field textarea{resize:vertical;min-height:88px}
+.dateFields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modalFooter{padding:10px 16px;border-top:1px solid #e7eaf3;background:#fafbff;display:flex;align-items:center;justify-content:flex-start;gap:7px}
+.modalFooter button:not(.primary):not(.dangerButton){border:1px solid #dfe5f1;background:#fff;color:#586c89;border-radius:8px;padding:6px 15px}
+.confirm h3{padding:13px 17px;background:#f2f2ff;border-bottom:1px solid #e5e8f5}
+.confirm p{margin:0;padding:18px;color:#455c81;line-height:1.9}
+.dangerButton{background:#bd5059;color:white;border:1px solid #bd5059;border-radius:8px;padding:6px 16px}
+@media(max-width:1000px){.projectRow{flex-direction:column;align-items:stretch}.open{flex-wrap:wrap}.actions{justify-content:flex-start}}
+@media(max-width:580px){.dateFields{grid-template-columns:1fr}.toolbar{flex-wrap:wrap}.modalBody{padding:11px}.projectTitle{flex-basis:100%}.faint{white-space:normal}.task{flex-wrap:wrap}.taskButtons{width:100%;justify-content:flex-end}}
+
+.taskBlock{border:1px solid #e2e8f3;background:white;border-radius:10px;overflow:hidden}.taskBlock>.task{border:0;border-radius:0}.taskButtons .planningButton{color:#246c85;border-color:#c4e3ee;background:#f3fbfe}

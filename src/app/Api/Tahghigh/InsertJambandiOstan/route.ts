@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import sql from "mssql";
 import { getConnection } from "@/lib/db";
+import { requireResearchIdentity, requireClaimedActor, researchAccessResponse, researchMutationResponse, positiveId, assertResearchCaseScope } from "@/lib/researchSecurity";
 import { verifyToken } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
@@ -22,6 +23,7 @@ export async function POST(req: NextRequest) {
     }
 
     try {
+        const actor = await requireResearchIdentity(token);
         const form = await req.formData();
 
         // دریافت مقادیر
@@ -46,8 +48,21 @@ export async function POST(req: NextRequest) {
 
         const jambandi = form.get("jambandi");
         const userId = form.get("userId");
+        requireClaimedActor(actor, userId);
         const filepage1 = form.get("filepage1");
         const filepage2 = form.get("filepage2");
+
+        const parsedErjaId = positiveId(erjaId);
+        const options = [valuesoal1, valuesoal2, valuesoal3, valuesoal4, valuesoal5, valuesoal6, valuesoal7];
+        if (!parsedErjaId || options.some((v) => v === null || v === undefined || !/^[0-5]$/.test(String(v)))) {
+            return NextResponse.json({ status: 400, error: "شناسه ارجاع یا پاسخ گزینه‌ها نامعتبر است." }, { status: 400 });
+        }
+        const texts = [pasokh1, pasokh2, pasokh3, pasokh4, pasokh5, pasokh6, pasokh7, pasokh8, jambandi];
+        if (texts.some((v) => typeof v !== "string" || (v as string).length > 4000) ||
+            [filepage1, filepage2].some((v) => typeof v !== "string" || (v as string).length > 200)) {
+            return NextResponse.json({ status: 400, error: "متن یا نام فایل جمع‌بندی نامعتبر است." }, { status: 400 });
+        }
+
 
         // const file1 = form.get("file1") as File | null;
         // const file2 = form.get("file2") as File | null;
@@ -81,10 +96,11 @@ export async function POST(req: NextRequest) {
         //     buffer2 = Buffer.from(arrayBuffer2);
         // }
 
+        await assertResearchCaseScope(actor, parsedErjaId);
         const pool = await getConnection();
         const result = await pool
             .request()
-            .input("ErjaId", sql.BigInt, Number(erjaId))
+            .input("ErjaId", sql.BigInt, parsedErjaId)
             .input("PasokhSoal1", sql.NVarChar(4000), pasokh1)
             .input("PasokhSoal2", sql.NVarChar(4000), pasokh2)
             .input("PasokhSoal3", sql.NVarChar(4000), pasokh3)
@@ -103,22 +119,17 @@ export async function POST(req: NextRequest) {
             .input("Value7", sql.Int, Number(valuesoal7))
 
             .input("Jambandi", sql.NVarChar(4000), jambandi)
-            .input("Page1", sql.NVarChar(4000), filepage1)
-            .input("Page2", sql.NVarChar(4000), filepage2)
+            .input("Page1", sql.NVarChar(200), filepage1)
+            .input("Page2", sql.NVarChar(200), filepage2)
             // .input("Files1", sql.VarBinary(sql.MAX), buffer1)
             // .input("Files2", sql.VarBinary(sql.MAX), buffer2)
             .input("UserName", sql.BigInt, Number(userId))
             .execute("Tahghighat.SP_InsertJambandiOstan");
 
-        return NextResponse.json(
-            { status: 200, data: result.recordset }
-        );
+        return researchMutationResponse(result);
 
     } catch (err) {
-        console.error("Error in API:", err);
-        return NextResponse.json(
-            { error: err instanceof Error ? err.message : "Unknown error" },
-            { status: 500 }
-        );
+        
+        return researchAccessResponse(err);
     }
 }

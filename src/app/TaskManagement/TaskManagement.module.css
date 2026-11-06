@@ -1,0 +1,57 @@
+/* Compact, calm typography: >=13px in the module, no heavy bold. */
+.workspace{font-family:"ShabnamApp",Tahoma,sans-serif;color:#243756;display:grid;gap:12px;min-width:0;font-size:13.5px;line-height:1.8;font-weight:400}
+.workspace :is(h1,h2){font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif;font-weight:500;line-height:1.5}
+.header{border:1px solid #e0e5f7;border-radius:14px;background:linear-gradient(110deg,#f5f5ff,#fff);padding:12px 17px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.header h1{font-size:19px;margin:0;color:#283c6b}
+.scope{border:1px solid #dadffa;background:#fff;color:#5a59a6;border-radius:9px;padding:3px 11px;font-size:13px;font-weight:400}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.metric{background:#fff;border:1px solid #dfe5f3;border-radius:12px;padding:11px 15px;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:56px;box-shadow:0 3px 10px rgba(42,64,105,.025);position:relative;overflow:hidden}
+.metric::before{content:"";position:absolute;right:0;top:10px;bottom:10px;width:3px;border-radius:4px;background:#7a78d9}
+.metric.project{background:#f8f8ff}.metric.task{background:#f6fbff}.metric.target{background:#fbf8ff}.metric.report{background:#f6fffc}
+.metric.task::before{background:#66a9c7}.metric.target::before{background:#a58cda}.metric.report::before{background:#5cae9a}
+.metricLabel{font-size:13.5px;color:#596b86;white-space:nowrap}
+.metricValue{font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif;font-size:21px;line-height:1;color:#343f84;font-weight:500;font-variant-numeric:tabular-nums}
+.section{border:1px solid #e0e6f1;border-radius:13px;background:white;overflow:hidden;min-width:0}
+.sectionHeading{padding:11px 16px;border-bottom:1px solid #edf0f7;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px}
+.sectionHeading h2{font-size:16px;color:#30456e;margin:0}
+.sectionCounter{font-size:13px;color:#63739b;background:#f5f7fd;border:1px solid #edf0f8;border-radius:8px;padding:2px 9px;white-space:nowrap}
+.scroll{overflow-x:auto;max-height:430px}
+.scroll table{width:100%;border-collapse:collapse;text-align:right;font-size:13px;white-space:nowrap}
+.scroll th{background:#f7f9fc;color:#586886;font-weight:500;padding:9px 16px;border-bottom:1px solid #e6ebf4;font-size:13px}
+.scroll td{padding:9px 16px;border-bottom:1px solid #edf0f6;color:#415472;font-size:13px}
+.scroll tbody tr:last-child td{border-bottom:0}
+.scroll tbody tr:hover{background:#fafbff}
+.important{font-weight:500;color:#32456e!important}
+.status{display:inline-flex;align-items:center;padding:1px 9px;border:1px solid #e4e5f2;color:#63708a;background:#f8f9fd;border-radius:99px;font-size:13px}
+.status.active{color:#267b69;border-color:#c9eee3;background:#effbf7}
+.empty{padding:20px 14px;margin:0;color:#7787a4;font-size:13px;text-align:center}
+.routes{display:grid;gap:7px;padding:10px}
+.route{border:1px solid #e2e8f4;border-radius:11px;background:#fff;overflow:hidden}
+.route[open]{border-color:#cdd5f6;background:#fcfdff}
+.routeSummary{list-style:none;cursor:pointer;display:grid;grid-template-columns:19px minmax(160px,2fr) minmax(100px,1fr) minmax(88px,.75fr) minmax(100px,.75fr) minmax(75px,.6fr);gap:9px;align-items:center;padding:10px 13px;min-height:56px;user-select:none}
+.routeSummary::-webkit-details-marker{display:none}
+.routeSummary:hover{background:#f7f9ff}
+.chevron{border:1px solid #dce3f3;border-radius:6px;display:flex;align-items:center;justify-content:center;width:19px;height:19px;line-height:1;font-size:17px;color:#6474a1;transform:rotate(0deg);transition:transform .15s}
+.route[open] .chevron{transform:rotate(180deg)}
+.routeMain{display:flex;flex-direction:column;gap:1px;min-width:0}
+.routeTitle{font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif;font-size:15px;font-weight:500;white-space:normal;color:#324b76}
+.routeSub{color:#7a86a0;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.routeProvince,.routePeriod{font-size:13px;color:#526482}
+.routeNumber{font-size:16px;font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif;color:#3e5180;white-space:nowrap;font-weight:500}
+.routeNumber span{font-size:13px;color:#8a94a6;font-weight:400}
+.routeTag{font-size:13px;color:#6766aa;background:#f3f2ff;border:1px solid #e6e3ff;border-radius:8px;padding:2px 8px;text-align:center;white-space:nowrap}
+.routeBody{border-top:1px solid #e7ebf5;padding:13px;display:grid;gap:13px}
+.flowPath{display:flex;gap:8px;align-items:stretch;min-width:0}
+.flowStep{flex:1;min-width:0;display:grid;gap:2px;border:1px solid #e0e9f4;background:#f9fbff;border-radius:9px;padding:8px 11px}
+.stepLabel{color:#8390a8;font-size:13px}
+.stepValue{color:#354c70;font-size:13px;overflow-wrap:anywhere}
+.flowArrow{align-self:center;color:#93a0bb;font-size:17px}
+.assignees{display:grid;gap:8px}
+.assigneeHeading{font-family:"PeydaApp","ShabnamApp",Tahoma,sans-serif;color:#425a84;font-size:14px;font-weight:500}
+.personList{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:7px}
+.person{padding:8px 11px;display:flex;flex-wrap:wrap;align-items:center;gap:5px 12px;border:1px solid #e5eaf3;border-radius:8px;background:#fff}
+.personName{font-size:13px;color:#354b75;font-weight:500;width:100%}
+.personInfo,.noAssignee{font-size:13px;color:#77859e}
+.notice{border:1px solid #ead6bb;border-radius:11px;background:#fffbf3;padding:14px 16px;color:#805d35;font-size:13px}
+@media(max-width:930px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.routeSummary{grid-template-columns:19px minmax(140px,2fr) minmax(80px,1fr) minmax(80px,1fr)}.routeNumber,.routeTag{display:none}.flowPath{flex-wrap:wrap}.flowStep{flex:1 1 40%}.flowArrow{display:none}}
+@media(max-width:560px){.workspace{gap:9px}.header{padding:10px}.header h1{font-size:17px}.metric{padding:8px 10px;min-height:50px}.metricLabel{font-size:13px}.metricValue{font-size:19px}.sectionHeading{padding:9px 10px}.routeSummary{grid-template-columns:18px minmax(0,1fr) auto;gap:6px}.routeProvince{grid-column:2}.routePeriod{grid-column:3}.personList{grid-template-columns:1fr}}

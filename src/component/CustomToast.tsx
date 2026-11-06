@@ -1,2 +1,13 @@
 "use client";
-export const showToast={success:(message:string)=>{if(typeof window!=="undefined")window.dispatchEvent(new CustomEvent("merat-toast",{detail:{message,type:"success"}}))},error:(message:string)=>{if(typeof window!=="undefined")window.dispatchEvent(new CustomEvent("merat-toast",{detail:{message,type:"error"}}))},warning:(message:string)=>{if(typeof window!=="undefined")window.dispatchEvent(new CustomEvent("merat-toast",{detail:{message,type:"warning"}}))},info:(message:string)=>{if(typeof window!=="undefined")window.dispatchEvent(new CustomEvent("merat-toast",{detail:{message,type:"info"}}))}};
+type ToastKind = "success" | "error" | "warning" | "info";
+function dispatchToast(type: ToastKind, message: string, title?: string) {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("merat-toast", { detail: { message, title, type } }));
+  }
+}
+export const showToast = {
+  success: (message: string, title?: string) => dispatchToast("success", message, title),
+  error: (message: string, title?: string) => dispatchToast("error", message, title),
+  warning: (message: string, title?: string) => dispatchToast("warning", message, title),
+  info: (message: string, title?: string) => dispatchToast("info", message, title),
+};

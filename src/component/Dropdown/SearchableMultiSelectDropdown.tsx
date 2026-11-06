@@ -73,7 +73,7 @@ export default function SearchableMultiSelectDropdown<
   className = "",
   ariaLabel = "انتخاب چند گزینه",
   leadingIcon,
-  dropdownZIndex = 2147483000,
+  dropdownZIndex = 2147483600,
   menuWidth,
   itemFontSize = "12px",
   maxSelections,
